@@ -1,5 +1,7 @@
-import type { KeyboardEvent } from 'react'
-import { CircleAlert, Focus, GitBranch } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import type { CSSProperties, KeyboardEvent, PointerEvent, WheelEvent } from 'react'
+import { CircleAlert, Focus, GitBranch, Minus, Plus, RotateCcw } from 'lucide-react'
+import { ConfidenceDial } from './ConfidenceDial'
 import { candidateLabel, formatNumber, formatPercent, promptFor, shortId } from '../lib'
 import type { Candidate, Pair, RunArtifact } from '../types'
 
@@ -12,6 +14,19 @@ type PartialOrderGraphProps = {
 }
 
 type PositionedCandidate = Candidate & { graphX: number; graphY: number }
+type GraphViewport = { x: number; y: number; scale: number }
+type PanOrigin = { pointerId: number; clientX: number; clientY: number; x: number; y: number; width: number; height: number }
+
+const GRAPH_WIDTH = 880
+const GRAPH_HEIGHT = 360
+const MIN_ZOOM = 1
+const MAX_ZOOM = 3
+const ZOOM_STEP = 1.25
+const INITIAL_VIEWPORT: GraphViewport = { x: 0, y: 0, scale: MIN_ZOOM }
+
+function clampNumber(value: number, minimum: number, maximum: number) {
+  return Math.min(Math.max(value, minimum), maximum)
+}
 
 function positionCandidates(candidates: Candidate[]): PositionedCandidate[] {
   if (candidates.length === 0) return []
@@ -26,9 +41,76 @@ function positionCandidates(candidates: Candidate[]): PositionedCandidate[] {
 
   return candidates.map((candidate, index) => ({
     ...candidate,
-    graphX: candidates.length === 1 ? 440 : 72 + ((candidate.embedding.x - minimumX) / xRange) * 736,
-    graphY: candidates.length === 1 ? 180 : 56 + ((candidate.embedding.y - minimumY) / yRange) * 244 + ((index % 3) - 1) * 7,
+    graphX: candidates.length === 1 ? GRAPH_WIDTH / 2 : 72 + ((candidate.embedding.x - minimumX) / xRange) * 736,
+    graphY: candidates.length === 1 ? GRAPH_HEIGHT / 2 : 56 + ((candidate.embedding.y - minimumY) / yRange) * 244 + ((index % 3) - 1) * 7,
   }))
+}
+
+function relaxCollisions(positioned: PositionedCandidate[], iterations = 24): PositionedCandidate[] {
+  const relaxed = positioned.map((candidate) => ({ ...candidate }))
+  const targets = positioned.map((candidate) => ({ x: candidate.graphX, y: candidate.graphY }))
+  const minimumDistance = 62
+  const maximumDisplacement = 36
+  const maximumStep = 4
+
+  for (let iteration = 0; iteration < iterations; iteration += 1) {
+    let moved = false
+
+    for (let firstIndex = 0; firstIndex < relaxed.length; firstIndex += 1) {
+      for (let secondIndex = firstIndex + 1; secondIndex < relaxed.length; secondIndex += 1) {
+        const first = relaxed[firstIndex]
+        const second = relaxed[secondIndex]
+        let deltaX = second.graphX - first.graphX
+        let deltaY = second.graphY - first.graphY
+        let distance = Math.hypot(deltaX, deltaY)
+
+        if (distance >= minimumDistance) continue
+        if (distance < 0.001) {
+          const angle = ((firstIndex + 1) * (secondIndex + 1) * 2.399963) % (Math.PI * 2)
+          deltaX = Math.cos(angle)
+          deltaY = Math.sin(angle)
+          distance = 1
+        }
+
+        const shift = Math.min((minimumDistance - distance) / 2, maximumStep)
+        const unitX = deltaX / distance
+        const unitY = deltaY / distance
+        first.graphX -= unitX * shift
+        first.graphY -= unitY * shift
+        second.graphX += unitX * shift
+        second.graphY += unitY * shift
+        moved = true
+      }
+    }
+
+    relaxed.forEach((candidate, index) => {
+      const offsetX = candidate.graphX - targets[index].x
+      const offsetY = candidate.graphY - targets[index].y
+      const displacement = Math.hypot(offsetX, offsetY)
+      if (displacement > maximumDisplacement) {
+        const correction = maximumDisplacement / displacement
+        candidate.graphX = targets[index].x + offsetX * correction
+        candidate.graphY = targets[index].y + offsetY * correction
+      }
+      candidate.graphX = clampNumber(candidate.graphX, 42, GRAPH_WIDTH - 42)
+      candidate.graphY = clampNumber(candidate.graphY, 46, GRAPH_HEIGHT - 46)
+    })
+
+    if (!moved) break
+  }
+
+  return relaxed
+}
+
+function constrainViewport(viewport: GraphViewport): GraphViewport {
+  const scale = clampNumber(viewport.scale, MIN_ZOOM, MAX_ZOOM)
+  const width = GRAPH_WIDTH / scale
+  const height = GRAPH_HEIGHT / scale
+  return {
+    x: clampNumber(viewport.x, 0, GRAPH_WIDTH - width),
+    y: clampNumber(viewport.y, 0, GRAPH_HEIGHT - height),
+    scale,
+  }
 }
 
 function moveGraphFocus(event: KeyboardEvent<SVGGElement>, candidateId: string, candidates: Candidate[], onSelectCandidate: (candidateId: string) => void) {
@@ -47,10 +129,88 @@ function moveGraphFocus(event: KeyboardEvent<SVGGElement>, candidateId: string, 
 }
 
 export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId, onSelectCandidate }: PartialOrderGraphProps) {
-  const positionedCandidates = positionCandidates(candidates)
-  const nodeById = Object.fromEntries(positionedCandidates.map((candidate) => [candidate.id, candidate])) as Record<string, PositionedCandidate>
-  const visiblePairs = pairs.filter((pair) => nodeById[pair.chosenId] && nodeById[pair.rejectedId])
+  const positionedCandidates = useMemo(
+    () => relaxCollisions(positionCandidates(candidates)),
+    [candidates],
+  )
+  const nodeById = useMemo(
+    () => Object.fromEntries(positionedCandidates.map((candidate) => [candidate.id, candidate])) as Record<string, PositionedCandidate>,
+    [positionedCandidates],
+  )
+  const visiblePairs = useMemo(
+    () => pairs.filter((pair) => nodeById[pair.chosenId] && nodeById[pair.rejectedId]),
+    [nodeById, pairs],
+  )
+  const pairOrder = useMemo(
+    () => new Map(run.pairs.map((pair, index) => [pair.id, index])),
+    [run.pairs],
+  )
+  const candidateOrder = useMemo(
+    () => new Map(run.candidates.map((candidate, index) => [candidate.id, index])),
+    [run.candidates],
+  )
+  const [viewport, setViewport] = useState<GraphViewport>(INITIAL_VIEWPORT)
+  const panOrigin = useRef<PanOrigin | null>(null)
   const selectedCandidate = candidates.find((candidate) => candidate.id === selectedCandidateId)
+  const viewWidth = GRAPH_WIDTH / viewport.scale
+  const viewHeight = GRAPH_HEIGHT / viewport.scale
+
+  const zoomBy = (factor: number, anchorX = 0.5, anchorY = 0.5) => {
+    setViewport((current) => {
+      const nextScale = clampNumber(current.scale * factor, MIN_ZOOM, MAX_ZOOM)
+      const currentWidth = GRAPH_WIDTH / current.scale
+      const currentHeight = GRAPH_HEIGHT / current.scale
+      const nextWidth = GRAPH_WIDTH / nextScale
+      const nextHeight = GRAPH_HEIGHT / nextScale
+      return constrainViewport({
+        x: current.x + (currentWidth - nextWidth) * anchorX,
+        y: current.y + (currentHeight - nextHeight) * anchorY,
+        scale: nextScale,
+      })
+    })
+  }
+
+  const beginPan = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0 || (event.target as Element).closest('.graph-node')) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    panOrigin.current = {
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      x: viewport.x,
+      y: viewport.y,
+      width: viewWidth,
+      height: viewHeight,
+    }
+  }
+
+  const continuePan = (event: PointerEvent<HTMLDivElement>) => {
+    const origin = panOrigin.current
+    if (!origin || origin.pointerId !== event.pointerId) return
+    event.preventDefault()
+    const bounds = event.currentTarget.getBoundingClientRect()
+    setViewport((current) => constrainViewport({
+      x: origin.x - ((event.clientX - origin.clientX) / Math.max(bounds.width, 1)) * origin.width,
+      y: origin.y - ((event.clientY - origin.clientY) / Math.max(bounds.height, 1)) * origin.height,
+      scale: current.scale,
+    }))
+  }
+
+  const endPan = (event: PointerEvent<HTMLDivElement>) => {
+    if (panOrigin.current?.pointerId !== event.pointerId) return
+    panOrigin.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const anchorX = clampNumber((event.clientX - bounds.left) / Math.max(bounds.width, 1), 0, 1)
+    const anchorY = clampNumber((event.clientY - bounds.top) / Math.max(bounds.height, 1), 0, 1)
+    zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP, anchorX, anchorY)
+  }
 
   if (candidates.length === 0) {
     return <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No candidates cross this aperture</h3><p>Clear the search or widen the domain and verdict filters.</p></div>
@@ -58,35 +218,51 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
 
   return (
     <div className="topology-stack">
-      <figure className="order-graph" aria-labelledby="order-graph-title">
+      <figure className="order-graph calibration-chrome" data-armed={selectedCandidate ? 'true' : 'false'} aria-labelledby="order-graph-title">
         <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Defensible partial order</strong></span><span>{visiblePairs.length} visible edges</span></figcaption>
         <div className="graph-key" aria-label="Graph legend"><span><i className="key-line key-line--defended" />Defended preference</span><span><i className="key-line key-line--ambiguous" />Ambiguous comparison</span><span><i className="key-node" />Candidate</span></div>
-        <svg className="order-graph-svg" viewBox="0 0 880 360" role="group" aria-label="Candidate partial-order graph. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
-          </defs>
-          <g aria-label="Preference edges">
-            {visiblePairs.map((pair) => {
-              const chosen = nodeById[pair.chosenId]
-              const rejected = nodeById[pair.rejectedId]
-              const markerEnd = pair.verdict === 'defended' ? 'url(#arrow-defended)' : undefined
-              const edgeLabel = pair.verdict === 'defended' ? 'preference edge' : 'undirected comparison'
-              return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd}><title>{`${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} confidence. ${pair.reason}`}</title></line>
-            })}
-          </g>
-          <g aria-label="Candidates">
-            {positionedCandidates.map((candidate) => {
-              const label = candidateLabel(run, candidate)
-              const prompt = promptFor(run, candidate.promptId)
-              const selected = candidate.id === selectedCandidateId
-              return (
-                <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`${label}, ${prompt?.domain ?? 'unknown domain'}, ${candidate.tokens} tokens. Select candidate.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
-                  <title>{`${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
-                </g>
-              )
-            })}
-          </g>
-        </svg>
+        <div className="graph-controls" role="group" aria-label="Graph viewport controls">
+          <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM} aria-label="Zoom graph out"><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
+          <button type="button" onClick={() => setViewport(INITIAL_VIEWPORT)} disabled={viewport.scale === MIN_ZOOM && viewport.x === 0 && viewport.y === 0}><RotateCcw size={14} aria-hidden="true" /><span>Reset view</span></button>
+          <button type="button" onClick={() => zoomBy(ZOOM_STEP)} disabled={viewport.scale >= MAX_ZOOM} aria-label="Zoom graph in"><Plus size={14} aria-hidden="true" /><span>Zoom in</span></button>
+          <output aria-label="Current graph zoom">{Math.round(viewport.scale * 100)}%</output>
+        </div>
+        <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan} onWheel={handleWheel}>
+          <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Candidate partial-order graph. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
+            </defs>
+            <g aria-label="Preference edges">
+              {visiblePairs.map((pair) => {
+                const chosen = nodeById[pair.chosenId]
+                const rejected = nodeById[pair.rejectedId]
+                const markerEnd = pair.verdict === 'defended' ? 'url(#arrow-defended)' : undefined
+                const edgeLabel = pair.verdict === 'defended' ? 'preference edge' : 'undirected comparison'
+                const confidence = clampNumber(pair.confidence, 0, 1)
+                const style = {
+                  '--edge-confidence': confidence,
+                  '--enter-delay': `${(pairOrder.get(pair.id) ?? 0) * 24}ms`,
+                  strokeWidth: 1.25 + confidence * 3,
+                  strokeOpacity: 0.35 + confidence * 0.65,
+                } as CSSProperties
+                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd} style={style}><title>{`${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} confidence. ${pair.reason}`}</title></line>
+              })}
+            </g>
+            <g aria-label="Candidates">
+              {positionedCandidates.map((candidate) => {
+                const label = candidateLabel(run, candidate)
+                const prompt = promptFor(run, candidate.promptId)
+                const selected = candidate.id === selectedCandidateId
+                const style = { '--enter-delay': `${(candidateOrder.get(candidate.id) ?? 0) * 32}ms` } as CSSProperties
+                return (
+                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} style={style} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`${label}, ${prompt?.domain ?? 'unknown domain'}, ${candidate.tokens} tokens. Select candidate.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
+                    <title>{`${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
+                  </g>
+                )
+              })}
+            </g>
+          </svg>
+        </div>
         <p className="graph-note">Position uses the artifact embedding x/y coordinates. Arrows mark defended preferences; dashed ambiguous comparisons are undirected. No scalar rank is inferred.</p>
       </figure>
 
@@ -99,21 +275,24 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
             {run.objectives.map((objective) => {
               const score = selectedCandidate.scores[objective.id]
               if (!score) return null
-              return <details key={objective.id}><summary><span>{objective.label}</span><strong>{formatNumber(score.value)} <small>{formatPercent(score.confidence)} confidence</small></strong></summary><p>{score.evidence}</p></details>
+              return <details key={objective.id}><summary><span>{objective.label}</span><span className="score-evidence-value"><strong>{formatNumber(score.value)}</strong><ConfidenceDial value={score.confidence} tone="neutral" label={`${objective.label} confidence`} size="inline" /></span></summary><p>{score.evidence}</p></details>
             })}
           </div>
         </section>
       ) : null}
 
-      <section className="candidate-table-section" aria-labelledby="candidate-table-title">
-        <header className="section-heading section-heading--compact"><div><span className="eyebrow">Accessible register</span><h3 id="candidate-table-title">Candidate evidence table</h3></div><span>{candidates.length} rows</span></header>
-        <div className="table-wrap"><table className="data-table candidate-table"><thead><tr><th scope="col">Candidate</th><th scope="col">Domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>{objective.label}</th>)}<th scope="col">Tokens</th><th scope="col">Latency</th></tr></thead><tbody>
-          {candidates.map((candidate) => {
-            const selected = candidate.id === selectedCandidateId
-            return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={objective.label} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Tokens">{candidate.tokens}</td><td data-label="Latency">{candidate.latencyMs} ms</td></tr>
-          })}
-        </tbody></table></div>
-      </section>
+      <details className="candidate-register-disclosure" open>
+        <summary><span>Open accessible register</span><small>{candidates.length} candidate rows</small></summary>
+        <section className="candidate-table-section" aria-labelledby="candidate-table-title">
+          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Accessible register</span><h3 id="candidate-table-title">Candidate evidence table</h3></div><span>{candidates.length} rows</span></header>
+          <div className="table-wrap"><table className="data-table candidate-table"><thead><tr><th scope="col">Candidate</th><th scope="col">Domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>{objective.label}</th>)}<th scope="col">Tokens</th><th scope="col">Latency</th></tr></thead><tbody>
+            {candidates.map((candidate) => {
+              const selected = candidate.id === selectedCandidateId
+              return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={objective.label} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Tokens">{candidate.tokens}</td><td data-label="Latency">{candidate.latencyMs} ms</td></tr>
+            })}
+          </tbody></table></div>
+        </section>
+      </details>
     </div>
   )
 }

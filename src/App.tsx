@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { flushSync } from 'react-dom'
 import type { ComponentType } from 'react'
 import { Activity, BookOpen, ChevronRight, Menu, Network, TestTubes, X } from 'lucide-react'
 import runArtifact from '../artifacts/demo-run.json'
@@ -22,8 +23,26 @@ function App() {
   const activeLabel = NAV_ITEMS.find((item) => item.id === activeView)?.label
 
   const navigate = (view: ViewId) => {
-    setActiveView(view)
-    document.getElementById('lab-main')?.focus()
+    const commitNavigation = () => {
+      setActiveView(view)
+      document.getElementById('lab-main')?.focus()
+    }
+    const transitionDocument = document as Document & {
+      startViewTransition?: (updateCallback: () => void) => unknown
+    }
+
+    if (
+      typeof transitionDocument.startViewTransition === 'function'
+      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      transitionDocument.startViewTransition(() => {
+        flushSync(() => setActiveView(view))
+        document.getElementById('lab-main')?.focus()
+      })
+      return
+    }
+
+    commitNavigation()
   }
 
   return (
@@ -49,10 +68,12 @@ function App() {
       </header>
 
       <main id="lab-main" tabIndex={-1}>
-        {activeView === 'overview' ? <Overview run={run} onNavigate={navigate} /> : null}
-        {activeView === 'topology' ? <RewardTopology run={run} filters={filters} onFiltersChange={setFilters} /> : null}
-        {activeView === 'pairs' ? <PairLab run={run} filters={filters} onFiltersChange={setFilters} /> : null}
-        {activeView === 'runbook' ? <Runbook run={run} /> : null}
+        <div className="bench-content">
+          {activeView === 'overview' ? <Overview run={run} onNavigate={navigate} /> : null}
+          {activeView === 'topology' ? <RewardTopology run={run} filters={filters} onFiltersChange={setFilters} /> : null}
+          {activeView === 'pairs' ? <PairLab run={run} filters={filters} onFiltersChange={setFilters} /> : null}
+          {activeView === 'runbook' ? <Runbook run={run} /> : null}
+        </div>
       </main>
 
       <nav className="bottom-nav" aria-label="Mobile workbench views">
