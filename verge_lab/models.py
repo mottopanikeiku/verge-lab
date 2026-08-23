@@ -6,10 +6,29 @@ import json
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 JsonObject = dict[str, Any]
+MAX_ARTIFACT_BYTES = 64 * 1024 * 1024
+MAX_OBJECTIVES = 32
+MAX_PROMPTS = 1_024
+MAX_CANDIDATES = 8_192
+MAX_CANDIDATES_PER_PROMPT = 64
+MAX_PAIRS = 100_000
+MAX_MUTATIONS = 8_192
+MAX_CHECKPOINTS = 8_192
+MAX_TEXT_CHARS = 131_072
+
+COLLECTION_LIMITS = {
+    "objectives": MAX_OBJECTIVES,
+    "prompts": MAX_PROMPTS,
+    "candidates": MAX_CANDIDATES,
+    "pairs": MAX_PAIRS,
+    "mutations": MAX_MUTATIONS,
+    "checkpoints": MAX_CHECKPOINTS,
+}
 
 
 def _object(value: Any, where: str) -> Mapping[str, Any]:
@@ -34,6 +53,8 @@ def _keys(value: Mapping[str, Any], required: set[str], where: str) -> None:
 def _string(value: Any, where: str, *, allow_empty: bool = False) -> str:
     if not isinstance(value, str) or (not allow_empty and not value):
         raise TypeError(f"{where} must be a non-empty string")
+    if len(value) > MAX_TEXT_CHARS:
+        raise ValueError(f"{where} exceeds {MAX_TEXT_CHARS} characters")
     return value
 
 
@@ -571,11 +592,36 @@ class RunArtifact:
             raise ValueError("schemaVersion must be 1")
         _string(self.id, "artifact.id")
         _string(self.name, "artifact.name")
-        _string(self.created_at, "artifact.createdAt")
+        created_at = _string(self.created_at, "artifact.createdAt")
+        if not created_at.endswith("Z"):
+            raise ValueError("artifact.createdAt must be an RFC 3339 UTC timestamp")
+        try:
+            datetime.fromisoformat(created_at[:-1] + "+00:00")
+        except ValueError as error:
+            raise ValueError("artifact.createdAt must be an RFC 3339 UTC timestamp") from error
         _string(self.status, "artifact.status")
         self.validate()
 
     def validate(self) -> None:
+        for label, values in (
+            ("objectives", self.objectives),
+            ("prompts", self.prompts),
+            ("candidates", self.candidates),
+            ("pairs", self.pairs),
+            ("mutations", self.mutations),
+            ("checkpoints", self.checkpoints),
+        ):
+            if len(values) > COLLECTION_LIMITS[label]:
+                raise ValueError(f"artifact.{label} exceeds {COLLECTION_LIMITS[label]} items")
+        candidates_per_prompt: dict[str, int] = {}
+        for candidate in self.candidates:
+            candidates_per_prompt[candidate.prompt_id] = (
+                candidates_per_prompt.get(candidate.prompt_id, 0) + 1
+            )
+        if any(count > MAX_CANDIDATES_PER_PROMPT for count in candidates_per_prompt.values()):
+            raise ValueError(
+                f"artifact exceeds {MAX_CANDIDATES_PER_PROMPT} candidates for one prompt"
+            )
         objective_ids = [item.id for item in self.objectives]
         prompt_ids = [item.id for item in self.prompts]
         candidate_ids = [item.id for item in self.candidates]
@@ -693,6 +739,8 @@ class RunArtifact:
             item = value[key]
             if not isinstance(item, list):
                 raise TypeError(f"artifact.{key} must be an array")
+            if len(item) > COLLECTION_LIMITS[key]:
+                raise ValueError(f"artifact.{key} exceeds {COLLECTION_LIMITS[key]} items")
             arrays[key] = item
         return cls(
             schema_version=_integer(value["schemaVersion"], "artifact.schemaVersion"),
@@ -712,6 +760,9 @@ class RunArtifact:
 
     @classmethod
     def from_json(cls, text: str) -> RunArtifact:
+        if len(text.encode("utf-8")) > MAX_ARTIFACT_BYTES:
+            raise ValueError(f"artifact exceeds {MAX_ARTIFACT_BYTES} bytes")
+
         def reject_constant(value: str) -> None:
             raise ValueError(f"non-finite JSON number {value} is not allowed")
 
@@ -719,4 +770,7 @@ class RunArtifact:
 
     @classmethod
     def read_json(cls, path: str | Path) -> RunArtifact:
-        return cls.from_json(Path(path).read_text(encoding="utf-8"))
+        source = Path(path)
+        if source.stat().st_size > MAX_ARTIFACT_BYTES:
+            raise ValueError(f"artifact exceeds {MAX_ARTIFACT_BYTES} bytes")
+        return cls.from_json(source.read_text(encoding="utf-8"))

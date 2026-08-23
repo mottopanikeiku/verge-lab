@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import RunArtifact
+from .pareto import compare_candidates
 
 
 def dpo_records(artifact: RunArtifact) -> tuple[dict[str, Any], ...]:
@@ -14,11 +15,14 @@ def dpo_records(artifact: RunArtifact) -> tuple[dict[str, Any], ...]:
     candidates = {item.id: item for item in artifact.candidates}
     records = []
     for pair in sorted(artifact.pairs, key=lambda item: (item.prompt_id, item.id)):
+        chosen = candidates[pair.chosen_id]
+        rejected = candidates[pair.rejected_id]
+        recomputed = compare_candidates(chosen, rejected, artifact.objectives)
+        if recomputed != pair:
+            raise ValueError(f"pair {pair.id} does not match recomputed preference evidence")
         if pair.verdict != "defended":
             continue
         prompt = prompts[pair.prompt_id]
-        chosen = candidates[pair.chosen_id]
-        rejected = candidates[pair.rejected_id]
         records.append(
             {
                 "prompt": prompt.text,

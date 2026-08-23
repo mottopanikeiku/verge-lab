@@ -18,6 +18,9 @@ import modal
 APP_NAME = "verge-lab"
 DEFAULT_MODEL = "Qwen/Qwen3-0.6B"
 DEFAULT_SEED = 1701
+SUPPORTED_MODEL_REVISIONS = {
+    "Qwen/Qwen3-0.6B": "c1899de289a04d12100db370d81485cdf75e47ca",
+}
 HF_CACHE_VOLUME_NAME = "verge-hf-cache"
 ADAPTER_VOLUME_NAME = "verge-adapters"
 HF_CACHE_DIR = "/cache/huggingface"
@@ -79,8 +82,9 @@ def _nonempty_text(name: str, value: Any, maximum: int) -> str:
 
 def _validate_model_id(model_id: Any) -> str:
     model_id = _nonempty_text("model_id", model_id, 256)
-    if model_id != model_id.strip() or any(character.isspace() for character in model_id):
-        raise ValueError("model_id must be a Hugging Face repository id without whitespace")
+    if model_id not in SUPPORTED_MODEL_REVISIONS:
+        supported = ", ".join(sorted(SUPPORTED_MODEL_REVISIONS))
+        raise ValueError(f"model_id must be one of the pinned supported models: {supported}")
     return model_id
 
 
@@ -222,13 +226,20 @@ def generate_candidates(
 
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=HF_CACHE_DIR)
+    model_revision = SUPPORTED_MODEL_REVISIONS[model_id]
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_id,
+        revision=model_revision,
+        cache_dir=HF_CACHE_DIR,
+    )
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
+        revision=model_revision,
         cache_dir=HF_CACHE_DIR,
         dtype=torch.bfloat16,
+        use_safetensors=True,
     ).to("cuda")
     model.eval()
 
@@ -287,6 +298,7 @@ def generate_candidates(
         "kind": "candidate-generation",
         "model_id": model_id,
         "device": "L4",
+        "model_revision": model_revision,
         "seed": seed,
         "prompt_count": len(prompts),
         "samples_per_prompt": samples_per_prompt,
@@ -324,6 +336,8 @@ def train_dpo(
     import shutil
     import tempfile
 
+    model_revision = SUPPORTED_MODEL_REVISIONS[model_id]
+
     destination = os.path.join(ADAPTER_ROOT, adapter_name, adapter_version)
     adapter_volume.reload()
     if os.path.exists(destination):
@@ -354,7 +368,12 @@ def train_dpo(
     with tempfile.TemporaryDirectory(prefix="verge-dpo-") as output_dir:
         config = DPOConfig(
             output_dir=output_dir,
-            model_init_kwargs={"dtype": torch.bfloat16, "cache_dir": HF_CACHE_DIR},
+            model_init_kwargs={
+                "dtype": torch.bfloat16,
+                "cache_dir": HF_CACHE_DIR,
+                "revision": model_revision,
+                "use_safetensors": True,
+            },
             per_device_train_batch_size=1,
             gradient_accumulation_steps=min(8, len(records)),
             num_train_epochs=float(epochs),
@@ -403,6 +422,7 @@ def train_dpo(
         files.append("manifest.json")
         files.sort()
         manifest: dict[str, Any] = {
+            "model_revision": model_revision,
             "kind": "dpo-lora-training",
             "model_id": model_id,
             "device": "L4",
