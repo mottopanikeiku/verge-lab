@@ -1,0 +1,43 @@
+{
+  "kind": "dpo-lora-training",
+  "runUrl": "https://modal.com/apps/mottopanikeiku/main/ap-4tHpAEcTRQ2Fkf18hFfEKy",
+  "model_id": "Qwen/Qwen3-0.6B",
+  "device": "L4",
+  "seed": 1701,
+  "pair_count": 2,
+  "dataset_sha256": "da0b1800f3f2cb385a873c8d65ff6b43223722f84ab27dd8d48dd6afc3a495da",
+  "adapter": {
+    "name": "verge-qwen3-0.6b-dpo",
+    "version": "v2-demo-20260823",
+    "volume": "verge-adapters",
+    "path": "verge-qwen3-0.6b-dpo/v2-demo-20260823",
+    "uri": "modal-volume://verge-adapters/verge-qwen3-0.6b-dpo/v2-demo-20260823"
+  },
+  "training": {
+    "epochs": 1,
+    "max_length": 512,
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 2,
+    "learning_rate": 0.00001,
+    "lora_rank": 8,
+    "lora_alpha": 16
+  },
+  "metrics": {
+    "epoch": 1.0,
+    "total_flos": 1496926126080.0,
+    "train_loss": 0.6931471824645996,
+    "train_runtime": 3.5408,
+    "train_samples_per_second": 0.565,
+    "train_steps_per_second": 0.282
+  },
+  "files": [
+    "README.md",
+    "adapter_config.json",
+    "adapter_model.safetensors",
+    "chat_template.jinja",
+    "manifest.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "training_args.bin"
+  ]
+}
