@@ -29,9 +29,12 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
-  --radius-1: 0.25rem;
-  --radius-2: 0.5rem;
-  --radius-3: 0.75rem;
+  --radius-instrument: 0.125rem;
+  --bench-glow: 0 0 0 1px color-mix(in srgb, var(--lime) 34%, transparent), 0 var(--space-2) var(--space-8) color-mix(in srgb, var(--assay-0) 18%, transparent);
+  --motion-snap: 180ms;
+  --motion-shift: 240ms;
+  --motion-reveal: 520ms;
+  --ease-instrument: cubic-bezier(0.22, 1, 0.36, 1);
   color: var(--ink-0);
   background: var(--mineral-1);
   font-family: var(--font-sans);
@@ -39,6 +42,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@property --confidence-value {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --checkpoint-progress {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
 }
 
 * { box-sizing: border-box; }
