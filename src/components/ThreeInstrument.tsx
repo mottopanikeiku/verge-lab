@@ -86,6 +86,9 @@ function InstrumentVisual({ kind, metrics }: Pick<ThreeInstrumentProps, 'kind' |
     brightness: clamp(metrics.brightness, 0.55, 1.35),
   }
 
+  if (kind === 'topology' && reducedMotion) {
+    return <div className="instrument-static-field"><span>Motion reduced</span></div>
+  }
   if (kind === 'constellation') {
     return (
       <LazyConstellationField

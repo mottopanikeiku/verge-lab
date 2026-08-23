@@ -74,9 +74,14 @@ export function RewardTopology({ run, filters, onFiltersChange }: FilteredViewPr
 function PairChoice({ run, pair, role }: { run: RunArtifact; pair: Pair; role: 'chosen' | 'rejected' }) {
   const candidate = candidateFor(run, role === 'chosen' ? pair.chosenId : pair.rejectedId)
   if (!candidate) return <div className="empty-inline">Candidate absent from artifact.</div>
+  const neutral = pair.verdict === 'ambiguous'
+  const sideLabel = neutral
+    ? role === 'chosen' ? 'Candidate A' : 'Candidate B'
+    : role === 'chosen' ? 'Chosen' : 'Rejected'
+  const tone = neutral ? 'neutral' : role
   return (
-    <article className={`pair-choice pair-choice--${role}`}>
-      <header><span>{role === 'chosen' ? 'Chosen' : 'Rejected'}</span><strong>{candidateLabel(run, candidate)} · {shortId(candidate.id)}</strong></header>
+    <article className={`pair-choice pair-choice--${tone}`}>
+      <header><span>{sideLabel}</span><strong>{candidateLabel(run, candidate)} · {shortId(candidate.id)}</strong></header>
       <blockquote>{candidate.output}</blockquote>
       <div className="pair-score-stack">{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <div key={objective.id}><span>{objective.label}</span><strong>{score ? formatNumber(score.value) : '—'}</strong><small>{score ? `${formatPercent(score.confidence)} confidence` : 'missing score'}</small>{score ? <p>{score.evidence}</p> : null}</div> })}</div>
     </article>
@@ -96,13 +101,13 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
       {selectedPair ? (
         <div className="pair-workbench">
           <aside className="pair-index" aria-label="Filtered comparison pairs"><span className="eyebrow">Pair register</span>{visiblePairs.map((pair) => { const prompt = promptFor(run, pair.promptId); return <button type="button" key={pair.id} className={pair.id === selectedPair.id ? 'is-selected' : undefined} aria-pressed={pair.id === selectedPair.id} onClick={() => setSelectedPairId(pair.id)}><span><i className={`verdict-mark verdict-mark--${pair.verdict}`} />{shortId(pair.id)}</span><small>{prompt?.domain}</small><strong>{formatPercent(pair.confidence)}</strong></button> })}</aside>
-          <main className="pair-evidence">
+          <section className="pair-evidence">
             <header className="pair-evidence-header"><div><span className={`verdict-label verdict-label--${selectedPair.verdict}`}>{selectedPair.verdict === 'defended' ? <CheckCircle2 size={14} aria-hidden="true" /> : <CircleAlert size={14} aria-hidden="true" />}{selectedPair.verdict}</span><h2>{shortId(selectedPair.id)}</h2><p>{promptFor(run, selectedPair.promptId)?.text}</p></div><dl><div><dt>Confidence</dt><dd>{formatPercent(selectedPair.confidence)}</dd></div><div><dt>Domain</dt><dd>{promptFor(run, selectedPair.promptId)?.domain}</dd></div></dl></header>
             <section className="specification-band" aria-labelledby="spec-title"><h3 id="spec-title">Prompt-level reward specification</h3><div><ul>{promptFor(run, selectedPair.promptId)?.specification.rubrics.map((rubric) => <li key={rubric}>{rubric}</li>)}</ul><ul>{promptFor(run, selectedPair.promptId)?.specification.constraints.map((constraint) => <li key={constraint}>{constraint}</li>)}</ul></div></section>
             <div className="pair-comparison"><PairChoice run={run} pair={selectedPair} role="chosen" /><PairChoice run={run} pair={selectedPair} role="rejected" /></div>
             <section className="verdict-reason"><span className="eyebrow">Why this verdict</span><h3>{selectedPair.reason}</h3><div className="margin-strip">{run.objectives.map((objective) => <div key={objective.id}><span>{objective.label}</span><strong>{selectedPair.margins[objective.id] === undefined ? 'not shared' : `${selectedPair.margins[objective.id] > 0 ? '+' : ''}${formatNumber(selectedPair.margins[objective.id])}`}</strong></div>)}</div></section>
             <section className="mutation-evidence"><header><span className="eyebrow">Mutation audit</span><strong>{relevantMutations.length} linked probes</strong></header>{relevantMutations.length === 0 ? <p className="empty-inline">No meaning-preserving mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'verdict flipped' : 'stable'} · objective deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
-          </main>
+          </section>
         </div>
       ) : <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No comparisons match</h3><p>Clear the candidate search or widen the domain and verdict filters.</p></div>}
     </div>

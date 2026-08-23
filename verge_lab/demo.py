@@ -9,6 +9,10 @@ from typing import Any
 
 from .ids import stable_id
 from .models import (
+    COLLECTION_LIMITS,
+    MAX_ARTIFACT_BYTES,
+    MAX_CANDIDATES_PER_PROMPT,
+    MAX_PAIRS,
     Candidate,
     Checkpoint,
     Embedding,
@@ -20,7 +24,7 @@ from .models import (
     Score,
     Summary,
 )
-from .mutations import audit_pair_mutation
+from .mutations import audit_pair_mutation, mutate_output
 from .pareto import mine_pareto_edges
 
 DEMO_CREATED_AT = "2026-08-23T12:00:00Z"
@@ -44,6 +48,13 @@ def build_artifact(payload: Mapping[str, Any]) -> RunArtifact:
         or not isinstance(candidate_rows, list)
     ):
         raise TypeError("input objectives, prompts and candidates must be arrays")
+    for label, rows in (
+        ("objectives", objective_rows),
+        ("prompts", prompt_rows),
+        ("candidates", candidate_rows),
+    ):
+        if len(rows) > COLLECTION_LIMITS[label]:
+            raise ValueError(f"input {label} exceeds {COLLECTION_LIMITS[label]} items")
 
     preliminary_objectives = [
         Objective(
@@ -102,36 +113,55 @@ def build_artifact(payload: Mapping[str, Any]) -> RunArtifact:
         candidate_by_key[key] = candidate
 
     candidates = tuple(candidate_by_key[key] for key in sorted(candidate_by_key))
-    objectives = tuple(
-        Objective(
-            id=item.id,
-            label=item.label,
-            description=item.description,
-            direction=item.direction,
-            color=item.color,
-            mean=round(
-                sum(
-                    candidate.scores[item.id].value
-                    for candidate in candidates
-                    if item.id in candidate.scores
-                )
-                / sum(item.id in candidate.scores for candidate in candidates),
-                4,
-            ),
-            delta=float(_mapping(objective_rows[index], "objective").get("delta", 0.0)),
+    candidates_per_prompt: dict[str, int] = {}
+    for candidate in candidates:
+        candidates_per_prompt[candidate.prompt_id] = (
+            candidates_per_prompt.get(candidate.prompt_id, 0) + 1
         )
-        for index, item in enumerate(preliminary_objectives)
-    )
+    if any(count > MAX_CANDIDATES_PER_PROMPT for count in candidates_per_prompt.values()):
+        raise ValueError(f"input exceeds {MAX_CANDIDATES_PER_PROMPT} candidates for one prompt")
+    potential_pair_count = sum(count * (count - 1) // 2 for count in candidates_per_prompt.values())
+    if potential_pair_count > MAX_PAIRS:
+        raise ValueError(f"input would produce more than {MAX_PAIRS} candidate pairs")
+
+    objective_list = []
+    for index, item in enumerate(preliminary_objectives):
+        observed_values = [
+            candidate.scores[item.id].value
+            for candidate in candidates
+            if item.id in candidate.scores
+        ]
+        if not observed_values:
+            raise ValueError(f"objective {item.id} has no observed scores")
+        objective_list.append(
+            Objective(
+                id=item.id,
+                label=item.label,
+                description=item.description,
+                direction=item.direction,
+                color=item.color,
+                mean=round(sum(observed_values) / len(observed_values), 4),
+                delta=float(_mapping(objective_rows[index], "objective").get("delta", 0.0)),
+            )
+        )
+    objectives = tuple(objective_list)
     pairs = mine_pareto_edges(candidates, objectives)
 
     mutations = []
     mutation_rows = payload.get("mutations", [])
     if not isinstance(mutation_rows, list):
         raise TypeError("input mutations must be an array")
+    if len(mutation_rows) > COLLECTION_LIMITS["mutations"]:
+        raise ValueError(f"input mutations exceeds {COLLECTION_LIMITS['mutations']} items")
     for raw in mutation_rows:
         row = _mapping(raw, "mutation")
         source = candidate_by_key[str(row["sourceKey"])]
         opponent = candidate_by_key[str(row["opponentKey"])]
+        kind = str(row["kind"])
+        output = mutate_output(source.output, kind)
+        declared_output = row.get("output")
+        if declared_output is not None and str(declared_output) != output:
+            raise ValueError(f"mutation output does not match registered mutator {kind}")
         scores = {
             str(name): Score.from_dict(value)
             for name, value in _mapping(row["scores"], "mutation.scores").items()
@@ -140,8 +170,8 @@ def build_artifact(payload: Mapping[str, Any]) -> RunArtifact:
             audit_pair_mutation(
                 source,
                 opponent,
-                kind=str(row["kind"]),
-                output=str(row["output"]),
+                kind=kind,
+                output=output,
                 mutated_scores=scores,
                 objectives=objectives,
             )
@@ -150,6 +180,8 @@ def build_artifact(payload: Mapping[str, Any]) -> RunArtifact:
     checkpoint_rows = payload.get("checkpoints", [])
     if not isinstance(checkpoint_rows, list):
         raise TypeError("input checkpoints must be an array")
+    if len(checkpoint_rows) > COLLECTION_LIMITS["checkpoints"]:
+        raise ValueError(f"input checkpoints exceeds {COLLECTION_LIMITS['checkpoints']} items")
     checkpoints = tuple(
         sorted((Checkpoint.from_dict(item) for item in checkpoint_rows), key=lambda item: item.step)
     )
@@ -193,7 +225,10 @@ def build_artifact(payload: Mapping[str, Any]) -> RunArtifact:
 
 
 def analyze_file(path: str | Path) -> RunArtifact:
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
+    source = Path(path)
+    if source.stat().st_size > MAX_ARTIFACT_BYTES:
+        raise ValueError(f"input exceeds {MAX_ARTIFACT_BYTES} bytes")
+    value = json.loads(source.read_text(encoding="utf-8"))
     return build_artifact(_mapping(value, "input"))
 
 

@@ -64,13 +64,14 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
         <svg className="order-graph-svg" viewBox="0 0 880 360" role="group" aria-label="Candidate partial-order graph. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
           <defs>
             <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
-            <marker id="arrow-ambiguous" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-ambiguous" /></marker>
           </defs>
           <g aria-label="Preference edges">
             {visiblePairs.map((pair) => {
               const chosen = nodeById[pair.chosenId]
               const rejected = nodeById[pair.rejectedId]
-              return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={`url(#arrow-${pair.verdict})`}><title>{`${pair.verdict} edge, ${formatPercent(pair.confidence)} confidence. ${pair.reason}`}</title></line>
+              const markerEnd = pair.verdict === 'defended' ? 'url(#arrow-defended)' : undefined
+              const edgeLabel = pair.verdict === 'defended' ? 'preference edge' : 'undirected comparison'
+              return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd}><title>{`${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} confidence. ${pair.reason}`}</title></line>
             })}
           </g>
           <g aria-label="Candidates">
@@ -86,7 +87,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
             })}
           </g>
         </svg>
-        <p className="graph-note">Position uses the artifact embedding x/y coordinates. Arrows point from rejected to chosen; no scalar rank is inferred.</p>
+        <p className="graph-note">Position uses the artifact embedding x/y coordinates. Arrows mark defended preferences; dashed ambiguous comparisons are undirected. No scalar rank is inferred.</p>
       </figure>
 
       {selectedCandidate ? (
@@ -98,7 +99,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
             {run.objectives.map((objective) => {
               const score = selectedCandidate.scores[objective.id]
               if (!score) return null
-              return <details key={objective.id}><summary><span>{objective.label}</span><strong>{formatNumber(score.value)} <small>± {formatPercent(1 - score.confidence)}</small></strong></summary><p>{score.evidence}</p></details>
+              return <details key={objective.id}><summary><span>{objective.label}</span><strong>{formatNumber(score.value)} <small>{formatPercent(score.confidence)} confidence</small></strong></summary><p>{score.evidence}</p></details>
             })}
           </div>
         </section>

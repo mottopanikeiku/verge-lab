@@ -43,3 +43,11 @@ def test_json_parser_rejects_non_standard_nan() -> None:
                 '"schemaVersion": 1', '"schemaVersion": NaN'
             )
         )
+
+
+def test_artifact_rejects_invalid_created_at() -> None:
+    raw = build_demo_artifact().to_dict()
+    raw["createdAt"] = "not-a-date"
+
+    with pytest.raises(ValueError, match="RFC 3339"):
+        RunArtifact.from_dict(raw)

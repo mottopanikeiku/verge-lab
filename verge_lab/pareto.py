@@ -68,17 +68,28 @@ def compare_candidates(
 
     ordered_objectives = tuple(sorted(objectives, key=lambda item: item.id))
     objective_ids = [item.id for item in ordered_objectives]
+    first, second = sorted((left, right), key=lambda item: item.id)
+    pair_id = stable_id("pair", left.prompt_id, first.id, second.id)
+
+    def conservative_margins(candidate: Candidate, other: Candidate) -> dict[str, float]:
+        return {
+            item.id: lower_confidence_margin(
+                candidate.scores[item.id],
+                other.scores[item.id],
+                item,
+                uncertainty_scale=uncertainty_scale,
+            )
+            for item in ordered_objectives
+            if item.id in candidate.scores and item.id in other.scores
+        }
+
+    stable_margins = {
+        key: round(value, 6) for key, value in sorted(conservative_margins(first, second).items())
+    }
     missing = [
         item for item in objective_ids if item not in left.scores or item not in right.scores
     ]
-    first, second = sorted((left, right), key=lambda item: item.id)
-    pair_id = stable_id("pair", left.prompt_id, first.id, second.id)
     if missing:
-        margins = {
-            item.id: round(point_margin(first.scores[item.id], second.scores[item.id], item), 6)
-            for item in ordered_objectives
-            if item.id in first.scores and item.id in second.scores
-        }
         return Pair(
             pair_id,
             left.prompt_id,
@@ -86,7 +97,7 @@ def compare_candidates(
             second.id,
             "ambiguous",
             0.0,
-            margins,
+            stable_margins,
             _reason("missing scores", missing),
         )
 
@@ -100,10 +111,6 @@ def compare_candidates(
         min(left.scores[item.id].confidence, right.scores[item.id].confidence)
         for item in ordered_objectives
     )
-    lexical_margins = {
-        item.id: round(point_margin(first.scores[item.id], second.scores[item.id], item), 6)
-        for item in ordered_objectives
-    }
     if low_confidence:
         return Pair(
             pair_id,
@@ -112,23 +119,12 @@ def compare_candidates(
             second.id,
             "ambiguous",
             confidence,
-            lexical_margins,
+            stable_margins,
             _reason("confidence below threshold", low_confidence),
         )
 
-    def bounds(candidate: Candidate, other: Candidate) -> dict[str, float]:
-        return {
-            item.id: lower_confidence_margin(
-                candidate.scores[item.id],
-                other.scores[item.id],
-                item,
-                uncertainty_scale=uncertainty_scale,
-            )
-            for item in ordered_objectives
-        }
-
-    left_bounds = bounds(left, right)
-    right_bounds = bounds(right, left)
+    left_bounds = conservative_margins(left, right)
+    right_bounds = conservative_margins(right, left)
 
     def defended(margins: Mapping[str, float]) -> bool:
         return all(value >= 0.0 for value in margins.values()) and any(
@@ -181,7 +177,7 @@ def compare_candidates(
         second.id,
         "ambiguous",
         confidence,
-        lexical_margins,
+        stable_margins,
         reason,
     )
 

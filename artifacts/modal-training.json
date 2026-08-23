@@ -1,17 +1,18 @@
 {
   "kind": "dpo-lora-training",
-  "runUrl": "https://modal.com/apps/mottopanikeiku/main/ap-4tHpAEcTRQ2Fkf18hFfEKy",
+  "runUrl": "https://modal.com/apps/mottopanikeiku/main/ap-HzPu3zIGC2dMao1G2J6TWB",
   "model_id": "Qwen/Qwen3-0.6B",
+  "model_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
   "device": "L4",
   "seed": 1701,
   "pair_count": 2,
-  "dataset_sha256": "da0b1800f3f2cb385a873c8d65ff6b43223722f84ab27dd8d48dd6afc3a495da",
+  "dataset_sha256": "06b268896f863bf4acce5d0a69e5383528839726ecb2c6d185e3b5ff7854ed43",
   "adapter": {
     "name": "verge-qwen3-0.6b-dpo",
-    "version": "v2-demo-20260823",
+    "version": "v3-reviewed-20260823",
     "volume": "verge-adapters",
-    "path": "verge-qwen3-0.6b-dpo/v2-demo-20260823",
-    "uri": "modal-volume://verge-adapters/verge-qwen3-0.6b-dpo/v2-demo-20260823"
+    "path": "verge-qwen3-0.6b-dpo/v3-reviewed-20260823",
+    "uri": "modal-volume://verge-adapters/verge-qwen3-0.6b-dpo/v3-reviewed-20260823"
   },
   "training": {
     "epochs": 1,
@@ -24,11 +25,11 @@
   },
   "metrics": {
     "epoch": 1.0,
-    "total_flos": 1496926126080.0,
+    "total_flos": 1561080102912.0,
     "train_loss": 0.6931471824645996,
-    "train_runtime": 3.5408,
-    "train_samples_per_second": 0.565,
-    "train_steps_per_second": 0.282
+    "train_runtime": 3.3742,
+    "train_samples_per_second": 0.593,
+    "train_steps_per_second": 0.296
   },
   "files": [
     "README.md",
