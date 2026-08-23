@@ -1,32 +1,154 @@
-# React + TypeScript + Vite
+# Verge Lab
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Train on the edges your reward stack can defend.**
 
-Currently, two official plugins are available:
+Verge Lab is a verifier-grounded preference-mining workbench for LLM post-training. It keeps prompt-level rubrics, executable constraints, judge confidence, and cost signals separate; builds a robust partial order over candidate responses; exports only defensible preference edges for DPO; and sends tradeoffs or low-confidence comparisons to a visible review queue.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The repository combines:
 
-## React Compiler
+- a dependency-light Python analysis engine and CLI;
+- a research-grade React interface for reward topology, pair evidence, and run lineage;
+- open-source [ThreeUI](https://github.com/MengTo/threeui) instruments used as bounded visual context, with semantic controls and data views kept in accessible DOM/SVG;
+- real Modal GPU entrypoints for candidate generation and LoRA DPO training.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Why this project
 
-## Expanding the Oxlint configuration
+Modern post-training increasingly mixes deterministic verification, prompt-specific rubrics, and model-based judgment. Collapsing those heterogeneous signals into one scalar can conceal reward conflicts and make weak evidence look certain. Verge uses a stricter rule:
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+1. Normalize every objective to a common “higher is better” direction.
+2. Carry scorer confidence into lower and upper evidence bounds.
+3. Add a preference edge only when the chosen response cannot regress on any shared objective and clears a strict margin on at least one.
+4. Mark missing, low-confidence, or genuinely conflicting evidence as ambiguous.
+5. Stress rewards with meaning-preserving mutations before exporting training pairs.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+This is deliberately an offline evidence layer, not a claim that Pareto mining solves reward design. It makes the assumptions and exclusions inspectable before an optimizer amplifies them.
+
+## Quick start
+
+Requirements: Node.js 22+, npm 10+, and Python 3.11+ with [uv](https://docs.astral.sh/uv/).
+
+```bash
+npm install
+uv sync --dev
+uv run verge demo --output artifacts/demo-run.json
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open the Vite URL. The included artifact is deterministic and drives four working views:
+
+- **Overview** — run evidence, objective shifts, and checkpoint history;
+- **Reward topology** — filterable candidate partial order with an equivalent data table;
+- **Pair lab** — chosen/rejected outputs, per-objective margins, confidence, and ambiguity reasons;
+- **Runbook** — reproducible configuration, stages, and Modal handoff.
+
+Production checks:
+
+```bash
+npm run check
+uv run ruff check .
+uv run pytest
+```
+
+## CLI
+
+Generate the built-in reproducible study:
+
+```bash
+uv run verge demo --output artifacts/demo-run.json
+```
+
+Analyze candidate records using a JSON specification:
+
+```bash
+uv run verge analyze \
+  --input examples/candidates.json \
+  --output artifacts/my-run.json
+```
+
+Export only defended edges in TRL-compatible preference format:
+
+```bash
+uv run verge export-dpo \
+  --artifact artifacts/my-run.json \
+  --output artifacts/my-run.dpo.jsonl
+```
+
+The core package performs no model inference and executes no generated code. Verifiers are explicit primitives. GPU/model dependencies stay outside the local analysis path.
+
+## Evidence rule
+
+For objective \(j\), candidate \(a\), score \(s_{a,j}\), and confidence \(c_{a,j}\), Verge compares conservative bounds:
+
+\[
+L_{a,j}=s_{a,j}-(1-c_{a,j}), \qquad
+U_{a,j}=s_{a,j}+(1-c_{a,j})
+\]
+
+after direction normalization and clipping. An edge \(a \succ b\) is defended only when:
+
+\[
+\forall j:\ L_{a,j} \ge U_{b,j}
+\quad\text{and}\quad
+\exists j:\ L_{a,j} \ge U_{b,j}+\epsilon
+\]
+
+The artifact stores raw values, confidence, evidence text, normalized margins, and the reason for every defended or ambiguous verdict. The policy is intentionally conservative: fewer clean pairs beat a large silently noisy dataset.
+
+## Artifact contract
+
+`schemaVersion: 1` artifacts contain:
+
+- immutable run/model metadata and derived summary counts;
+- prompt-level rubrics and hard constraints;
+- candidates with token/latency metadata, objective evidence, and stable projection coordinates;
+- defended and ambiguous pair comparisons;
+- mutation-audit results and score flips;
+- checkpoint metrics and GPU-time estimates.
+
+Stable content hashes and deterministic sorting make artifacts diffable and suitable for experiment lineage. The web app statically imports the same JSON generated by the Python CLI.
+
+## Modal GPU workflow
+
+Modal authentication is local to your machine; no credentials belong in this repository.
+
+Cheap public-model smoke generation:
+
+```bash
+modal run modal_app.py --smoke
+```
+
+Train a LoRA adapter from exported defended pairs:
+
+```bash
+modal run modal_app.py \
+  --mode train \
+  --dataset artifacts/my-run.dpo.jsonl \
+  --run-name my-first-adapter
+```
+
+The default is `Qwen/Qwen3-0.6B` on an L4. Hugging Face weights and adapters use separate persistent Modal Volumes. Remote functions return JSON-serializable manifests; failures propagate instead of falling back to fake local output. Review `modal_app.py` before increasing model size, sequence length, sample count, or epochs.
+
+## Research basis
+
+- [DeepSeek-R1](https://arxiv.org/abs/2501.12948) — on-policy RL and distilled reasoning.
+- [DAPO](https://arxiv.org/abs/2503.14476) and [Dr. GRPO](https://arxiv.org/abs/2503.20783) — concrete GRPO stability and objective corrections.
+- [Spurious Rewards](https://arxiv.org/abs/2506.10947) — benchmark gains can emerge from prior amplification even under wrong rewards.
+- [Rubrics as Rewards](https://arxiv.org/abs/2507.17746) — structured reward signals beyond binary-verifiable tasks.
+- [MO-GRPO](https://arxiv.org/abs/2509.22047) — multi-objective imbalance and reward hacking in group-relative optimization.
+- [Prompt-Level Reward Specifications](https://arxiv.org/abs/2605.29275) — reusable prompt-specific rubrics and executable constraints separated from scoring.
+- [Reliability without Validity](https://arxiv.org/abs/2606.19544) — judge agreement and repeatability do not establish validity.
+
+Verge’s robust partial-order rule is an engineering design motivated by these findings, not a reproduction or claimed result of any cited paper.
+
+## Known limits
+
+- Confidence is only as calibrated as its scorer. Bounds expose that assumption; they do not repair it.
+- Pareto rules can discard useful tradeoff pairs and bias training data toward easy dominance.
+- Meaning-preserving mutation templates are domain-specific and can accidentally change semantics.
+- The included artifact is a deterministic demonstration, not a benchmark result.
+- ThreeUI’s sandboxed visual components do not accept candidate graphs. Verge labels them as ambient instruments and uses real SVG/DOM for semantic topology.
+- A successful training run still needs held-out exact evaluation, fixed-token baselines, random/format reward controls, and preferably a second model family.
+
+## License
+
+MIT. ThreeUI Community is separately distributed under the MIT license; bundled fonts and third-party assets retain their upstream licenses.

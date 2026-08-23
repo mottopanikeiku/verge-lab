@@ -1,0 +1,819 @@
+{
+  "schemaVersion": 1,
+  "id": "run_84cbc8e3db0e",
+  "name": "Verge Lab · defended edge study",
+  "createdAt": "2026-08-23T12:00:00Z",
+  "status": "complete",
+  "model": {
+    "base": "Qwen/Qwen3-0.6B",
+    "method": "DPO over confidence-bound Pareto edges",
+    "adapter": "verge-demo-lora",
+    "parameterCount": 600000000,
+    "quantization": "bfloat16"
+  },
+  "summary": {
+    "promptCount": 4,
+    "candidateCount": 12,
+    "defendedPairCount": 2,
+    "ambiguousPairCount": 10,
+    "mutationFlipCount": 2,
+    "estimatedGpuMinutes": 18.6,
+    "estimatedCostUsd": 0.42
+  },
+  "objectives": [
+    {
+      "id": "correctness",
+      "label": "Correctness",
+      "description": "Factual and executable task completion",
+      "direction": "maximize",
+      "color": "#b7f34a",
+      "mean": 0.8242,
+      "delta": 0.086
+    },
+    {
+      "id": "constraint",
+      "label": "Constraint fidelity",
+      "description": "Satisfaction of prompt-level hard requirements",
+      "direction": "maximize",
+      "color": "#7756ff",
+      "mean": 0.8058,
+      "delta": 0.071
+    },
+    {
+      "id": "clarity",
+      "label": "Clarity",
+      "description": "Directness and inspectable reasoning",
+      "direction": "maximize",
+      "color": "#ff755f",
+      "mean": 0.8983,
+      "delta": 0.044
+    },
+    {
+      "id": "latency",
+      "label": "Latency",
+      "description": "Measured generation latency in milliseconds",
+      "direction": "minimize",
+      "color": "#4d8791",
+      "mean": 414.9167,
+      "delta": -37.4
+    }
+  ],
+  "prompts": [
+    {
+      "id": "prompt_143abfee5655",
+      "text": "A Python service intermittently emits duplicate invoice IDs under concurrency. Give a minimal diagnosis and a transaction-safe fix in at most 120 words.",
+      "domain": "software reliability",
+      "specification": {
+        "rubrics": [
+          "Identify the read-then-write race",
+          "Recommend a database-enforced uniqueness strategy",
+          "Include retry behavior for conflicts"
+        ],
+        "constraints": [
+          "At most 120 words",
+          "Do not recommend an in-process lock as the sole fix"
+        ]
+      }
+    },
+    {
+      "id": "prompt_7c50d1ef3445",
+      "text": "A trial reports 18 events among 600 treated patients and 30 among 600 controls. Explain relative risk and absolute risk reduction without claiming significance.",
+      "domain": "clinical statistics",
+      "specification": {
+        "rubrics": [
+          "Compute risks and relative risk",
+          "Compute absolute risk reduction",
+          "Separate effect size from statistical significance"
+        ],
+        "constraints": [
+          "State that confidence intervals or a hypothesis test are needed",
+          "Use percentages"
+        ]
+      }
+    },
+    {
+      "id": "prompt_14bcdcb6f194",
+      "text": "Design a rollback plan for a payment API schema migration where old and new clients overlap for 48 hours.",
+      "domain": "production operations",
+      "specification": {
+        "rubrics": [
+          "Use an expand-contract migration",
+          "Name rollback triggers",
+          "Protect in-flight data"
+        ],
+        "constraints": [
+          "Keep old fields readable for 48 hours",
+          "Include observability and ownership"
+        ]
+      }
+    },
+    {
+      "id": "prompt_24c4ab6fc7ae",
+      "text": "Summarize why a scalar reward can hide regressions when ranking writing assistants, and propose a safer preference rule.",
+      "domain": "alignment research",
+      "specification": {
+        "rubrics": [
+          "Explain compensating objective tradeoffs",
+          "Propose partial-order comparison",
+          "Preserve ambiguous pairs"
+        ],
+        "constraints": [
+          "Do not describe visualization as model internals",
+          "Distinguish evidence from preference"
+        ]
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate_3e56fbaba37c",
+      "promptId": "prompt_143abfee5655",
+      "output": "The duplicate is a read-then-write race: two workers observe the same next value before either commits. Put the invariant in the database: generate IDs from a sequence, or insert a candidate ID under a UNIQUE constraint inside the invoice transaction. On a uniqueness conflict, roll back and retry with bounded jitter; do not publish until commit. An in-process lock is insufficient across replicas. Track conflict and retry counts to confirm the fix.",
+      "tokens": 88,
+      "latencyMs": 382.0,
+      "scores": {
+        "clarity": {
+          "value": 0.9,
+          "confidence": 0.95,
+          "evidence": "Diagnosis and fix are concise and operational"
+        },
+        "constraint": {
+          "value": 0.99,
+          "confidence": 0.99,
+          "evidence": "88 tokens and no process-local lock recommendation"
+        },
+        "correctness": {
+          "value": 0.96,
+          "confidence": 0.98,
+          "evidence": "Race, database invariant, transactional commit and bounded retry are all present"
+        },
+        "latency": {
+          "value": 382.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.72,
+        "y": 0.46,
+        "z": 0.28
+      }
+    },
+    {
+      "id": "candidate_30c81831e326",
+      "promptId": "prompt_143abfee5655",
+      "output": "Two requests can compute the same identifier before either writes it. Add a UNIQUE index and allocate the number in the same database transaction as the invoice. If insertion conflicts, retry a small bounded number of times and surface failure. This works across service replicas; a mutex in one process does not.",
+      "tokens": 69,
+      "latencyMs": 451.0,
+      "scores": {
+        "clarity": {
+          "value": 0.83,
+          "confidence": 0.94,
+          "evidence": "Direct but retry observability is absent"
+        },
+        "constraint": {
+          "value": 0.94,
+          "confidence": 0.98,
+          "evidence": "Within limit and rejects a local-only mutex"
+        },
+        "correctness": {
+          "value": 0.84,
+          "confidence": 0.96,
+          "evidence": "Correct race and database-level remedy, but publication timing is implicit"
+        },
+        "latency": {
+          "value": 451.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.48,
+        "y": 0.18,
+        "z": 0.12
+      }
+    },
+    {
+      "id": "candidate_05e428698a66",
+      "promptId": "prompt_143abfee5655",
+      "output": "Use a distributed lock around ID allocation, then increment the current maximum. Keep lock leases short and alert on contention. This is fast to deploy and avoids most simultaneous writers.",
+      "tokens": 54,
+      "latencyMs": 334.0,
+      "scores": {
+        "clarity": {
+          "value": 0.92,
+          "confidence": 0.94,
+          "evidence": "Very concise and easy to scan"
+        },
+        "constraint": {
+          "value": 0.58,
+          "confidence": 0.98,
+          "evidence": "Violates the requirement against a lock as the sole fix"
+        },
+        "correctness": {
+          "value": 0.66,
+          "confidence": 0.96,
+          "evidence": "Lock leases leave failure windows and MAX allocation remains fragile"
+        },
+        "latency": {
+          "value": 334.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.19,
+        "y": 0.72,
+        "z": -0.14
+      }
+    },
+    {
+      "id": "candidate_05ef5ea97e2b",
+      "promptId": "prompt_7c50d1ef3445",
+      "output": "The treated risk is 18/600 = 3.0%; the control risk is 30/600 = 5.0%. Relative risk is 3.0% / 5.0% = 0.60, a 40% relative reduction. Absolute risk reduction is 5.0% - 3.0% = 2.0 percentage points, corresponding to an NNT of 50 over the study period. These are effect-size estimates, not proof of significance; confidence intervals or an appropriate hypothesis test are needed.",
+      "tokens": 91,
+      "latencyMs": 405.0,
+      "scores": {
+        "clarity": {
+          "value": 0.91,
+          "confidence": 0.96,
+          "evidence": "Calculations and interpretation are clearly separated"
+        },
+        "constraint": {
+          "value": 0.98,
+          "confidence": 0.99,
+          "evidence": "Uses percentages and explicitly withholds significance"
+        },
+        "correctness": {
+          "value": 0.98,
+          "confidence": 0.99,
+          "evidence": "All requested effect measures are arithmetically correct"
+        },
+        "latency": {
+          "value": 405.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.18,
+        "y": 0.64,
+        "z": 0.42
+      }
+    },
+    {
+      "id": "candidate_2bc127965e85",
+      "promptId": "prompt_7c50d1ef3445",
+      "output": "Event risk was 3.0% with treatment and 5.0% with control. The relative risk is 0.60, while the absolute reduction is 2.0 percentage points. The observed treatment rate is lower, but the counts alone do not establish statistical significance; report a confidence interval or test result before making that claim.",
+      "tokens": 63,
+      "latencyMs": 477.0,
+      "scores": {
+        "clarity": {
+          "value": 0.95,
+          "confidence": 0.96,
+          "evidence": "Most concise complete response"
+        },
+        "constraint": {
+          "value": 0.99,
+          "confidence": 0.99,
+          "evidence": "All format and inference constraints are met"
+        },
+        "correctness": {
+          "value": 0.93,
+          "confidence": 0.99,
+          "evidence": "Relative and absolute effects are correct"
+        },
+        "latency": {
+          "value": 477.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.42,
+        "y": 0.36,
+        "z": 0.27
+      }
+    },
+    {
+      "id": "candidate_6e9b865bbb91",
+      "promptId": "prompt_7c50d1ef3445",
+      "output": "Treatment reduced events from 5.0% to 3.0%, so it is 40% better and prevents 2 events per 100 patients. This demonstrates the treatment is effective, with a number needed to treat of 50.",
+      "tokens": 50,
+      "latencyMs": 348.0,
+      "scores": {
+        "clarity": {
+          "value": 0.88,
+          "confidence": 0.95,
+          "evidence": "Readable but overstates the conclusion"
+        },
+        "constraint": {
+          "value": 0.49,
+          "confidence": 0.99,
+          "evidence": "Claims effectiveness without uncertainty analysis"
+        },
+        "correctness": {
+          "value": 0.78,
+          "confidence": 0.98,
+          "evidence": "Arithmetic is mostly correct but '40% better' is imprecise"
+        },
+        "latency": {
+          "value": 348.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.72,
+        "y": 0.08,
+        "z": -0.08
+      }
+    },
+    {
+      "id": "candidate_db638152e91b",
+      "promptId": "prompt_14bcdcb6f194",
+      "output": "Expand first: deploy additive nullable fields and dual-read compatibility before any client writes them. Backfill idempotently, then enable dual-write behind a flag while reconciling old/new values. For 48 hours, keep old fields readable and monitor parse errors, payment failures, reconciliation drift, and latency with an on-call owner. Roll back by disabling new writes and readers; retain the additive schema so in-flight records remain readable. Trigger rollback on SLO breach, unexplained drift, or elevated declines. Contract only after the overlap window and a verified backfill.",
+      "tokens": 126,
+      "latencyMs": 438.0,
+      "scores": {
+        "clarity": {
+          "value": 0.89,
+          "confidence": 0.95,
+          "evidence": "Dense but ordered around operational phases"
+        },
+        "constraint": {
+          "value": 0.99,
+          "confidence": 0.99,
+          "evidence": "48-hour readability, telemetry and ownership are explicit"
+        },
+        "correctness": {
+          "value": 0.97,
+          "confidence": 0.98,
+          "evidence": "Complete reversible expand-contract sequence"
+        },
+        "latency": {
+          "value": 438.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.62,
+        "y": -0.31,
+        "z": 0.51
+      }
+    },
+    {
+      "id": "candidate_ab9209bca97a",
+      "promptId": "prompt_14bcdcb6f194",
+      "output": "Use expand-contract: add new fields without removing old ones, dual-write, backfill, and compare records. Keep old reads for the full 48-hour overlap. Assign the payment on-call to watch declines, schema errors, and drift. If those breach agreed thresholds, turn off new reads and writes while retaining both columns. Remove old fields only after clients have migrated and reconciliation is clean.",
+      "tokens": 91,
+      "latencyMs": 512.0,
+      "scores": {
+        "clarity": {
+          "value": 0.86,
+          "confidence": 0.95,
+          "evidence": "Clear sequential plan"
+        },
+        "constraint": {
+          "value": 0.96,
+          "confidence": 0.99,
+          "evidence": "Meets overlap, observability, and ownership constraints"
+        },
+        "correctness": {
+          "value": 0.88,
+          "confidence": 0.97,
+          "evidence": "Sound plan with less detail on in-flight backfill"
+        },
+        "latency": {
+          "value": 512.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.33,
+        "y": -0.49,
+        "z": 0.24
+      }
+    },
+    {
+      "id": "candidate_110066c3e6b9",
+      "promptId": "prompt_14bcdcb6f194",
+      "output": "Ship the new schema to ten percent of clients, then increase traffic each hour. If payment errors rise, redeploy the old API and restore the previous database snapshot. Keep dashboards for request errors and latency. Notify the release manager before full rollout.",
+      "tokens": 76,
+      "latencyMs": 367.0,
+      "scores": {
+        "clarity": {
+          "value": 0.93,
+          "confidence": 0.94,
+          "evidence": "Simple staged rollout is easy to follow"
+        },
+        "constraint": {
+          "value": 0.52,
+          "confidence": 0.98,
+          "evidence": "Does not preserve old fields for the overlap"
+        },
+        "correctness": {
+          "value": 0.55,
+          "confidence": 0.97,
+          "evidence": "Snapshot restore risks deleting payments and ignores mixed clients"
+        },
+        "latency": {
+          "value": 367.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": 0.05,
+        "y": -0.68,
+        "z": -0.19
+      }
+    },
+    {
+      "id": "candidate_be5e1bc4926d",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement. It also hides which verifier supplied the evidence. Compare candidates objective by objective after normalizing direction. Defend an edge only when conservative confidence bounds show no regression on every objective and a strict improvement on at least one. Keep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
+      "tokens": 105,
+      "latencyMs": 421.0,
+      "scores": {
+        "clarity": {
+          "value": 0.91,
+          "confidence": 0.96,
+          "evidence": "Rule is explicit and inspectable"
+        },
+        "constraint": {
+          "value": 1.0,
+          "confidence": 0.99,
+          "evidence": "Distinguishes evidence, preference and assistive visualization"
+        },
+        "correctness": {
+          "value": 0.97,
+          "confidence": 0.98,
+          "evidence": "Precisely describes scalar compensation and partial-order remedy"
+        },
+        "latency": {
+          "value": 421.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.24,
+        "y": -0.47,
+        "z": 0.62
+      }
+    },
+    {
+      "id": "candidate_1a8caf702cee",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "output": "A weighted sum can offset a safety or factual loss with better style, so the final rank conceals the regression. Use Pareto dominance instead: after putting every objective in a larger-is-better direction, select a winner only if it is no worse everywhere and materially better somewhere. Preserve tradeoffs and uncertain verifier outputs as ambiguous comparisons.",
+      "tokens": 76,
+      "latencyMs": 493.0,
+      "scores": {
+        "clarity": {
+          "value": 0.94,
+          "confidence": 0.96,
+          "evidence": "Compact and direct"
+        },
+        "constraint": {
+          "value": 0.92,
+          "confidence": 0.98,
+          "evidence": "Preserves ambiguity but omits visualization distinction"
+        },
+        "correctness": {
+          "value": 0.9,
+          "confidence": 0.98,
+          "evidence": "Correctly explains scalar compensation and Pareto dominance"
+        },
+        "latency": {
+          "value": 493.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.51,
+        "y": -0.22,
+        "z": 0.34
+      }
+    },
+    {
+      "id": "candidate_28131455cc02",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "output": "Scalar rewards compress different qualities into one convenient number. Plot candidates in a multi-dimensional space and choose points near the outer boundary. The graph reveals the model's internal reasoning and makes the best preference obvious, so ambiguous comparisons can be discarded.",
+      "tokens": 66,
+      "latencyMs": 351.0,
+      "scores": {
+        "clarity": {
+          "value": 0.86,
+          "confidence": 0.93,
+          "evidence": "Fluent but makes unsupported claims"
+        },
+        "constraint": {
+          "value": 0.31,
+          "confidence": 0.97,
+          "evidence": "Falsely calls the visualization internal reasoning and discards ambiguity"
+        },
+        "correctness": {
+          "value": 0.47,
+          "confidence": 0.62,
+          "evidence": "Uncalibrated rubric judge; executable support is unavailable"
+        },
+        "latency": {
+          "value": 351.0,
+          "confidence": 0.99,
+          "evidence": "Measured deterministic generation latency"
+        }
+      },
+      "embedding": {
+        "x": -0.79,
+        "y": -0.61,
+        "z": -0.07
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "id": "pair_1f48b9943fac",
+      "promptId": "prompt_143abfee5655",
+      "chosenId": "candidate_05e428698a66",
+      "rejectedId": "candidate_3e56fbaba37c",
+      "verdict": "ambiguous",
+      "confidence": 0.94,
+      "margins": {
+        "clarity": 0.02,
+        "constraint": -0.41,
+        "correctness": -0.3,
+        "latency": 48.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_a04acc0649be",
+      "promptId": "prompt_143abfee5655",
+      "chosenId": "candidate_05e428698a66",
+      "rejectedId": "candidate_30c81831e326",
+      "verdict": "ambiguous",
+      "confidence": 0.94,
+      "margins": {
+        "clarity": 0.09,
+        "constraint": -0.36,
+        "correctness": -0.18,
+        "latency": 117.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_f91efaf8f3fd",
+      "promptId": "prompt_143abfee5655",
+      "chosenId": "candidate_3e56fbaba37c",
+      "rejectedId": "candidate_30c81831e326",
+      "verdict": "defended",
+      "confidence": 0.94,
+      "margins": {
+        "clarity": 0.0645,
+        "constraint": 0.0485,
+        "correctness": 0.117,
+        "latency": 68.999
+      },
+      "reason": "lower-bound Pareto dominance: clarity, constraint, correctness, latency"
+    },
+    {
+      "id": "pair_0af5c9b4cec3",
+      "promptId": "prompt_14bcdcb6f194",
+      "chosenId": "candidate_110066c3e6b9",
+      "rejectedId": "candidate_ab9209bca97a",
+      "verdict": "ambiguous",
+      "confidence": 0.94,
+      "margins": {
+        "clarity": 0.07,
+        "constraint": -0.44,
+        "correctness": -0.33,
+        "latency": 145.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_adbd595e584c",
+      "promptId": "prompt_14bcdcb6f194",
+      "chosenId": "candidate_110066c3e6b9",
+      "rejectedId": "candidate_db638152e91b",
+      "verdict": "ambiguous",
+      "confidence": 0.94,
+      "margins": {
+        "clarity": 0.04,
+        "constraint": -0.47,
+        "correctness": -0.42,
+        "latency": 71.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_b60d9f40c188",
+      "promptId": "prompt_14bcdcb6f194",
+      "chosenId": "candidate_db638152e91b",
+      "rejectedId": "candidate_ab9209bca97a",
+      "verdict": "defended",
+      "confidence": 0.95,
+      "margins": {
+        "clarity": 0.025,
+        "constraint": 0.029,
+        "correctness": 0.0875,
+        "latency": 73.999
+      },
+      "reason": "lower-bound Pareto dominance: clarity, constraint, correctness, latency"
+    },
+    {
+      "id": "pair_1019e527de6f",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "chosenId": "candidate_1a8caf702cee",
+      "rejectedId": "candidate_be5e1bc4926d",
+      "verdict": "ambiguous",
+      "confidence": 0.96,
+      "margins": {
+        "clarity": 0.03,
+        "constraint": -0.08,
+        "correctness": -0.07,
+        "latency": -72.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_5763465efb16",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "chosenId": "candidate_1a8caf702cee",
+      "rejectedId": "candidate_28131455cc02",
+      "verdict": "ambiguous",
+      "confidence": 0.62,
+      "margins": {
+        "clarity": 0.08,
+        "constraint": 0.61,
+        "correctness": 0.43,
+        "latency": -142.0
+      },
+      "reason": "confidence below threshold: correctness"
+    },
+    {
+      "id": "pair_bd53d2873101",
+      "promptId": "prompt_24c4ab6fc7ae",
+      "chosenId": "candidate_28131455cc02",
+      "rejectedId": "candidate_be5e1bc4926d",
+      "verdict": "ambiguous",
+      "confidence": 0.62,
+      "margins": {
+        "clarity": -0.05,
+        "constraint": -0.69,
+        "correctness": -0.5,
+        "latency": 70.0
+      },
+      "reason": "confidence below threshold: correctness"
+    },
+    {
+      "id": "pair_4146ea14c595",
+      "promptId": "prompt_7c50d1ef3445",
+      "chosenId": "candidate_05ef5ea97e2b",
+      "rejectedId": "candidate_2bc127965e85",
+      "verdict": "ambiguous",
+      "confidence": 0.96,
+      "margins": {
+        "clarity": -0.04,
+        "constraint": -0.01,
+        "correctness": 0.05,
+        "latency": 72.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_6214d66e206c",
+      "promptId": "prompt_7c50d1ef3445",
+      "chosenId": "candidate_2bc127965e85",
+      "rejectedId": "candidate_6e9b865bbb91",
+      "verdict": "ambiguous",
+      "confidence": 0.95,
+      "margins": {
+        "clarity": 0.07,
+        "constraint": 0.5,
+        "correctness": 0.15,
+        "latency": -129.0
+      },
+      "reason": "cross-objective tradeoff"
+    },
+    {
+      "id": "pair_931071bef327",
+      "promptId": "prompt_7c50d1ef3445",
+      "chosenId": "candidate_05ef5ea97e2b",
+      "rejectedId": "candidate_6e9b865bbb91",
+      "verdict": "ambiguous",
+      "confidence": 0.95,
+      "margins": {
+        "clarity": 0.03,
+        "constraint": 0.49,
+        "correctness": 0.2,
+        "latency": -57.0
+      },
+      "reason": "cross-objective tradeoff"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "mut_1c3cbb018fb6",
+      "sourceCandidateId": "candidate_3e56fbaba37c",
+      "kind": "plain-headings",
+      "output": "Diagnosis: the duplicate is a read-then-write race. Fix: enforce uniqueness in the database transaction and retry conflicts with bounded jitter. Do not rely on an in-process lock across replicas.",
+      "scoreDelta": {
+        "clarity": -0.14,
+        "constraint": -0.11,
+        "correctness": -0.17,
+        "latency": 148.0
+      },
+      "flipped": true,
+      "reason": "defended preference reversed after plain-headings"
+    },
+    {
+      "id": "mut_82ffb928674d",
+      "sourceCandidateId": "candidate_be5e1bc4926d",
+      "kind": "collapse-whitespace",
+      "output": "A scalar can trade a serious loss on one objective for a gain on another. Direction-normalize objectives and defend a preference only with confidence-bound non-regression everywhere plus one strict gain; preserve missing, weak, or conflicting evidence as ambiguous.",
+      "scoreDelta": {
+        "clarity": 0.02,
+        "constraint": -0.03,
+        "correctness": -0.02,
+        "latency": 8.0
+      },
+      "flipped": false,
+      "reason": "preference verdict stable after collapse-whitespace"
+    },
+    {
+      "id": "mut_95a1606c5cb3",
+      "sourceCandidateId": "candidate_db638152e91b",
+      "kind": "remove-emphasis",
+      "output": "Expand, dual-read, backfill, dual-write, and reconcile. Keep old fields readable for 48 hours. The payment on-call monitors declines, errors, drift, and latency. Disable new reads and writes on an SLO breach while retaining additive fields for in-flight data.",
+      "scoreDelta": {
+        "clarity": -0.08,
+        "constraint": -0.09,
+        "correctness": -0.15,
+        "latency": 110.0
+      },
+      "flipped": true,
+      "reason": "defended preference reversed after remove-emphasis"
+    },
+    {
+      "id": "mut_d52fe170353d",
+      "sourceCandidateId": "candidate_05ef5ea97e2b",
+      "kind": "collapse-whitespace",
+      "output": "Treated risk: 3.0%. Control risk: 5.0%. Relative risk: 0.60. Absolute risk reduction: 2.0 percentage points. These effect estimates do not establish significance; confidence intervals or a hypothesis test are needed.",
+      "scoreDelta": {
+        "clarity": -0.01,
+        "constraint": 0.0,
+        "correctness": -0.01,
+        "latency": 5.0
+      },
+      "flipped": false,
+      "reason": "preference verdict stable after collapse-whitespace"
+    }
+  ],
+  "checkpoints": [
+    {
+      "step": 0,
+      "label": "base",
+      "trainLoss": 1.0,
+      "evalReward": 0.612,
+      "defendedWinRate": 0.5,
+      "gpuMinutes": 0.0
+    },
+    {
+      "step": 40,
+      "label": "warmup",
+      "trainLoss": 0.812,
+      "evalReward": 0.658,
+      "defendedWinRate": 0.58,
+      "gpuMinutes": 3.9
+    },
+    {
+      "step": 80,
+      "label": "edge fit",
+      "trainLoss": 0.641,
+      "evalReward": 0.701,
+      "defendedWinRate": 0.67,
+      "gpuMinutes": 7.7
+    },
+    {
+      "step": 120,
+      "label": "audit gate",
+      "trainLoss": 0.548,
+      "evalReward": 0.724,
+      "defendedWinRate": 0.72,
+      "gpuMinutes": 11.8
+    },
+    {
+      "step": 180,
+      "label": "selected",
+      "trainLoss": 0.462,
+      "evalReward": 0.751,
+      "defendedWinRate": 0.78,
+      "gpuMinutes": 18.6
+    }
+  ]
+}

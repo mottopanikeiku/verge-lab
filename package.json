@@ -14,7 +14,8 @@
     "@designcodeio/threeui": "0.3.0",
     "lucide-react": "^1.33.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
