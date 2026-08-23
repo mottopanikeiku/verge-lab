@@ -1,0 +1,20 @@
+{
+  "kind": "candidate-generation",
+  "runUrl": "https://modal.com/apps/mottopanikeiku/main/ap-8bEziy6b2V6Xu9M8S5u7aY",
+  "model_id": "Qwen/Qwen3-0.6B",
+  "device": "L4",
+  "seed": 1701,
+  "prompt_count": 1,
+  "samples_per_prompt": 1,
+  "max_new_tokens": 64,
+  "candidates": [
+    {
+      "id": "candidate-c4a77c50654a03d5",
+      "prompt_index": 0,
+      "sample_index": 0,
+      "prompt": "In one sentence, explain why executable checks strengthen preference data.",
+      "completion": "Executable checks strengthen preference data by providing direct, verifiable evidence of individual choices or decisions, which enhances the accuracy and reliability of the data collected.",
+      "seed": 1701
+    }
+  ]
+}
