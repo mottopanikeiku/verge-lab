@@ -1,0 +1,425 @@
+{
+  "baseline": {
+    "abstained": 380,
+    "abstention_reasons": {
+      "cross-objective tradeoff": 283,
+      "equivalent within epsilon": 79,
+      "missing scores: honesty": 18
+    },
+    "all_pairs": 1200,
+    "assumed_confidence": 1.0,
+    "comparable_defended": 706,
+    "dataset_top_vs_other": {
+      "abstention_reasons": {
+        "cross-objective tradeoff": 145,
+        "equivalent within epsilon": 44,
+        "missing scores: honesty": 7
+      },
+      "comparisons": 635,
+      "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+      "outcomes": {
+        "abstained": 196,
+        "other_defended": 95,
+        "top_defended": 344
+      },
+      "prompt_counts": {
+        "all_overall_scores_tied": 3,
+        "tied_top": 58,
+        "unique_top": 142
+      }
+    },
+    "defended": 820,
+    "defended_vs_overall": {
+      "agree": 574,
+      "disagree": 132,
+      "overall_missing": 0,
+      "overall_tie": 114
+    },
+    "disagreement_fraction_of_comparable_defended": 0.18696883852691218,
+    "epsilon": 0.01,
+    "min_confidence": 0.8,
+    "name": "nominal_point_scores",
+    "per_pair_uncertainty_penalty": 0.0,
+    "uncertainty_scale": 0.0
+  },
+  "candidate_count": 800,
+  "limitations": [
+    "200-row deterministic prefix of TruthfulQA subset, not a random or representative sample of UltraFeedback or human preferences.",
+    "GPT-4 annotations and overall ratings are unverified. Separate overall field is not an independent annotator, human preference or ground truth.",
+    "Equal-interval treatment of ordinal 1..5 ratings and confidence penalties are modeling choices. Any positive penalty can remove dominance when one aspect ties.",
+    "No model training, inference or downstream preference-quality evaluation; disagreement measures inconsistency between recorded fields only.",
+    "Stored excerpts and hashes permit score reproduction and linkage, not full response review offline. Full text requires pinned upstream data; MIT is the dataset-card license, not a legal assessment of upstream content."
+  ],
+  "method": {
+    "abstentions": "Core verdict ambiguous is reported as abstained; CSV candidate_a/b for abstentions are identifiers, not a preference",
+    "aspect_values": "Mean of source Rating entries per aspect; (rating - 1)/4 maps 1..5 to 0..1; maximize all four aspects",
+    "confidence": "Unavailable in source. All confidence values in sensitivity are MODELING ASSUMPTIONS, not estimates or verified reliability. Nominal point-score run assumes 1 with zero uncertainty penalty; no statistical coverage claim.",
+    "core": "verge_lab.pareto.mine_pareto_edges and compare_candidates, unchanged",
+    "examples": "First matching pair in stable core output order, not hand-picked",
+    "missing_all_aspects": "Non-objective metadata-only schema entry allows Candidate construction; all actual objectives remain absent and comparison abstains",
+    "missing_aspects": "Absent, nonnumeric, nonfinite or out-of-range ratings omit the whole aspect; core abstains on any missing objective; no imputation",
+    "overall": "Source overall_score, NOT fine-grained_score or an aspect aggregate; exact numeric ties excluded from agreement/disagreement denominator and reported separately",
+    "unused_schema_fields": "tokens=0, latency_ms=0 and embedding=(0,0,0) are required-schema placeholders, not measurements; not used by the miner"
+  },
+  "missing_aspect_ratings": {
+    "helpfulness": 0,
+    "honesty": 8,
+    "instruction_following": 0,
+    "truthfulness": 0
+  },
+  "outputs": [
+    "source.jsonl",
+    "source-metadata.json",
+    "source-card.txt",
+    "summary.json",
+    "pairs.csv",
+    "examples.json",
+    "run.json"
+  ],
+  "overall_pair_rankings": {
+    "strictly_ranked": 1003,
+    "tied": 197
+  },
+  "prompt_count": 200,
+  "sensitivity": [
+    {
+      "abstained": 380,
+      "abstention_reasons": {
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 1.0,
+      "comparable_defended": 706,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 196,
+          "other_defended": 95,
+          "top_defended": 344
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 820,
+      "defended_vs_overall": {
+        "agree": 574,
+        "disagree": 132,
+        "overall_missing": 0,
+        "overall_tie": 114
+      },
+      "disagreement_fraction_of_comparable_defended": 0.18696883852691218,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "nominal_point_scores",
+      "per_pair_uncertainty_penalty": 0.0,
+      "uncertainty_scale": 0.0
+    },
+    {
+      "abstained": 380,
+      "abstention_reasons": {
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 1.0,
+      "comparable_defended": 706,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 196,
+          "other_defended": 95,
+          "top_defended": 344
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 820,
+      "defended_vs_overall": {
+        "agree": 574,
+        "disagree": 132,
+        "overall_missing": 0,
+        "overall_tie": 114
+      },
+      "disagreement_fraction_of_comparable_defended": 0.18696883852691218,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_1_penalty_scale_0.05",
+      "per_pair_uncertainty_penalty": 0.0,
+      "uncertainty_scale": 0.05
+    },
+    {
+      "abstained": 380,
+      "abstention_reasons": {
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 0.9,
+      "comparable_defended": 706,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 196,
+          "other_defended": 95,
+          "top_defended": 344
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 820,
+      "defended_vs_overall": {
+        "agree": 574,
+        "disagree": 132,
+        "overall_missing": 0,
+        "overall_tie": 114
+      },
+      "disagreement_fraction_of_comparable_defended": 0.18696883852691218,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_0.9_no_penalty",
+      "per_pair_uncertainty_penalty": 0.0,
+      "uncertainty_scale": 0.0
+    },
+    {
+      "abstained": 857,
+      "abstention_reasons": {
+        "confidence bounds overlap": 477,
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 0.9,
+      "comparable_defended": 321,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "confidence bounds overlap": 251,
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 447,
+          "other_defended": 9,
+          "top_defended": 179
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 343,
+      "defended_vs_overall": {
+        "agree": 309,
+        "disagree": 12,
+        "overall_missing": 0,
+        "overall_tie": 22
+      },
+      "disagreement_fraction_of_comparable_defended": 0.037383177570093455,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_0.9_penalty_scale_0.05",
+      "per_pair_uncertainty_penalty": 0.01,
+      "uncertainty_scale": 0.05
+    },
+    {
+      "abstained": 857,
+      "abstention_reasons": {
+        "confidence bounds overlap": 477,
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 0.8,
+      "comparable_defended": 321,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "confidence bounds overlap": 251,
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 447,
+          "other_defended": 9,
+          "top_defended": 179
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 343,
+      "defended_vs_overall": {
+        "agree": 309,
+        "disagree": 12,
+        "overall_missing": 0,
+        "overall_tie": 22
+      },
+      "disagreement_fraction_of_comparable_defended": 0.037383177570093455,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_0.8_penalty_scale_0.05",
+      "per_pair_uncertainty_penalty": 0.02,
+      "uncertainty_scale": 0.05
+    },
+    {
+      "abstained": 1039,
+      "abstention_reasons": {
+        "confidence bounds overlap": 659,
+        "cross-objective tradeoff": 283,
+        "equivalent within epsilon": 79,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 0.8,
+      "comparable_defended": 160,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "confidence bounds overlap": 337,
+          "cross-objective tradeoff": 145,
+          "equivalent within epsilon": 44,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 533,
+          "other_defended": 3,
+          "top_defended": 99
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 161,
+      "defended_vs_overall": {
+        "agree": 157,
+        "disagree": 3,
+        "overall_missing": 0,
+        "overall_tie": 1
+      },
+      "disagreement_fraction_of_comparable_defended": 0.01875,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_0.8_penalty_scale_1",
+      "per_pair_uncertainty_penalty": 0.4,
+      "uncertainty_scale": 1.0
+    },
+    {
+      "abstained": 1200,
+      "abstention_reasons": {
+        "confidence below threshold: helpfulness, honesty, instruction_following, truthfulness": 1182,
+        "missing scores: honesty": 18
+      },
+      "all_pairs": 1200,
+      "assumed_confidence": 0.5,
+      "comparable_defended": 0,
+      "dataset_top_vs_other": {
+        "abstention_reasons": {
+          "confidence below threshold: helpfulness, honesty, instruction_following, truthfulness": 628,
+          "missing scores: honesty": 7
+        },
+        "comparisons": 635,
+        "definition": "All maximum-overall candidates versus every strictly lower-overall candidate; unordered pairs counted once; top-top ties excluded",
+        "outcomes": {
+          "abstained": 635,
+          "other_defended": 0,
+          "top_defended": 0
+        },
+        "prompt_counts": {
+          "all_overall_scores_tied": 3,
+          "tied_top": 58,
+          "unique_top": 142
+        }
+      },
+      "defended": 0,
+      "defended_vs_overall": {
+        "agree": 0,
+        "disagree": 0,
+        "overall_missing": 0,
+        "overall_tie": 0
+      },
+      "disagreement_fraction_of_comparable_defended": null,
+      "epsilon": 0.01,
+      "min_confidence": 0.8,
+      "name": "confidence_0.5_below_threshold",
+      "per_pair_uncertainty_penalty": 0.05,
+      "uncertainty_scale": 0.05
+    }
+  ],
+  "source": {
+    "attribution": "UltraFeedback, Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Wei Zhu, Yuan Ni, Guotong Xie, Zhiyuan Liu and Maosong Sun (2023 dataset card); prompts from TruthfulQA, Stephanie Lin, Jacob Hilton and Owain Evans (2022).",
+    "card_sha256": "70a22b5659215ab738b9dfd0dc6bd40d3bb040bf846b4e34955358f30625a4f7",
+    "card_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/raw/40b436560ca83a8dba36114c22ab3c66e43f6d5e/README.md",
+    "dataset": "openbmb/UltraFeedback",
+    "dataset_url": "https://huggingface.co/datasets/openbmb/UltraFeedback",
+    "excerpt_chars": 240,
+    "hash_definitions": {
+      "instruction_and_response": "UTF-8 full original text (not excerpt)",
+      "line": "Exact downloaded JSONL line, including newline",
+      "prefix": "Concatenated exact downloaded first 200 JSONL lines, including newlines"
+    },
+    "judge_card_excerpt": "We then ask GPT-4 to annotate the collected samples based on the instructions.",
+    "license": "MIT (dataset card declaration; upstream source datasets may have additional terms)",
+    "license_card_excerpt": "license: mit\ntask_categories:\n- text-generation\nlanguage:\n- en\nsize_categories:\n- 100K<n<1M",
+    "limitation_card_excerpt": "GPT-4 also makes mistakes and provides inaccurate feedbacks.",
+    "omitted": [
+      "Full responses",
+      "Full critiques and rationales",
+      "System prompts",
+      "Reference answers"
+    ],
+    "overall_score_provenance": "Separate overall critique-generation rating, not the mean fine-grained rating (paper sections 2.4, 2.6 and 3.1). Independent score field, NOT an independent judge or verified ground truth.",
+    "paper_url": "https://arxiv.org/html/2310.01377v2",
+    "prompt_count": 200,
+    "revision": "40b436560ca83a8dba36114c22ab3c66e43f6d5e",
+    "selection": "First 200 physical JSONL rows, zero-based indices 0..199; no filtering or shuffle",
+    "source_file": "truthful_qa.jsonl",
+    "source_prefix_bytes_consumed": 2425518,
+    "source_prefix_sha256": "301b543f3587d2666ee1ded62304df635c79867c816f3ccc565cc9a74b17a125",
+    "source_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/resolve/40b436560ca83a8dba36114c22ab3c66e43f6d5e/truthful_qa.jsonl",
+    "stored_source_sha256": "2f97554fd89d1dd0e8546f2d5a546d79a800f53db786cc93d759ba6c58f772b8",
+    "truthfulqa_url": "https://github.com/sylinrl/TruthfulQA"
+  }
+}

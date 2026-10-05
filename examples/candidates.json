@@ -1,5 +1,5 @@
 {
-  "name": "Verge Lab · defended edge study",
+  "name": "Verge Lab · illustrative pair-mining example",
   "createdAt": "2026-08-23T12:00:00Z",
   "status": "complete",
   "model": {
@@ -41,7 +41,7 @@
     {
       "id": "latency",
       "label": "Latency",
-      "description": "Measured generation latency in milliseconds",
+      "description": "Illustrative generation latency in milliseconds",
       "direction": "minimize",
       "color": "#4d8791",
       "delta": -37.4
@@ -139,7 +139,7 @@
         "latency": {
           "value": 382,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -173,7 +173,7 @@
         "latency": {
           "value": 451,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -207,7 +207,7 @@
         "latency": {
           "value": 334,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -241,7 +241,7 @@
         "latency": {
           "value": 405,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -275,7 +275,7 @@
         "latency": {
           "value": 477,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -309,7 +309,7 @@
         "latency": {
           "value": 348,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -343,7 +343,7 @@
         "latency": {
           "value": 438,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -377,7 +377,7 @@
         "latency": {
           "value": 512,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -411,7 +411,7 @@
         "latency": {
           "value": 367,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -445,7 +445,7 @@
         "latency": {
           "value": 421,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -479,7 +479,7 @@
         "latency": {
           "value": 493,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -513,7 +513,7 @@
         "latency": {
           "value": 351,
           "confidence": 0.99,
-          "evidence": "Measured deterministic generation latency"
+          "evidence": "Illustrative latency input; not a generation measurement"
         }
       },
       "embedding": {
@@ -548,7 +548,7 @@
         "latency": {
           "value": 530,
           "confidence": 0.99,
-          "evidence": "Audit replay measurement"
+          "evidence": "Illustrative mutation latency input; no replay was measured"
         }
       }
     },
@@ -576,7 +576,7 @@
         "latency": {
           "value": 410,
           "confidence": 0.99,
-          "evidence": "Audit replay measurement"
+          "evidence": "Illustrative mutation latency input; no replay was measured"
         }
       }
     },
@@ -604,7 +604,7 @@
         "latency": {
           "value": 548,
           "confidence": 0.99,
-          "evidence": "Audit replay measurement"
+          "evidence": "Illustrative mutation latency input; no replay was measured"
         }
       }
     },
@@ -632,7 +632,7 @@
         "latency": {
           "value": 429,
           "confidence": 0.99,
-          "evidence": "Audit replay measurement"
+          "evidence": "Illustrative mutation latency input; no replay was measured"
         }
       }
     }

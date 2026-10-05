@@ -1,0 +1,34 @@
+{
+  "attribution": "UltraFeedback, Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Wei Zhu, Yuan Ni, Guotong Xie, Zhiyuan Liu and Maosong Sun (2023 dataset card); prompts from TruthfulQA, Stephanie Lin, Jacob Hilton and Owain Evans (2022).",
+  "card_sha256": "70a22b5659215ab738b9dfd0dc6bd40d3bb040bf846b4e34955358f30625a4f7",
+  "card_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/raw/40b436560ca83a8dba36114c22ab3c66e43f6d5e/README.md",
+  "dataset": "openbmb/UltraFeedback",
+  "dataset_url": "https://huggingface.co/datasets/openbmb/UltraFeedback",
+  "excerpt_chars": 240,
+  "hash_definitions": {
+    "instruction_and_response": "UTF-8 full original text (not excerpt)",
+    "line": "Exact downloaded JSONL line, including newline",
+    "prefix": "Concatenated exact downloaded first 200 JSONL lines, including newlines"
+  },
+  "judge_card_excerpt": "We then ask GPT-4 to annotate the collected samples based on the instructions.",
+  "license": "MIT (dataset card declaration; upstream source datasets may have additional terms)",
+  "license_card_excerpt": "license: mit\ntask_categories:\n- text-generation\nlanguage:\n- en\nsize_categories:\n- 100K<n<1M",
+  "limitation_card_excerpt": "GPT-4 also makes mistakes and provides inaccurate feedbacks.",
+  "omitted": [
+    "Full responses",
+    "Full critiques and rationales",
+    "System prompts",
+    "Reference answers"
+  ],
+  "overall_score_provenance": "Separate overall critique-generation rating, not the mean fine-grained rating (paper sections 2.4, 2.6 and 3.1). Independent score field, NOT an independent judge or verified ground truth.",
+  "paper_url": "https://arxiv.org/html/2310.01377v2",
+  "prompt_count": 200,
+  "revision": "40b436560ca83a8dba36114c22ab3c66e43f6d5e",
+  "selection": "First 200 physical JSONL rows, zero-based indices 0..199; no filtering or shuffle",
+  "source_file": "truthful_qa.jsonl",
+  "source_prefix_bytes_consumed": 2425518,
+  "source_prefix_sha256": "301b543f3587d2666ee1ded62304df635c79867c816f3ccc565cc9a74b17a125",
+  "source_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/resolve/40b436560ca83a8dba36114c22ab3c66e43f6d5e/truthful_qa.jsonl",
+  "stored_source_sha256": "2f97554fd89d1dd0e8546f2d5a546d79a800f53db786cc93d759ba6c58f772b8",
+  "truthfulqa_url": "https://github.com/sylinrl/TruthfulQA"
+}
