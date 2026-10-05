@@ -1,158 +1,51 @@
 # Verge Lab
 
-**Train on the edges your reward stack can defend.**
+Verge Lab is an offline preference-pair miner and review tool for scored language-model responses.
 
-![Verge Lab overview showing the run ledger, candidate field, and plural reward objectives](assets/verge-lab-overview.webp)
+**Question:** When several scoring aspects disagree, which response pairs can a Pareto rule defend, and when should it abstain?
 
-Verge Lab is a verifier-grounded preference-mining workbench for LLM post-training. It keeps prompt-level rubrics, executable constraints, judge confidence, and cost signals separate; builds a robust partial order over candidate responses; exports only defensible preference edges for DPO; and sends tradeoffs or low-confidence comparisons to a visible review queue.
+The rule in [`verge_lab/pareto.py`](verge_lab/pareto.py) changes minimization scores to a higher-is-better direction, subtracts an assumed uncertainty penalty, and keeps an edge only if every adjusted margin is nonnegative and at least one clears the strict threshold. [`verge_lab/export.py`](verge_lab/export.py) recomputes comparisons before exporting defended pairs for DPO. The React UI reviews **authored illustrative examples**, not model measurements; its ambient instruments come from [ThreeUI](https://github.com/MengTo/threeui), not model internals.
 
-The repository combines:
+## Result: mining public annotations, not training a model
 
-- a dependency-light Python analysis engine and CLI;
-- a research-grade React interface for reward topology, pair evidence, and run lineage;
-- open-source [ThreeUI](https://github.com/MengTo/threeui) instruments used as bounded visual context, with semantic controls and data views kept in accessible DOM/SVG;
-- real Modal GPU entrypoints for candidate generation and LoRA DPO training.
+[`tools/mine_public_preferences.py`](tools/mine_public_preferences.py) analyzes the first **200 prompts** in the pinned UltraFeedback TruthfulQA file: **800 responses, 1,200 within-prompt pairs**. It uses the recorded helpfulness, honesty, instruction-following and truthfulness ratings, rescaled to a common range. The reference preference is the upstream judge's separate `overall_score`, not a human preference label or an aspect average.
 
-## Why this project
+| Nominal point-score comparison | Pairs |
+| --- | ---: |
+| Defended | 820 |
+| Abstained | 380 |
+| Defended, agreeing with overall ranking | 574 |
+| Defended, opposing overall ranking | 132 |
+| Defended, overall score tied | 114 |
 
-Modern post-training increasingly mixes deterministic verification, prompt-specific rubrics, and model-based judgment. Collapsing those heterogeneous signals into one scalar can conceal reward conflicts and make weak evidence look certain. Verge uses a stricter rule:
+All counts and assumptions are in [`summary.json`](results/public-preferences/summary.json). Abstentions include **283 aspect tradeoffs, 79 aspect ties and 18 missing-score comparisons**. Among strictly ranked defended pairs, disagreement is **132/706 (18.7%)**. Comparing each overall-top response against strictly lower-ranked responses gives **344 top defended, 95 other defended and 196 abstentions**; tied tops are handled explicitly.
 
-1. Normalize every objective to a common “higher is better” direction.
-2. Carry scorer confidence into conservative pair margins.
-3. Add a preference edge only when the chosen response cannot regress on any shared objective and clears a strict margin on at least one.
-4. Mark missing, low-confidence, or genuinely conflicting evidence as ambiguous.
-5. Stress rewards with meaning-preserving mutations before exporting training pairs.
+Confidence is absent from the dataset. The nominal run assumes full confidence with no uncertainty penalty; it is a score-consistency check, not a reliability estimate. With assumed confidence **0.9** and penalty scale **0.05**, only **343** pairs remain defended and **857** abstain. Tied aspects lose their nonnegative margin under any positive penalty. This sensitivity is a limitation of the rule, not evidence that either setting is calibrated.
 
-This is deliberately an offline evidence layer, not a claim that Pareto mining solves reward design. It makes the assumptions and exclusions inspectable before an optimizer amplifies them.
+[`examples.json`](results/public-preferences/examples.json) includes actual disagreements and abstentions. For example, on source row `0001`, completion `3` dominates completion `0` on instruction-following with the other aspects tied, but has a lower overall score (**7.0 versus 7.5**). [`pairs.csv`](results/public-preferences/pairs.csv) records every comparison; [source metadata](results/public-preferences/source-metadata.json) records the revision, hashes, attribution and dataset-card license.
 
-## Quick start
+The browser's curves, candidate scores, judge confidences, costs and model metadata remain **illustrative**. Its calculated example verdicts are not a benchmark. The [historical GPU smoke run](artifacts/modal-training.json) used **two pairs**, one epoch and **3.3742 seconds**, with training loss **0.693147** (approximately ln 2): it supplies no evidence of improved model quality.
 
-Requirements: Node.js 22+, npm 10+, and Python 3.11+ with [uv](https://docs.astral.sh/uv/). Modal GPU commands additionally require a configured Modal account.
+## Reproduce
 
-```bash
-npm install
-uv sync --extra modal --dev
-uv run verge demo --output artifacts/demo-run.json
-npm run dev
-```
-
-Open the Vite URL. The included artifact is deterministic and drives four working views:
-
-- **Overview** — run evidence, objective shifts, and checkpoint history;
-- **Reward topology** — filterable candidate partial order with an equivalent data table;
-- **Pair lab** — neutral A/B evidence for ambiguous comparisons, chosen/rejected evidence for defended edges, conservative margins, and mutation probes;
-- **Runbook** — reproducible configuration, stages, and Modal handoff.
-
-Production checks:
+From a checkout, with Python and uv, on a local CPU:
 
 ```bash
-npm run check
-uv run ruff check .
-uv run pytest
+uv sync --locked --dev
+nice -n 19 uv run python tools/mine_public_preferences.py
+nice -n 19 uv run pytest -q -x
 ```
 
-## CLI
+The mining command uses the committed compact source without network access. Add `--fetch` to refresh from the pinned public file. [The recorded offline run](results/public-preferences/run.json) took **0.312 seconds**, used **34,816 KiB** peak process RSS, and cost **$0**; no model inference or training was run. [Workflow details](docs/WORKFLOWS.md) cover the illustrative UI, CLI export, checks and optional historical GPU entrypoints.
 
-Generate the built-in reproducible study:
+## Limitations
 
-```bash
-uv run verge demo --output artifacts/demo-run.json
-```
+- This is a small deterministic prefix of one dataset subset, not a representative sample.
+- GPT-4 aspect and overall annotations are unverified and share a judge; disagreement is not an error rate.
+- Ordinal-score rescaling and confidence penalties are modelling choices. Pareto selection can favor easy dominance and discard useful tradeoffs.
+- Built-in phrase, keyword, JSON, regex and word-count checks do not establish semantic correctness; supplied judge confidences are not calibrated by this tool.
+- Stored excerpts support score reproduction, not full offline response review. No downstream training or held-out evaluation was performed.
 
-Analyze candidate records using a JSON specification:
+## Prior work and attribution
 
-```bash
-uv run verge analyze examples/candidates.json \
-  --output artifacts/my-run.json
-```
-
-Export only defended edges in TRL-compatible preference format:
-
-```bash
-uv run verge export-dpo artifacts/my-run.json \
-  --output artifacts/my-run.dpo.jsonl
-```
-
-The core package performs no model inference and executes no generated code. Verifiers are explicit primitives. GPU/model dependencies stay outside the local analysis path.
-
-`analyze` treats supplied candidate scores and evidence as trusted measurements; it does not authenticate an external judge. Pair verdicts are always recomputed from those scores, and `export-dpo` rejects an artifact whose stored pair evidence differs from deterministic recomputation. Keep untrusted judge output outside the training path until its provenance and calibration have been established.
-
-## Evidence rule
-
-For objective \(j\), candidate \(a\), score \(s_{a,j}\), confidence \(c_{a,j}\), direction \(d_j \in \{-1,1\}\), and uncertainty scale \(\sigma\), Verge computes the conservative pair margin:
-
-\[
-m_j(a,b)=d_j(s_{a,j}-s_{b,j})
--\sigma\left[(1-c_{a,j})+(1-c_{b,j})\right]
-\]
-
-The default \(\sigma=0.05\) is a declared evidence penalty in each objective's native score units, not a statistical confidence interval. An edge \(a \succ b\) is defended only when:
-
-\[
-\forall j:\ m_j(a,b) \ge 0
-\quad\text{and}\quad
-\exists j:\ m_j(a,b) > \epsilon
-\]
-
-Scores below the configured confidence threshold are never compared. The artifact stores raw values, confidence, evidence text, conservative margins, and the reason for every defended or ambiguous verdict. The policy is intentionally conservative: fewer clean pairs beat a large silently noisy dataset.
-
-## Artifact contract
-
-`schemaVersion: 1` artifacts contain:
-
-- immutable run/model metadata and derived summary counts;
-- prompt-level rubrics and hard constraints;
-- candidates with token/latency metadata, objective evidence, and stable projection coordinates;
-- defended and ambiguous pair comparisons;
-- mutation-audit results and score flips;
-- checkpoint metrics and GPU-time estimates.
-
-Stable content hashes and deterministic sorting make artifacts diffable and suitable for experiment lineage. The web app statically imports the same JSON generated by the Python CLI.
-
-## Modal GPU workflow
-
-Modal authentication is local to your machine; no credentials belong in this repository.
-
-Cheap public-model smoke generation:
-
-```bash
-uv run modal run modal_app.py --smoke
-```
-
-Train a LoRA adapter from exported defended pairs:
-
-```bash
-uv run modal run modal_app.py \
-  --train \
-  --pairs-jsonl artifacts/my-run.dpo.jsonl \
-  --adapter-name my-first-adapter \
-  --adapter-version v1
-```
-
-The default is `Qwen/Qwen3-0.6B` on an L4, pinned to a reviewed Hugging Face commit and safetensors; other model IDs are rejected until explicitly reviewed and added. Hugging Face weights and adapters use separate persistent Modal Volumes. Remote functions return JSON-serializable manifests; failures propagate instead of falling back to fake local output. `artifacts/modal-smoke.json` and `artifacts/modal-training.json` record verified GPU runs; the trained adapter is persisted at the manifest's `modal-volume://` URI. Review `modal_app.py` before increasing model size, sequence length, sample count, or epochs.
-
-## Research basis
-
-- [DeepSeek-R1](https://arxiv.org/abs/2501.12948) — on-policy RL and distilled reasoning.
-- [DAPO](https://arxiv.org/abs/2503.14476) and [Dr. GRPO](https://arxiv.org/abs/2503.20783) — concrete GRPO stability and objective corrections.
-- [Spurious Rewards](https://arxiv.org/abs/2506.10947) — benchmark gains can emerge from prior amplification even under wrong rewards.
-- [Rubrics as Rewards](https://arxiv.org/abs/2507.17746) — structured reward signals beyond binary-verifiable tasks.
-- [MO-GRPO](https://arxiv.org/abs/2509.22047) — multi-objective imbalance and reward hacking in group-relative optimization.
-- [Prompt-Level Reward Specifications](https://arxiv.org/abs/2605.29275) — reusable prompt-specific rubrics and executable constraints separated from scoring.
-- [Reliability without Validity](https://arxiv.org/abs/2606.19544) — judge agreement and repeatability do not establish validity.
-
-Verge’s robust partial-order rule is an engineering design motivated by these findings, not a reproduction or claimed result of any cited paper.
-
-## Known limits
-
-- Confidence is only as calibrated as its scorer. Conservative margins expose that assumption; they do not repair it.
-- Pareto rules can discard useful tradeoff pairs and bias training data toward easy dominance.
-- Meaning-preserving mutation templates are domain-specific and must be checked against source outputs.
-- The included artifact is a deterministic demonstration, not a benchmark result.
-- ThreeUI’s sandboxed visual components do not accept candidate graphs. Verge labels them as ambient instruments and uses real SVG/DOM for semantic topology.
-- The selected ThreeUI 0.3.0 instruments execute third-party runtime assets inside opaque-origin `allow-scripts` iframes. No artifact data enters those frames and the page sends no referrer, but deployments with strict privacy or supply-chain requirements should replace them with vetted self-hosted assets.
-- A successful training run still needs held-out exact evaluation, fixed-token baselines, random/format reward controls, and preferably a second model family.
-
-## License
-
-MIT. ThreeUI Community is separately distributed under the MIT license; bundled fonts and third-party assets retain their upstream licenses.
+[UltraFeedback](https://arxiv.org/abs/2310.01377) supplies GPT-4 annotations on responses to [TruthfulQA](https://arxiv.org/abs/2109.07958) prompts; its pinned card declares MIT, with upstream-content terms noted in the source metadata. [DPO](https://arxiv.org/abs/2305.18290) motivates the export format. The Pareto rule is this repository's engineering choice, not a reproduction of those papers. Project code and ThreeUI are MIT licensed; upstream assets retain their own terms.

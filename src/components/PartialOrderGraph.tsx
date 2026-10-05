@@ -219,8 +219,8 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
   return (
     <div className="topology-stack">
       <figure className="order-graph calibration-chrome" data-armed={selectedCandidate ? 'true' : 'false'} aria-labelledby="order-graph-title">
-        <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Defensible partial order</strong></span><span>{visiblePairs.length} visible edges</span></figcaption>
-        <div className="graph-key" aria-label="Graph legend"><span><i className="key-line key-line--defended" />Defended preference</span><span><i className="key-line key-line--ambiguous" />Ambiguous comparison</span><span><i className="key-node" />Candidate</span></div>
+        <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Illustrative partial order</strong></span><span>{visiblePairs.length} computed example edges</span></figcaption>
+        <div className="graph-key" aria-label="Illustrative graph legend"><span><i className="key-line key-line--defended" />Example defended preference</span><span><i className="key-line key-line--ambiguous" />Example ambiguous comparison</span><span><i className="key-node" />Example candidate</span></div>
         <div className="graph-controls" role="group" aria-label="Graph viewport controls">
           <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM} aria-label="Zoom graph out"><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
           <button type="button" onClick={() => setViewport(INITIAL_VIEWPORT)} disabled={viewport.scale === MIN_ZOOM && viewport.x === 0 && viewport.y === 0}><RotateCcw size={14} aria-hidden="true" /><span>Reset view</span></button>
@@ -228,11 +228,11 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
           <output aria-label="Current graph zoom">{Math.round(viewport.scale * 100)}%</output>
         </div>
         <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan} onWheel={handleWheel}>
-          <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Candidate partial-order graph. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
+          <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Illustrative candidate partial-order graph computed from authored example scores. Coordinates are authored, not model embeddings. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
             <defs>
               <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
             </defs>
-            <g aria-label="Preference edges">
+            <g aria-label="Computed preference edges on illustrative inputs">
               {visiblePairs.map((pair) => {
                 const chosen = nodeById[pair.chosenId]
                 const rejected = nodeById[pair.rejectedId]
@@ -245,50 +245,50 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
                   strokeWidth: 1.25 + confidence * 3,
                   strokeOpacity: 0.35 + confidence * 0.65,
                 } as CSSProperties
-                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd} style={style}><title>{`${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} confidence. ${pair.reason}`}</title></line>
+                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd} style={style}><title>{`Computed example ${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} illustrative confidence, not a measurement. ${pair.reason}`}</title></line>
               })}
             </g>
-            <g aria-label="Candidates">
+            <g aria-label="Illustrative candidates">
               {positionedCandidates.map((candidate) => {
                 const label = candidateLabel(run, candidate)
                 const prompt = promptFor(run, candidate.promptId)
                 const selected = candidate.id === selectedCandidateId
                 const style = { '--enter-delay': `${(candidateOrder.get(candidate.id) ?? 0) * 32}ms` } as CSSProperties
                 return (
-                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} style={style} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`${label}, ${prompt?.domain ?? 'unknown domain'}, ${candidate.tokens} tokens. Select candidate.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
-                    <title>{`${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
+                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} style={style} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`Illustrative candidate ${label}, ${prompt?.domain ?? 'unknown domain'}, ${candidate.tokens} illustrative tokens. Select example candidate.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
+                    <title>{`Illustrative candidate ${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
                   </g>
                 )
               })}
             </g>
           </svg>
         </div>
-        <p className="graph-note">Position uses the artifact embedding x/y coordinates. Arrows mark defended preferences; dashed ambiguous comparisons are undirected. No scalar rank is inferred.</p>
+        <p className="graph-note">Illustrative projection of authored x/y coordinates, not measured model embeddings. Arrows show preferences computed from example scores; dashed ambiguous comparisons are undirected. No scalar rank or measured model quality is inferred.</p>
       </figure>
 
       {selectedCandidate ? (
         <section className="candidate-inspector" aria-labelledby="candidate-inspector-title">
-          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected specimen</span><h3 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h3><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
+          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected illustrative candidate</span><h3 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h3><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
           <blockquote>{selectedCandidate.output}</blockquote>
-          <dl className="specimen-facts"><div><dt>Tokens</dt><dd>{selectedCandidate.tokens}</dd></div><div><dt>Latency</dt><dd>{selectedCandidate.latencyMs} ms</dd></div><div><dt>Embed z</dt><dd>{formatNumber(selectedCandidate.embedding.z)}</dd></div></dl>
+          <dl className="specimen-facts"><div><dt>Illustrative tokens</dt><dd>{selectedCandidate.tokens}</dd></div><div><dt>Illustrative latency</dt><dd>{selectedCandidate.latencyMs} ms</dd></div><div><dt>Illustrative coordinate z</dt><dd>{formatNumber(selectedCandidate.embedding.z)}</dd></div></dl>
           <div className="score-evidence-list">
             {run.objectives.map((objective) => {
               const score = selectedCandidate.scores[objective.id]
               if (!score) return null
-              return <details key={objective.id}><summary><span>{objective.label}</span><span className="score-evidence-value"><strong>{formatNumber(score.value)}</strong><ConfidenceDial value={score.confidence} tone="neutral" label={`${objective.label} confidence`} size="inline" /></span></summary><p>{score.evidence}</p></details>
+              return <details key={objective.id}><summary><span>Illustrative {objective.label} score</span><span className="score-evidence-value"><strong>{formatNumber(score.value)}</strong><ConfidenceDial value={score.confidence} tone="neutral" label={`${objective.label} confidence`} size="inline" /></span></summary><p>Authored example evidence: {score.evidence}</p></details>
             })}
           </div>
         </section>
       ) : null}
 
       <details className="candidate-register-disclosure" open>
-        <summary><span>Open accessible register</span><small>{candidates.length} candidate rows</small></summary>
+        <summary><span>Open illustrative accessible register</span><small>{candidates.length} example candidate rows</small></summary>
         <section className="candidate-table-section" aria-labelledby="candidate-table-title">
-          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Accessible register</span><h3 id="candidate-table-title">Candidate evidence table</h3></div><span>{candidates.length} rows</span></header>
-          <div className="table-wrap"><table className="data-table candidate-table"><thead><tr><th scope="col">Candidate</th><th scope="col">Domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>{objective.label}</th>)}<th scope="col">Tokens</th><th scope="col">Latency</th></tr></thead><tbody>
+          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Illustrative accessible register</span><h3 id="candidate-table-title">Example candidate scores and confidences</h3></div><span>{candidates.length} example rows</span></header>
+          <div className="table-wrap"><table className="data-table candidate-table"><caption>All scores, confidences, token counts and latencies are illustrative authored inputs, not model measurements. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
             {candidates.map((candidate) => {
               const selected = candidate.id === selectedCandidateId
-              return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={objective.label} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Tokens">{candidate.tokens}</td><td data-label="Latency">{candidate.latencyMs} ms</td></tr>
+              return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Example candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Example domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={`Illustrative ${objective.label} score / confidence`} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Illustrative tokens">{candidate.tokens}</td><td data-label="Illustrative latency">{candidate.latencyMs} ms</td></tr>
             })}
           </tbody></table></div>
         </section>

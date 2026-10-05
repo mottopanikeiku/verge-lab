@@ -24,14 +24,16 @@ export function ConfidenceDial({
 
   return (
     <span
+      role="img"
       className={`confidence-dial confidence-dial--${tone} confidence-dial--${size}`}
       style={style}
+      aria-label={`Illustrative ${label}: ${formattedValue}`}
     >
       <span className="confidence-dial__meter" aria-hidden="true">
         <span className="confidence-dial__needle" />
       </span>
       <span className="confidence-dial__copy">
-        <span className="confidence-dial__label">{label}</span>
+        <span className="confidence-dial__label">Illustrative {label}</span>
         <strong className="confidence-dial__value">{formattedValue}</strong>
       </span>
     </span>

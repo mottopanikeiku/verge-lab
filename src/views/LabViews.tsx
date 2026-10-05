@@ -29,32 +29,32 @@ export function Overview({ run, onNavigate }: OverviewProps) {
       <section className="bench-hero">
         <header className="view-hero overview-hero">
           <div>
-            <span className="eyebrow">Run overview / {shortId(run.id)}</span>
-            <h1>Evidence before preference.</h1>
-            <p>Verge keeps reward disagreements visible, then exports only the edges every shared objective can defend.</p>
-            <div className="hero-readout" role="list" aria-label="Run evidence summary">
-              <span role="listitem"><strong>{run.summary.candidateCount}</strong> candidate specimens</span>
-              <span role="listitem"><strong>{run.summary.defendedPairCount}</strong> defended edges</span>
-              <span role="listitem"><strong>{run.summary.ambiguousPairCount}</strong> held ambiguous</span>
-              <span role="listitem"><strong>{formatPercent(averageConfidence)}</strong> mean confidence</span>
+            <span className="eyebrow">Illustrative demo overview / {shortId(run.id)}</span>
+            <h1>Example scores, explicit tradeoffs.</h1>
+            <p>Explore a partial order computed from authored example scores. Defended edges satisfy the shared objectives; these examples are not model measurements.</p>
+            <div className="hero-readout" role="list" aria-label="Illustrative example summary, computed from authored inputs">
+              <span role="listitem"><strong>{run.summary.candidateCount}</strong> example candidates</span>
+              <span role="listitem"><strong>{run.summary.defendedPairCount}</strong> example defended edges</span>
+              <span role="listitem"><strong>{run.summary.ambiguousPairCount}</strong> example ambiguous pairs</span>
+              <span role="listitem"><strong>{formatPercent(averageConfidence)}</strong> mean illustrative confidence</span>
             </div>
           </div>
-          <dl className="run-stamp"><div><dt>Status</dt><dd><span className="status-dot" />{run.status}</dd></div><div><dt>Model</dt><dd>{run.model.base}</dd></div><div><dt>Created</dt><dd>{formatDate(run.createdAt)}</dd></div></dl>
+          <dl className="run-stamp"><div><dt>Demo status</dt><dd><span className="status-dot" />{run.status}</dd></div><div><dt>Example model</dt><dd>{run.model.base}</dd></div><div><dt>Demo date</dt><dd>{formatDate(run.createdAt)}</dd></div></dl>
         </header>
-        <ThreeInstrument kind="constellation" title="Candidate density field" description={`${run.summary.candidateCount} candidates; motion reflects ${formatPercent(ambiguityRate)} ambiguity and brightness reflects mean pair confidence.`} metrics={{ speed: 0.25 + ambiguityRate, density: 0.55 + run.summary.candidateCount / 20, opacity: 0.68 + defendedRate * 0.2, hue: 0.18, brightness: 0.65 + averageConfidence * 0.5 }} />
+        <ThreeInstrument kind="constellation" title="Illustrative candidate field" description={`${run.summary.candidateCount} example candidates; motion maps the computed ${formatPercent(ambiguityRate)} example ambiguity share and brightness maps mean illustrative confidence.`} metrics={{ speed: 0.25 + ambiguityRate, density: 0.55 + run.summary.candidateCount / 20, opacity: 0.68 + defendedRate * 0.2, hue: 0.18, brightness: 0.65 + averageConfidence * 0.5 }} />
         <HeroEvidenceField run={run} />
       </section>
 
       <section className="ledger" aria-labelledby="ledger-title">
-        <header className="section-heading"><div><span className="eyebrow">Run ledger</span><h2 id="ledger-title">{run.name}</h2></div><span>schema v{run.schemaVersion}</span></header>
+        <header className="section-heading"><div><span className="eyebrow">Illustrative demo ledger</span><h2 id="ledger-title">{run.name}</h2></div><span>schema v{run.schemaVersion}</span></header>
         <div className="ledger-grid">
-          <article className="ledger-lead"><span>Defended edge yield</span><strong>{formatPercent(defendedRate)}</strong><p>{run.summary.defendedPairCount} of {totalPairs} comparisons survive robust Pareto checks.</p><button type="button" className="text-action" onClick={() => onNavigate('topology')}>Trace the order <ArrowRight size={15} aria-hidden="true" /></button></article>
-          <dl className="ledger-metrics"><div><dt>Prompts</dt><dd>{run.summary.promptCount}</dd></div><div><dt>Candidates</dt><dd>{run.summary.candidateCount}</dd></div><div><dt>Ambiguous</dt><dd className="coral-text">{run.summary.ambiguousPairCount}</dd></div><div><dt>Mutation flips</dt><dd>{run.summary.mutationFlipCount}</dd></div><div><dt>GPU estimate</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} min</dd></div><div><dt>Cost estimate</dt><dd>${formatNumber(run.summary.estimatedCostUsd)}</dd></div></dl>
+          <article className="ledger-lead"><span>Computed example defended yield</span><strong>{formatPercent(defendedRate)}</strong><p>{run.summary.defendedPairCount} of {totalPairs} example comparisons satisfy the confidence-bound Pareto rule on authored inputs, not measured outcomes.</p><button type="button" className="text-action" onClick={() => onNavigate('topology')}>Trace the example order <ArrowRight size={15} aria-hidden="true" /></button></article>
+          <dl className="ledger-metrics"><div><dt>Example prompts</dt><dd>{run.summary.promptCount}</dd></div><div><dt>Example candidates</dt><dd>{run.summary.candidateCount}</dd></div><div><dt>Example ambiguous pairs</dt><dd className="coral-text">{run.summary.ambiguousPairCount}</dd></div><div><dt>Computed example flips</dt><dd>{run.summary.mutationFlipCount}</dd></div><div><dt>Illustrative GPU estimate</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} min</dd></div><div><dt>Illustrative cost estimate</dt><dd>${formatNumber(run.summary.estimatedCostUsd)}</dd></div></dl>
         </div>
       </section>
 
       <section className="objective-ledger" aria-labelledby="objective-title">
-        <header className="section-heading"><div><span className="eyebrow">Reward specification</span><h2 id="objective-title">Objectives remain plural</h2></div><span>{run.objectives.length} dimensions</span></header>
+        <header className="section-heading"><div><span className="eyebrow">Illustrative reward specification</span><h2 id="objective-title">Example objective scores</h2></div><span>{run.objectives.length} example dimensions</span></header>
         <div className="objective-rows">
           {run.objectives.map((objective, index) => {
             const shiftRatio = objectiveShiftRatios[index]
@@ -63,8 +63,8 @@ export function Overview({ run, onNavigate }: OverviewProps) {
             return (
               <article key={objective.id} className={`objective-row objective-row--${index % 4}`} data-magnitude={shiftRatio.toFixed(4)} data-delta-direction={direction} style={{ '--objective-magnitude': magnitude } as React.CSSProperties}>
                 <span className="objective-index">0{index + 1}</span>
-                <div><h3>{objective.label}</h3><p>{objective.description}</p><span className="objective-magnitude" aria-label={`Audit delta magnitude is ${formatPercent(shiftRatio)} of the objective mean`}><i aria-hidden="true" /></span></div>
-                <dl><div><dt>Direction</dt><dd>{objective.direction}</dd></div><div><dt>Mean</dt><dd>{formatNumber(objective.mean)}</dd></div><div><dt>Δ audit</dt><dd>{objective.delta > 0 ? '+' : ''}{formatNumber(objective.delta)}</dd></div></dl>
+                <div><h3>{objective.label}</h3><p>{objective.description}</p><span className="objective-magnitude" aria-label={`Illustrative authored delta magnitude is ${formatPercent(shiftRatio)} of the computed example score mean, not an observed change`}><i aria-hidden="true" /></span></div>
+                <dl><div><dt>Direction</dt><dd>{objective.direction}</dd></div><div><dt>Example mean</dt><dd>{formatNumber(objective.mean)}</dd></div><div><dt>Illustrative Δ</dt><dd>{objective.delta > 0 ? '+' : ''}{formatNumber(objective.delta)}</dd></div></dl>
               </article>
             )
           })}
@@ -73,7 +73,7 @@ export function Overview({ run, onNavigate }: OverviewProps) {
 
       <section className="triage-strip" aria-labelledby="triage-title">
         <header><span className="eyebrow">Next examination</span><h2 id="triage-title">Follow the uncertain edge.</h2></header>
-        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Pair lab</span><strong>{run.summary.ambiguousPairCount} comparisons need inspection</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('runbook')}><span><Clock3 size={18} aria-hidden="true" />Runbook</span><strong>{run.checkpoints.length} checkpoints record the path</strong><ArrowRight aria-hidden="true" /></button></div>
+        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Pair lab</span><strong>{run.summary.ambiguousPairCount} example comparisons to inspect</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('runbook')}><span><Clock3 size={18} aria-hidden="true" />Runbook</span><strong>{run.checkpoints.length} illustrative checkpoints</strong><ArrowRight aria-hidden="true" /></button></div>
       </section>
     </div>
   )
@@ -95,7 +95,7 @@ export function RewardTopology({ run, filters, onFiltersChange }: FilteredViewPr
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Reward topology</span><h1>A ranking is too certain.</h1><p>This is a partial order: defended arrows coexist with unresolved tradeoffs. Filter the aperture without collapsing evidence.</p></div><div className="calibration-chrome"><ThreeInstrument compact kind="topology" title="Edge confidence texture" description={`Hue follows ${formatPercent(defendedRate)} defended edge share; brightness follows ${formatPercent(meanConfidence)} mean confidence.`} metrics={{ speed: 0, density: 0, opacity: 1, hue: -0.32 + defendedRate * 0.68, brightness: 0.62 + meanConfidence * 0.58 }} /></div></header>
+      <header className="view-hero"><div><span className="eyebrow">Illustrative reward topology</span><h1>A ranking is too certain.</h1><p>This partial order is computed from authored example scores, not model evaluations. Defended arrows coexist with unresolved tradeoffs; filtering changes which examples are visible.</p></div><div className="calibration-chrome"><ThreeInstrument compact kind="topology" title="Illustrative confidence texture" description={`Hue maps the computed ${formatPercent(defendedRate)} example defended edge share; brightness maps ${formatPercent(meanConfidence)} mean illustrative confidence.`} metrics={{ speed: 0, density: 0, opacity: 1, hue: -0.32 + defendedRate * 0.68, brightness: 0.62 + meanConfidence * 0.58 }} /></div></header>
       <EvidenceFilters run={run} filters={filters} onChange={onFiltersChange} resultCount={visibleCandidates.length} resultLabel={`candidates · ${visiblePairs.length} edges`} />
       <PartialOrderGraph run={run} candidates={visibleCandidates} pairs={visiblePairs} selectedCandidateId={effectiveSelectedCandidateId} onSelectCandidate={setSelectedCandidateId} />
     </div>
@@ -112,11 +112,11 @@ function PairChoice({ run, pair, role }: { run: RunArtifact; pair: Pair; role: '
   const tone = neutral ? 'neutral' : role
   return (
     <article className={`pair-choice pair-choice--${tone}`}>
-      <header><span>{sideLabel}</span><strong>{candidateLabel(run, candidate)} · {shortId(candidate.id)}</strong></header>
+      <header><span>Example {sideLabel}</span><strong>{candidateLabel(run, candidate)} · {shortId(candidate.id)}</strong></header>
       <blockquote>{candidate.output}</blockquote>
       <div className="pair-score-stack">{run.objectives.map((objective) => {
         const score = candidate.scores[objective.id]
-        return <div key={objective.id}><span>{objective.label}</span><strong>{score ? formatNumber(score.value) : '—'}</strong>{score ? <ConfidenceDial value={score.confidence} tone="neutral" label={`${sideLabel} ${objective.label} confidence`} size="inline" /> : <small>missing score</small>}{score ? <p>{score.evidence}</p> : null}</div>
+        return <div key={objective.id}><span>Illustrative {objective.label} score</span><strong>{score ? formatNumber(score.value) : '—'}</strong>{score ? <ConfidenceDial value={score.confidence} tone="neutral" label={`${sideLabel} ${objective.label} confidence`} size="inline" /> : <small>missing example score</small>}{score ? <p>Authored example evidence: {score.evidence}</p> : null}</div>
       })}</div>
     </article>
   )
@@ -132,12 +132,12 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Pair lab</span><h1>Inspect the edge, not the score.</h1><p>Compare verifier evidence objective by objective. Ambiguity is a valid result, never a missing label.</p></div><dl className="verdict-counts"><div><dt>Defended</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Ambiguous</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></header>
+      <header className="view-hero"><div><span className="eyebrow">Illustrative pair lab</span><h1>Inspect the edge, not the score.</h1><p>Compare authored example evidence objective by objective. Verdicts and margins are deterministic calculations on these example inputs; ambiguity is a valid result, not a missing label.</p></div><dl className="verdict-counts"><div><dt>Example defended</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Example ambiguous</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></header>
       <EvidenceFilters run={run} filters={filters} onChange={onFiltersChange} resultCount={visiblePairs.length} resultLabel="comparisons" />
       {selectedPair ? (
         <div className={`pair-workbench ${drillDownOpen ? 'pair-workbench--detail' : 'pair-workbench--register'}`}>
-          <aside className="pair-index pair-index-panel" aria-label="Filtered comparison pairs">
-            <span className="eyebrow">Pair register</span>
+          <aside className="pair-index pair-index-panel" aria-label="Filtered illustrative comparison pairs">
+            <span className="eyebrow">Illustrative pair register</span>
             {visiblePairs.map((pair) => {
               const prompt = promptFor(run, pair.promptId)
               const selected = pair.id === selectedPair.id
@@ -154,18 +154,18 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
             <button type="button" className="pair-back" onClick={() => setSelectedPairId(null)}><ArrowLeft size={15} aria-hidden="true" />Back to pair register</button>
             <header className="pair-evidence-header">
               <div><span className={`verdict-label verdict-label--${selectedPair.verdict}`}>{selectedPair.verdict === 'defended' ? <CheckCircle2 size={14} aria-hidden="true" /> : <CircleAlert size={14} aria-hidden="true" />}{selectedPair.verdict}</span><h2 id="pair-evidence-title">{shortId(selectedPair.id)}</h2><p>{promptFor(run, selectedPair.promptId)?.text}</p></div>
-              <dl><div><dt>Confidence</dt><dd><ConfidenceDial value={selectedPair.confidence} tone={selectedPair.verdict} label={`${shortId(selectedPair.id)} verdict confidence`} size="panel" /></dd></div><div><dt>Domain</dt><dd>{promptFor(run, selectedPair.promptId)?.domain}</dd></div></dl>
+              <dl><div><dt>Illustrative confidence</dt><dd><ConfidenceDial value={selectedPair.confidence} tone={selectedPair.verdict} label={`${shortId(selectedPair.id)} verdict confidence`} size="panel" /></dd></div><div><dt>Example domain</dt><dd>{promptFor(run, selectedPair.promptId)?.domain}</dd></div></dl>
             </header>
             <section className="specification-band" aria-labelledby="spec-title">
-              <h3 id="spec-title">Prompt-level reward specification</h3>
+              <h3 id="spec-title">Example prompt-level reward specification</h3>
               <div>
                 <section aria-labelledby="rubrics-title"><h4 id="rubrics-title">Rubrics</h4><ul>{promptFor(run, selectedPair.promptId)?.specification.rubrics.map((rubric) => <li key={rubric}>{rubric}</li>)}</ul></section>
                 <section aria-labelledby="constraints-title"><h4 id="constraints-title">Constraints</h4><ul>{promptFor(run, selectedPair.promptId)?.specification.constraints.map((constraint) => <li key={constraint}>{constraint}</li>)}</ul></section>
               </div>
             </section>
             <div className="pair-comparison"><PairChoice run={run} pair={selectedPair} role="chosen" /><PairChoice run={run} pair={selectedPair} role="rejected" /></div>
-            <section className="verdict-reason"><span className="eyebrow">Why this verdict</span><h3>{selectedPair.reason}</h3><div className="margin-strip">{run.objectives.map((objective) => <div key={objective.id}><span>{objective.label}</span><strong>{selectedPair.margins[objective.id] === undefined ? 'not shared' : `${selectedPair.margins[objective.id] > 0 ? '+' : ''}${formatNumber(selectedPair.margins[objective.id])}`}</strong></div>)}</div></section>
-            <section className="mutation-evidence"><header><span className="eyebrow">Mutation audit</span><strong>{relevantMutations.length} linked probes</strong></header>{relevantMutations.length === 0 ? <p className="empty-inline">No meaning-preserving mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'verdict flipped' : 'stable'} · objective deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
+            <section className="verdict-reason"><span className="eyebrow">Computed example verdict and margins</span><h3>{selectedPair.reason}</h3><div className="margin-strip">{run.objectives.map((objective) => <div key={objective.id}><span>{objective.label}</span><strong>{selectedPair.margins[objective.id] === undefined ? 'not shared' : `${selectedPair.margins[objective.id] > 0 ? '+' : ''}${formatNumber(selectedPair.margins[objective.id])}`}</strong></div>)}</div></section>
+            <section className="mutation-evidence"><header><span className="eyebrow">Illustrative mutation comparisons</span><strong>{relevantMutations.length} linked examples</strong></header><p>Verdict flips and deltas are computed from authored before/after scores, not measured rescoring or model bias tests.</p>{relevantMutations.length === 0 ? <p className="empty-inline">No example mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} · computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
           </section>
         </div>
       ) : <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No comparisons match</h3><p>Clear the candidate search or widen the domain and verdict filters.</p></div>}
@@ -181,24 +181,24 @@ export function Runbook({ run }: SharedViewProps) {
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Runbook / deterministic trace</span><h1>The path is part of the result.</h1><p>Checkpoint evidence, mutation probes, and the adapter manifest form one inspectable training record.</p></div><div className="runbook-seal"><ShieldCheck aria-hidden="true" /><span>Artifact status</span><strong>{run.status}</strong><small>{run.id}</small></div></header>
+      <header className="view-hero"><div><span className="eyebrow">Runbook / illustrative demo</span><h1>An authored example, not a run.</h1><p>Illustrative checkpoints, mutation comparisons and model metadata show the artifact format. They are not a training record, a trained adapter or GPU diagnostics.</p></div><div className="runbook-seal"><ShieldCheck aria-hidden="true" /><span>Example artifact status</span><strong>{run.status}</strong><small>{run.id}</small></div></header>
       <section className="runbook-grid">
-        <div className="calibration-chrome"><ThreeInstrument kind="diagnostics" title="Run activity diagnostic" description={`${run.checkpoints.length} checkpoints; speed follows GPU activity, density follows defended win rate, brightness follows evaluation reward.`} metrics={{ speed: clamp((lastCheckpoint?.gpuMinutes ?? 0) / Math.max(run.summary.estimatedGpuMinutes, 1), 0.15, 1.3), density: 0.45 + (lastCheckpoint?.defendedWinRate ?? 0), opacity: 0.78, hue: 0.36 + clamp(rewardGain, -0.3, 0.3), brightness: 0.72 + clamp(lastCheckpoint?.evalReward ?? 0, 0, 1) * 0.48 }} /></div>
-        <section className="manifest" aria-labelledby="manifest-title"><header><span className="eyebrow">Model manifest</span><h2 id="manifest-title">Adapter specimen</h2></header><dl><div><dt>Base</dt><dd>{run.model.base}</dd></div><div><dt>Method</dt><dd>{run.model.method}</dd></div><div><dt>Adapter</dt><dd>{run.model.adapter}</dd></div><div><dt>Parameters</dt><dd>{formatCompactNumber(run.model.parameterCount)}</dd></div><div><dt>Quantization</dt><dd>{run.model.quantization}</dd></div><div><dt>Budget</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} GPU min</dd></div></dl></section>
+        <div className="calibration-chrome"><ThreeInstrument kind="diagnostics" title="Illustrative checkpoint animation" description={`${run.checkpoints.length} authored example checkpoints; speed maps illustrative GPU-minute values, density maps illustrative win-rate values and brightness maps illustrative reward values. None is observed activity.`} metrics={{ speed: clamp((lastCheckpoint?.gpuMinutes ?? 0) / Math.max(run.summary.estimatedGpuMinutes, 1), 0.15, 1.3), density: 0.45 + (lastCheckpoint?.defendedWinRate ?? 0), opacity: 0.78, hue: 0.36 + clamp(rewardGain, -0.3, 0.3), brightness: 0.72 + clamp(lastCheckpoint?.evalReward ?? 0, 0, 1) * 0.48 }} /></div>
+        <section className="manifest" aria-labelledby="manifest-title"><header><span className="eyebrow">Illustrative model metadata</span><h2 id="manifest-title">Example adapter description</h2></header><dl><div><dt>Example base</dt><dd>{run.model.base}</dd></div><div><dt>Example method</dt><dd>{run.model.method}</dd></div><div><dt>Example adapter name</dt><dd>{run.model.adapter}</dd></div><div><dt>Illustrative parameters</dt><dd>{formatCompactNumber(run.model.parameterCount)}</dd></div><div><dt>Example quantization</dt><dd>{run.model.quantization}</dd></div><div><dt>Illustrative GPU estimate</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} GPU min</dd></div></dl></section>
       </section>
       <section className="timeline-section" aria-labelledby="timeline-title">
-        <header className="section-heading"><div><span className="eyebrow">Checkpoint trace</span><h2 id="timeline-title">Training timeline</h2></div><span>{run.checkpoints.length} recorded states</span></header>
+        <header className="section-heading"><div><span className="eyebrow">Illustrative checkpoint trace</span><h2 id="timeline-title">Authored demo timeline</h2></div><span>{run.checkpoints.length} illustrative states</span></header>
         {run.checkpoints.length === 0 ? (
-          <div className="empty-state"><Clock3 aria-hidden="true" /><h3>No checkpoints recorded</h3><p>The run artifact contains no training trace.</p></div>
+          <div className="empty-state"><Clock3 aria-hidden="true" /><h3>No illustrative checkpoints</h3><p>The example artifact contains no authored checkpoint values.</p></div>
         ) : (
           <div className="checkpoint-trace-stack">
             <CheckpointTrace checkpoints={run.checkpoints} />
-            <ol className="timeline">{run.checkpoints.map((checkpoint, index) => <li key={`${checkpoint.step}-${checkpoint.label}`} style={{ '--checkpoint-progress': `${(checkpoint.step / maxStep) * 100}%` } as React.CSSProperties}><div className="timeline-axis"><span>{String(index + 1).padStart(2, '0')}</span></div><article><header><div><span>Step {checkpoint.step}</span><h3>{checkpoint.label}</h3></div><strong>{formatPercent(checkpoint.defendedWinRate)} defended win rate</strong></header><dl><div><dt>Train loss</dt><dd>{formatNumber(checkpoint.trainLoss, 3)}</dd></div><div><dt>Eval reward</dt><dd>{formatNumber(checkpoint.evalReward, 3)}</dd></div><div><dt>GPU elapsed</dt><dd>{formatNumber(checkpoint.gpuMinutes, 1)} min</dd></div></dl><div className="checkpoint-rule" aria-hidden="true"><i /></div></article></li>)}</ol>
+            <ol className="timeline">{run.checkpoints.map((checkpoint, index) => <li key={`${checkpoint.step}-${checkpoint.label}`} style={{ '--checkpoint-progress': `${(checkpoint.step / maxStep) * 100}%` } as React.CSSProperties}><div className="timeline-axis"><span>{String(index + 1).padStart(2, '0')}</span></div><article><header><div><span>Illustrative step {checkpoint.step}</span><h3>{checkpoint.label}</h3></div><strong>{formatPercent(checkpoint.defendedWinRate)} illustrative defended win rate</strong></header><dl><div><dt>Illustrative train loss</dt><dd>{formatNumber(checkpoint.trainLoss, 3)}</dd></div><div><dt>Illustrative eval reward</dt><dd>{formatNumber(checkpoint.evalReward, 3)}</dd></div><div><dt>Illustrative GPU minutes</dt><dd>{formatNumber(checkpoint.gpuMinutes, 1)} min</dd></div></dl><div className="checkpoint-rule" aria-hidden="true"><i /></div></article></li>)}</ol>
           </div>
         )}
       </section>
-      <section className="method-note"><Beaker aria-hidden="true" /><div><span className="eyebrow">Export doctrine</span><h2>Only defended edges leave the bench.</h2><p>DPO output retains margins and verifier evidence as metadata. Missing scores, low confidence, and cross-objective tradeoffs remain ambiguous rather than becoming synthetic winners.</p></div><dl><div><dt>Eligible edges</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Held for review</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></section>
-      <section className="mutation-register" aria-labelledby="mutation-title"><header className="section-heading"><div><span className="eyebrow"><Microscope size={14} aria-hidden="true" />Bias probes</span><h2 id="mutation-title">Mutation register</h2></div><span>{run.summary.mutationFlipCount} flips</span></header>{run.mutations.length === 0 ? <p className="empty-inline">No mutation probes were recorded for this run.</p> : <div>{run.mutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind} · {shortId(mutation.sourceCandidateId)}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'flipped' : 'stable'} / objective deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</div>}</section>
+      <section className="method-note"><Beaker aria-hidden="true" /><div><span className="eyebrow">Example export rule</span><h2>Only example defended edges are eligible.</h2><p>The Python exporter retains margins and authored score evidence as metadata. Missing scores, low confidence and cross-objective tradeoffs remain ambiguous. These eligibility counts are computed on illustrative inputs, not evidence of training quality.</p></div><dl><div><dt>Example eligible edges</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Example ambiguous edges</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></section>
+      <section className="mutation-register" aria-labelledby="mutation-title"><header className="section-heading"><div><span className="eyebrow"><Microscope size={14} aria-hidden="true" />Illustrative mutations</span><h2 id="mutation-title">Example mutation register</h2></div><span>{run.summary.mutationFlipCount} computed example flips</span></header><p>Mutated text and authored before/after scores illustrate the audit rule. Deltas and flips are deterministic example calculations, not measured model responses.</p>{run.mutations.length === 0 ? <p className="empty-inline">No illustrative mutations are included in this artifact.</p> : <div>{run.mutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind} · {shortId(mutation.sourceCandidateId)}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} / computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</div>}</section>
     </div>
   )
 }

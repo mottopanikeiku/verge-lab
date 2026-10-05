@@ -36,10 +36,10 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
     return (
       <figure className="checkpoint-trace checkpoint-trace--empty">
         <figcaption>
-          <span className="eyebrow">Evaluation telemetry</span>
-          <strong>No calibrated states to plot</strong>
+          <span className="eyebrow">Illustrative checkpoint curves</span>
+          <strong>No authored example states to plot</strong>
         </figcaption>
-        <p>The checkpoint register has no finite reward, win-rate, or loss observations.</p>
+        <p>The example checkpoint register has no finite authored reward, win-rate or loss values.</p>
       </figure>
     )
   }
@@ -74,20 +74,20 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
     <figure className="checkpoint-trace calibration-chrome" aria-labelledby={titleId}>
       <figcaption className="checkpoint-trace__heading">
         <div>
-          <span className="eyebrow">Evaluation telemetry</span>
-          <strong>{data.length} calibrated {data.length === 1 ? 'state' : 'states'}</strong>
+          <span className="eyebrow">Illustrative checkpoint curves — not observations</span>
+          <strong>{data.length} authored example {data.length === 1 ? 'state' : 'states'}</strong>
         </div>
-        <ul className="checkpoint-trace__legend" aria-label="Trace legend">
-          <li><i className="trace-key trace-key--reward" />Eval reward</li>
-          <li><i className="trace-key trace-key--win-rate" />Defended win rate</li>
-          <li><i className="trace-key trace-key--loss" />Train loss</li>
+        <ul className="checkpoint-trace__legend" aria-label="Illustrative curve legend; all values are authored examples">
+          <li><i className="trace-key trace-key--reward" />Illustrative eval reward</li>
+          <li><i className="trace-key trace-key--win-rate" />Illustrative defended win rate</li>
+          <li><i className="trace-key trace-key--loss" />Illustrative train loss</li>
         </ul>
       </figcaption>
 
       <div className="checkpoint-trace__plot">
         <svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
-          <title id={titleId}>Checkpoint evaluation, defended win-rate, and training-loss trace</title>
-          <desc id={descriptionId}>From step {stepFormatter.format(first.step)} to {stepFormatter.format(latest.step)}. Evaluation reward moves from {formatDecimal(first.evalReward)} to {formatDecimal(latest.evalReward)}, defended win rate from {Math.round(first.defendedWinRate * 100)} percent to {Math.round(latest.defendedWinRate * 100)} percent, and training loss from {formatDecimal(first.trainLoss)} to {formatDecimal(latest.trainLoss)}.</desc>
+          <title id={titleId}>Illustrative checkpoint reward, win-rate and loss curves, not measured training results</title>
+          <desc id={descriptionId}>Authored demo values, not observations from training or evaluation. From illustrative step {stepFormatter.format(first.step)} to {stepFormatter.format(latest.step)}. Illustrative evaluation reward goes from {formatDecimal(first.evalReward)} to {formatDecimal(latest.evalReward)}, illustrative defended win rate from {Math.round(first.defendedWinRate * 100)} percent to {Math.round(latest.defendedWinRate * 100)} percent, and illustrative training loss from {formatDecimal(first.trainLoss)} to {formatDecimal(latest.trainLoss)}.</desc>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="var(--violet)" stopOpacity="0.26" />
@@ -100,12 +100,14 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
             {xTicks.map((checkpoint) => <line key={checkpoint.step} x1={xFor(checkpoint.step)} y1={PLOT_TOP} x2={xFor(checkpoint.step)} y2={PLOT_BOTTOM} />)}
           </g>
           <g className="checkpoint-trace__axes" aria-hidden="true">
+            <text x={PLOT_LEFT} y={PLOT_TOP - 10}>illustrative reward / win rate</text>
+            <text x={PLOT_RIGHT} y={PLOT_TOP - 10} textAnchor="end">illustrative loss</text>
             <text x={PLOT_LEFT - 10} y={PLOT_TOP + 4} textAnchor="end">{primaryMaximum.toFixed(2)}</text>
             <text x={PLOT_LEFT - 10} y={PLOT_BOTTOM + 4} textAnchor="end">{primaryMinimum.toFixed(2)}</text>
             <text x={PLOT_RIGHT + 10} y={PLOT_TOP + 4}>loss {lossMaximum.toFixed(2)}</text>
             <text x={PLOT_RIGHT + 10} y={PLOT_BOTTOM + 4}>0.00</text>
             {xTicks.map((checkpoint) => <text key={checkpoint.step} x={xFor(checkpoint.step)} y={PLOT_BOTTOM + 28} textAnchor="middle">{stepFormatter.format(checkpoint.step)}</text>)}
-            <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={CHART_HEIGHT - 8} textAnchor="middle">training step</text>
+            <text x={(PLOT_LEFT + PLOT_RIGHT) / 2} y={CHART_HEIGHT - 8} textAnchor="middle">illustrative training step (authored)</text>
           </g>
 
           <path className="checkpoint-trace__area" d={evalArea} fill={`url(#${gradientId})`} aria-hidden="true" />
@@ -124,10 +126,10 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
         </svg>
       </div>
 
-      <dl className="checkpoint-trace__readout" aria-label={`Latest checkpoint at step ${stepFormatter.format(latest.step)}`}>
-        <div><dt>Eval reward</dt><dd><strong>{formatDecimal(latest.evalReward)}</strong><small>from {formatDecimal(first.evalReward)}</small></dd></div>
-        <div><dt>Defended win rate</dt><dd><strong>{Math.round(latest.defendedWinRate * 100)}%</strong><small>from {Math.round(first.defendedWinRate * 100)}%</small></dd></div>
-        <div><dt>Train loss</dt><dd><strong>{formatDecimal(latest.trainLoss)}</strong><small>from {formatDecimal(first.trainLoss)}</small></dd></div>
+      <dl className="checkpoint-trace__readout" aria-label={`Latest illustrative checkpoint at authored step ${stepFormatter.format(latest.step)}, not a measured state`}>
+        <div><dt>Illustrative eval reward</dt><dd><strong>{formatDecimal(latest.evalReward)}</strong><small>from {formatDecimal(first.evalReward)}</small></dd></div>
+        <div><dt>Illustrative defended win rate</dt><dd><strong>{Math.round(latest.defendedWinRate * 100)}%</strong><small>from {Math.round(first.defendedWinRate * 100)}%</small></dd></div>
+        <div><dt>Illustrative train loss</dt><dd><strong>{formatDecimal(latest.trainLoss)}</strong><small>from {formatDecimal(first.trainLoss)}</small></dd></div>
       </dl>
     </figure>
   )
