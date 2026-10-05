@@ -1,0 +1,18 @@
+{
+  "analysis_seconds": 0.23075137300475035,
+  "command": "/home/alp/Projects/profile-program/work/verge-lab/.venv/bin/python3 tools/mine_public_preferences.py",
+  "confidence_label": "INFERENCE (assumed, not calibrated)",
+  "cpu": "Unknown",
+  "determinism": "summary.json, pairs.csv and examples.json are deterministic for stored source and unchanged core; run.json contains variable timings and environment",
+  "external_invocation_note": "Run under nice -n 19; process niceness recorded below. No GPU, model or paid provider calls.",
+  "fetch_requested": false,
+  "fetch_seconds": 2.609885996207595e-07,
+  "max_rss_kib_linux": 35672,
+  "niceness": 19,
+  "paid_compute_usd": 0,
+  "platform": "Linux-7.2.5-200.fc44.x86_64-x86_64-with-glibc2.43",
+  "python": "3.11.15",
+  "resources_label": "MEAS",
+  "script_sha256": "9d3bb90517b6c9269c542c45b940a22f2769f0c8004a08c5e7595cd532fcb05d",
+  "total_seconds": 0.23075163399334997
+}
