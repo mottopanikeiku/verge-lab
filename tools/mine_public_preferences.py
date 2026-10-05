@@ -413,7 +413,7 @@ def analyze(directory: Path) -> dict:
                     },
                 }
     with (directory / "pairs.csv").open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(pair_rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(pair_rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(pair_rows)
     for category in (
