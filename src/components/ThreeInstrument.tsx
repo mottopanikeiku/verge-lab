@@ -52,7 +52,7 @@ class InstrumentBoundary extends Component<InstrumentBoundaryProps, InstrumentBo
     if (this.state.failed) {
       return (
         <div className="instrument-fallback" role="status">
-          Visual instrument unavailable. The run evidence remains accessible in the tables below.
+          Illustrative visual unavailable. Example inputs and computed comparisons remain accessible below.
         </div>
       )
     }
@@ -142,20 +142,20 @@ export function ThreeInstrument({
         <figcaption>
           <span className="instrument-kicker">
             <Activity size={13} aria-hidden="true" />
-            Assistive field
+            Illustrative decoration
           </span>
           <strong>{title}</strong>
         </figcaption>
-        <span className="instrument-live">live mapping</span>
+        <span className="instrument-live">example mapping</span>
       </div>
       <div className="instrument-viewport" aria-hidden="true">
         <InstrumentBoundary>
-          <Suspense fallback={<div className="instrument-loading">Calibrating field…</div>}>
+          <Suspense fallback={<div className="instrument-loading">Loading illustrative field…</div>}>
             <InstrumentVisual kind={kind} metrics={metrics} />
           </Suspense>
         </InstrumentBoundary>
       </div>
-      <p>{description} Decorative signal only; it does not expose model internals.</p>
+      <p>{description} Decorative example mapping by ThreeUI (@designcodeio/threeui), not model internals or GPU diagnostics.</p>
     </figure>
   )
 }

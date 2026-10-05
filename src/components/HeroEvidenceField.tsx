@@ -68,6 +68,7 @@ export function HeroEvidenceField({ run }: HeroEvidenceFieldProps) {
   return (
     <div className="hero-evidence-field" aria-hidden="true">
       <svg viewBox={`0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}`} preserveAspectRatio="xMidYMid slice">
+        <title>Illustrative example candidate field and computed pair yield</title>
         <defs>
           <filter id="hero-node-glow" x="-200%" y="-200%" width="400%" height="400%">
             <feGaussianBlur stdDeviation="5" result="blur" />
@@ -98,7 +99,7 @@ export function HeroEvidenceField({ run }: HeroEvidenceFieldProps) {
           <circle className="hero-aperture__track" r={APERTURE_RADIUS} />
           <circle className="hero-aperture__value" r={APERTURE_RADIUS} style={apertureStyle} transform="rotate(-90)" />
           <text className="hero-aperture__number" textAnchor="middle" y="3">{Math.round(defendedRate * 100)}%</text>
-          <text className="hero-aperture__label" textAnchor="middle" y="25">defended yield</text>
+          <text className="hero-aperture__label" textAnchor="middle" y="25">example defended yield</text>
         </g>
         <g className="hero-evidence-field__nodes">
           {points.map((point, index) => {
@@ -114,7 +115,7 @@ export function HeroEvidenceField({ run }: HeroEvidenceFieldProps) {
             const style = { '--hero-delay': `${280 + index * 44}ms` } as HeroVisualStyle
             return (
               <g key={point.id} className={`hero-node hero-node--${tone}`} transform={`translate(${point.x.toFixed(1)} ${point.y.toFixed(1)})`} style={style}>
-                <title>{`${point.id}: ${Math.round(meanConfidence * 100)}% mean verifier confidence`}</title>
+                <title>{`${point.id}: ${Math.round(meanConfidence * 100)}% mean illustrative confidence, not a verifier measurement`}</title>
                 <circle className="hero-node__halo" r={radius + 7} />
                 <circle className="hero-node__core" r={radius} filter="url(#hero-node-glow)" />
                 <text x={radius + 7} y="3">{String(index + 1).padStart(2, '0')}</text>

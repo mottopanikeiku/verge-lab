@@ -51,7 +51,7 @@ function App() {
       <aside className="side-rail" aria-label="Verge Lab navigation">
         <header className="brand-lockup">
           <div className="brand-mark" aria-hidden="true"><span /><span /><span /></div>
-          <div><strong>VERGE / LAB</strong><small>Preference calibration</small></div>
+          <div><strong>VERGE / LAB</strong><small>Illustrative preference demo</small></div>
         </header>
         <nav className="primary-nav" aria-label="Workbench views">
           {NAV_ITEMS.map((item) => {
@@ -59,7 +59,7 @@ function App() {
             return <button type="button" key={item.id} className={activeView === item.id ? 'is-active' : undefined} aria-current={activeView === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><span className="nav-index">{item.index}</span><Icon size={17} aria-hidden={true} /><span>{item.label}</span><ChevronRight className="nav-chevron" size={15} aria-hidden="true" /></button>
           })}
         </nav>
-        <footer className="rail-footer"><div><span className="status-dot" />{run.status}</div><dl><div><dt>Run</dt><dd>{run.id}</dd></div><div><dt>Schema</dt><dd>v{run.schemaVersion}</dd></div></dl></footer>
+        <footer className="rail-footer"><div><span className="status-dot" />Example artifact: {run.status}</div><dl><div><dt>Demo</dt><dd>{run.id}</dd></div><div><dt>Schema</dt><dd>v{run.schemaVersion}</dd></div></dl></footer>
       </aside>
 
       <header className="mobile-header">
@@ -68,6 +68,10 @@ function App() {
       </header>
 
       <main id="lab-main" tabIndex={-1}>
+        <aside className="example-notice" aria-labelledby="example-notice-title">
+          <strong id="example-notice-title">Illustrative demo — not measured results</strong>
+          <p>Every view uses static <code>artifacts/demo-run.json</code> derived from authored <code>examples/candidates.json</code>. All candidate and mutation judge scores, confidences, token counts, latencies, pair counts, cost and GPU estimates, model metadata, embedding coordinates/projections, curves, checkpoints and mutations are illustrative. Pair verdicts, margins, counts and mutation flips are deterministic calculations on example inputs, not model evaluations. No training, model inference or GPU monitoring runs in this UI.</p>
+        </aside>
         <div className="bench-content">
           {activeView === 'overview' ? <Overview run={run} onNavigate={navigate} /> : null}
           {activeView === 'topology' ? <RewardTopology run={run} filters={filters} onFiltersChange={setFilters} /> : null}
