@@ -2,6 +2,8 @@
 
 Verge Lab is an offline preference-pair miner and review tool for scored language-model responses.
 
+Live demo: https://mottopanikeiku.github.io/verge-lab/
+
 **Question:** When several scoring aspects disagree, which response pairs can a Pareto rule defend, and when should it abstain?
 
 The rule in [`verge_lab/pareto.py`](verge_lab/pareto.py) changes minimization scores to a higher-is-better direction, subtracts an assumed uncertainty penalty, and keeps an edge only if every adjusted margin is nonnegative and at least one clears the strict threshold. [`verge_lab/export.py`](verge_lab/export.py) recomputes comparisons before exporting defended pairs for DPO. The React UI reviews **authored illustrative examples**, not model measurements; its ambient instruments come from [ThreeUI](https://github.com/MengTo/threeui), not model internals.
@@ -49,3 +51,5 @@ The mining command uses the committed compact source without network access. Add
 ## Prior work and attribution
 
 [UltraFeedback](https://arxiv.org/abs/2310.01377) supplies GPT-4 annotations on responses to [TruthfulQA](https://arxiv.org/abs/2109.07958) prompts; its pinned card declares MIT, with upstream-content terms noted in the source metadata. [DPO](https://arxiv.org/abs/2305.18290) motivates the export format. The Pareto rule is this repository's engineering choice, not a reproduction of those papers. Project code and ThreeUI are MIT licensed; upstream assets retain their own terms.
+
+Written with AI coding assistance.
