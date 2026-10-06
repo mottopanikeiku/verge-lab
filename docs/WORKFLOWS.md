@@ -15,6 +15,22 @@ npm run dev
 
 The UI has an overview, a candidate partial-order graph with a data table, a pair review view, and an example configuration/checkpoint view. ThreeUI provides ambient visual instruments, not model internals or measurements. Its upstream runtime assets run in opaque-origin `allow-scripts` iframes; candidate data is not passed into them. Deployments with stricter privacy requirements should replace those assets with vetted self-hosted ones.
 
+### GitHub Pages
+
+The Vite base is `/verge-lab/` in `vite.config.ts`, so production scripts, styles and the favicon use the project prefix. To review the same production build locally:
+
+```bash
+npm ci
+npm run build
+npm run preview -- --host 127.0.0.1
+```
+
+Open `http://127.0.0.1:4173/verge-lab/`. The `pages.yml` workflow builds with the committed npm lockfile on pushes to `main` or manual dispatch, uploads `dist` with `actions/upload-pages-artifact`, and deploys with `actions/deploy-pages`. It does not enable Pages or change repository settings; the repository must already use GitHub Actions as its Pages source.
+
+The npm lockfile pins installed dependencies, including ThreeUI 0.3.0. Its three used iframe scenes reference Tailwind, Iconify, GSAP and Three.js. A Vite transform pins Tailwind to 3.4.17 and adds SHA-384 integrity checks to the already-versioned Iconify 1.0.7, GSAP 3.12.2 and Three.js r128 scripts. Tailwind's CDN endpoint does not send a CORS header, so it cannot support cross-origin SRI. Google Fonts stylesheets and decorative image endpoints remain remote assets, not pinned executable dependencies.
+
+The checked-in [browser smoke record](assets/pages-smoke.json) and [pair-review screenshot](assets/pages-pair-lab.png) come from the prefixed production build in headless Chromium. The run visited every view, filtered 12 comparisons to 10 ambiguous pairs, opened pair details, exercised an empty candidate search, and restored the register. It recorded no console errors, uncaught page errors, failed requests or HTTP error responses.
+
 ## Analyze and export
 
 ```bash

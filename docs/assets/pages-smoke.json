@@ -1,0 +1,33 @@
+{
+  "url": "http://127.0.0.1:43761/verge-lab/",
+  "browser": "Playwright 1.61.0 Chromium 153.0.8010.12",
+  "headless": true,
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "steps": [
+    "Production overview and illustrative iframe loaded under /verge-lab/.",
+    "Reward topology view loaded, including its Three.js iframe.",
+    "Runbook loaded, including its diagnostics iframe.",
+    "Pair lab filtered 12 comparisons to 10 ambiguous pairs and opened evidence details.",
+    "Candidate search showed the empty state and restored the filtered pair register."
+  ],
+  "allPairCount": 12,
+  "ambiguousPairCount": 10,
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "badResponses": [],
+  "localRequests": [
+    "http://127.0.0.1:43761/verge-lab/",
+    "http://127.0.0.1:43761/verge-lab/assets/index-DdRqFVmR.js",
+    "http://127.0.0.1:43761/verge-lab/assets/index-CxBQ0wn4.css",
+    "http://127.0.0.1:43761/verge-lab/assets/ConstellationField-BRqX-br2.js",
+    "http://127.0.0.1:43761/verge-lab/assets/NeuformBatchEffects-Dm6i3eLO.js",
+    "http://127.0.0.1:43761/verge-lab/favicon.svg",
+    "http://127.0.0.1:43761/verge-lab/assets/TopologyField-CRohABDg.js",
+    "http://127.0.0.1:43761/verge-lab/assets/DiagnosticsPanel-D3U3MAvP.js"
+  ],
+  "screenshot": "docs/assets/pages-pair-lab.png"
+}
