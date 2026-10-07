@@ -103,6 +103,14 @@ Review the code and account costs first: complete training can use three paralle
 
 The reward model is an older proxy trained before HelpSteer2, not a human judge. Its declared training sources exclude HelpSteer2, but older-source prompt overlap and shared pretraining cannot be ruled out. Three training seeds, 1,024 pairs, truncation and a 192-token generation cap limit what the result can establish.
 
+After committing the complete generations, scores and summaries, I remove the downloaded base-model/scorer cache while retaining the learned adapters and completed result units:
+
+```bash
+uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode cleanup
+```
+
+`cache-cleanup.json` records whether the cache existed before and after deletion. Offline analysis still works; a later generation or scoring run must first restore the pinned downloads with `--mode cache`.
+
 
 ## Historical GPU smoke run
 

@@ -86,6 +86,25 @@ def completed_results(payload: bytes, size: str) -> dict:
     return {"models": models, "score": score}
 
 
+@app.function(image=image, cpu=2, memory=8192, timeout=60, max_containers=1,
+              volumes={"/cache": weights})
+def cleanup_weights() -> dict:
+    """Remove downloaded weights after results are committed; retain all adapters."""
+    import shutil
+
+    weights.reload()
+    root = Path("/cache/hf")
+    present_before = root.exists()
+    if present_before:
+        shutil.rmtree(root)
+    weights.commit()
+    weights.reload()
+    return {
+        "volume": "verge-lab-day-hf", "cache_present_before": present_before,
+        "cache_present_after": root.exists(), "adapters_untouched": True,
+    }
+
+
 @app.function(image=image, cpu=2, memory=8192, timeout=900, max_containers=1,
               volumes={"/cache": weights})
 def cache_models() -> dict:
@@ -406,5 +425,9 @@ async def main(
         save_compressed(RESULTS / "records.jsonl.gz", result.pop("rows"))
         (RESULTS / "reward-metadata.json").write_text(
             json.dumps(result, indent=2, sort_keys=True) + "\n")
+    elif mode == "cleanup":
+        result = await cleanup_weights.remote.aio()
+        (RESULTS / "cache-cleanup.json").write_text(
+            json.dumps(result, indent=2, sort_keys=True) + "\n")
     else:
-        raise ValueError("mode must be cache, pilot, train, full or score")
+        raise ValueError("mode must be cache, pilot, train, full, score or cleanup")

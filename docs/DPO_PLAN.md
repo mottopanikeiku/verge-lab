@@ -1,6 +1,6 @@
 # Does Pareto pair selection improve DPO training?
 
-I will compare equal-size training sets rather than treating score agreement as evidence of better trained models. I commit this plan before any training or reward results.
+I compare equal-size training sets rather than treating score agreement as evidence of better trained models. I committed the original plan and exact datasets at `12c887e` before any training or reward results. Later compute-only amendments are explicitly separated below.
 
 ## Data and fixed selectors
 
