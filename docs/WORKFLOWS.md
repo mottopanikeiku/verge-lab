@@ -71,9 +71,37 @@ The human reference is the separately collected `preference_strength`, not helpf
 
 For equal-yield comparison, I exclude helpfulness ties from **both** selectors. Otherwise the gap baseline cannot choose a direction, and forcing a winner would be misleading. Within each split, Pareto selects all defended pairs in that common eligible pool; the baseline selects exactly as many pairs by descending absolute helpfulness gap and predicts the gap's sign. At equal gaps I use a label-blind SHA-256 ordering with a fixed seed, and report variation across twenty seeds. The baseline's agreement with helpfulness itself is tautological; its agreement with the separate human preferences is the useful test.
 
-I report train and validation separately and do not tune on validation. Wilson intervals describe nominal binomial variation of agreement, not uncertainty in human annotations or a test of one selector's superiority. There is no model training, inference, timing benchmark or paid compute.
+I report train and validation separately and do not tune on validation. Wilson intervals describe nominal binomial variation of agreement, not uncertainty in human annotations or a test of one selector's superiority. This label-agreement comparison uses no model inference or paid compute; the separate DPO experiment below tests trained models.
 
 HelpSteer2 and HelpSteer2-Preference are by NVIDIA, Scale AI and Zhilin Wang et al., released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). I retain their card and source links; compact files omit text but preserve scores, strengths and identifying hashes. HelpSteer3 also declares CC-BY-4.0, but its preferences and free-text feedback do not supply matched numeric multi-aspect ratings. I do not invent aspect scores for it.
+
+
+## Equal-size DPO training experiment
+
+I fix the training sets, evaluation prompts and decision rule in [DPO_PLAN.md](DPO_PLAN.md). The original plan/data commit is `12c887e`; `3b062bd` records the compute-only amendment and selected 1.5B model before the complete experiment. The amendment explicitly acknowledges that the larger model's unscored pilot exceeded the original aggregate-minute ceiling. It changes no training or evaluation choice.
+
+The committed `results/day-dpo/data.json.gz` contains full training texts for three 1,024-pair conditions and 192 held-out prompts. `data-metadata.json` records source hashes, eligibility, pair IDs, prompt IDs and overlaps. To rebuild those inputs from the pinned upstream cache:
+
+```bash
+uv run python tools/compare_human_preferences.py --fetch --cache .cache/helpsteer2
+uv run python tools/prepare_day_dpo.py --cache .cache/helpsteer2
+```
+
+Training requires a configured Modal account and paid L4 GPUs. The client runs no local model inference. Its container image pins PyTorch, Transformers, TRL, PEFT, datasets and Accelerate. The cache command downloads both candidate models and the independent scorer using only a CPU container; GPU functions load locally from `verge-lab-day-hf`. Nine adapters are saved separately in `verge-lab-day-adapters`.
+
+```bash
+uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode cache
+uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode pilot --size 1.5B
+uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode full --size 1.5B
+uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode score --size 1.5B
+uv run python tools/analyze_day_dpo.py
+```
+
+Review the code and account costs first: complete training can use three parallel L4 containers, with a 30-minute timeout per call; scoring uses one. The pilot is compute-only and its adapter is not reused. A complete rerun starts each condition/seed from the same pinned base checkpoint; an already saved matching adapter may be loaded to resume generation. To retrain rather than resume, use a new adapter volume in your own account.
+
+`generations-*.jsonl.gz` retain every generated answer and text hash; `training-*.json` retain actual optimizer progress, loss, adapter changes and settings. `records.jsonl.gz` binds the independent reward to each response. Analysis rejects missing, duplicate, nonfinite or unbalanced records and checks the exact committed prompt IDs. `summary.json` and `reward-difference.svg` are computed from those raw scores with the planned crossed prompt/seed bootstrap. Token lengths and scorer-input truncation are reported rather than hidden.
+
+The reward model is an older proxy trained before HelpSteer2, not a human judge. Its declared training sources exclude HelpSteer2, but older-source prompt overlap and shared pretraining cannot be ruled out. Three training seeds, 1,024 pairs, truncation and a 192-token generation cap limit what the result can establish.
 
 
 ## Historical GPU smoke run

@@ -291,8 +291,12 @@ def render_svg(summary):
         '<text x="28" y="382">Bars: means; dots: seed means; '
         'text: median and observed range</text>',
     ])
-    maximum = max(row["response_tokens"]["mean"]
-                  for row in summary["conditions"].values())
+    maximum = max(
+        max(row["response_tokens"]["mean"],
+            max((seed_row["response_tokens"]["mean"] for seed_row in row["per_seed"]),
+                default=0))
+        for row in summary["conditions"].values()
+    )
     scale = 380 / max(maximum, 1)
     for index, condition in enumerate(("start", *CONDITIONS)):
         row = summary["conditions"][condition]

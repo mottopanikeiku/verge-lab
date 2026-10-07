@@ -294,6 +294,20 @@ def test_length_spread_and_seed_means_keep_seed_variation():
         {"seed": 1701, "mean": 0}, {"seed": 1702, "mean": 10}, {"seed": 1703, "mean": 20}]
 
 
+def test_svg_length_domain_contains_seed_means_above_condition_mean():
+    rows = balanced_rows()
+    for row in rows:
+        if row["condition"] == "pareto":
+            row["response_tokens"] = 192 if row["seed"] == 1701 else 0
+    summary = analysis.summarize(analysis.validate_records(rows), draws=20)
+    svg = ElementTree.fromstring(analysis.render_svg(summary))
+    dots = [element for element in svg.iter()
+            if element.tag.endswith("circle") and float(element.attrib["cy"]) >= 400]
+    assert len(dots) == 9
+    assert all(210 <= float(dot.attrib["cx"]) <= 590 for dot in dots)
+    assert max(float(dot.attrib["cx"]) for dot in dots) == 590
+
+
 def test_percentile_interval_uses_linear_interpolation():
     assert analysis.percentile([0, 10, 20], 0.025) == 0.5
     assert analysis.percentile([0, 10, 20], 0.975) == 19.5
