@@ -48,6 +48,44 @@ def save_compressed(path: Path, rows: list[dict]) -> None:
     path.write_bytes(gzip.compress(content, mtime=0))
 
 
+def save_object(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    content = json.dumps(
+        value, sort_keys=True, ensure_ascii=False, allow_nan=False,
+    ).encode()
+    path.write_bytes(gzip.compress(content, mtime=0))
+
+
+@app.function(image=image, cpu=2, memory=8192, timeout=300, max_containers=1,
+              volumes={"/adapters": adapters})
+def completed_results(payload: bytes, size: str) -> dict:
+    """Recover completed units on CPU before allocating any new GPU work."""
+    adapters.reload()
+    data = json.loads(gzip.decompress(payload))
+    models = []
+    units = [("start", 1701), *((c, s) for c in CONDITIONS for s in SEEDS)]
+    for condition, seed in units:
+        path = Path(f"/adapters/{size}/results/{condition}-{seed}.json.gz")
+        if not path.exists():
+            continue
+        result = json.loads(gzip.decompress(path.read_bytes()))
+        if (
+            result["model"] != list(MODELS[size])
+            or result["evaluation_sha256"] != digest(data["evaluation"])
+            or result["condition"] != condition
+            or result["seed"] != (None if condition == "start" else seed)
+        ):
+            raise ValueError("Saved generations do not match the fixed experiment")
+        if condition != "start":
+            metadata = result["training"]
+            if metadata["training_data_sha256"] != digest(data["train"][condition]):
+                raise ValueError("Saved training set does not match the fixed experiment")
+        models.append(result)
+    score_path = Path(f"/adapters/{size}/results/scores.json.gz")
+    score = json.loads(gzip.decompress(score_path.read_bytes())) if score_path.exists() else None
+    return {"models": models, "score": score}
+
+
 @app.function(image=image, cpu=2, memory=8192, timeout=900, max_containers=1,
               volumes={"/cache": weights})
 def cache_models() -> dict:
@@ -260,16 +298,25 @@ def train_and_generate(payload: bytes, size: str, condition: str, seed: int) -> 
     del model, tokenizer
     gc.collect()
     torch.cuda.empty_cache()
-    return {"training": metadata, "generations": rows}
+    result = {
+        "training": metadata, "generations": rows, "model": MODELS[size],
+        "condition": condition, "seed": None if condition == "start" else seed,
+        "evaluation_sha256": digest(data["evaluation"]),
+    }
+    save_object(Path(f"/adapters/{size}/results/{condition}-{seed}.json.gz"), result)
+    adapters.commit()
+    return result
 
 
 @app.function(image=image, gpu="L4", cpu=2, memory=8192, timeout=1800, max_containers=1,
-              volumes={"/cache": weights})
-def score_generations(rows: list[dict]) -> dict:
+              volumes=VOLUMES)
+def score_generations(rows: list[dict], size: str) -> dict:
     import torch
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
     weights.reload()
+    adapters.reload()
+    input_sha256 = digest(rows)
     tokenizer = AutoTokenizer.from_pretrained(
         REWARD[0], revision=REWARD[1], local_files_only=True,
     )
@@ -292,8 +339,13 @@ def score_generations(rows: list[dict]) -> dict:
             row["reward_input_truncated"] = truncated
             row["reward_model"] = REWARD[0]
             row["reward_revision"] = REWARD[1]
-    return {"rows": rows, "reward_truncated_count": truncations, "reward_model": REWARD,
-            "versions": VERSIONS}
+    result = {
+        "rows": rows, "reward_truncated_count": truncations, "reward_model": REWARD,
+        "versions": VERSIONS, "generations_sha256": input_sha256,
+    }
+    save_object(Path(f"/adapters/{size}/results/scores.json.gz"), result)
+    adapters.commit()
+    return result
 
 
 def store_training_result(result: dict) -> None:
@@ -303,29 +355,39 @@ def store_training_result(result: dict) -> None:
     if metadata is not None:
         (RESULTS / f"training-{name}.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n")
+    details = {key: result[key] for key in ("model", "condition", "seed", "evaluation_sha256")}
+    (RESULTS / f"generation-metadata-{name}.json").write_text(
+        json.dumps(details, indent=2, sort_keys=True) + "\n")
 
 
 @app.local_entrypoint()
-def main(
+async def main(
     mode: str = "cache", size: str = "0.5B", condition: str = "pareto", seed: int = 1701,
 ) -> None:
     RESULTS.mkdir(parents=True, exist_ok=True)
     if mode == "cache":
-        result = cache_models.remote()
+        result = await cache_models.remote.aio()
         (RESULTS / "cache-models.json").write_text(
             json.dumps(result, indent=2, sort_keys=True) + "\n")
     elif mode == "pilot":
-        result = pilot.remote(DATA.read_bytes(), size)
+        result = await pilot.remote.aio(DATA.read_bytes(), size)
         (RESULTS / f"pilot-{size}.json").write_text(
             json.dumps(result, indent=2, sort_keys=True) + "\n")
         print(json.dumps(result, indent=2))
     elif mode == "train":
-        store_training_result(train_and_generate.remote(DATA.read_bytes(), size, condition, seed))
+        result = await train_and_generate.remote.aio(DATA.read_bytes(), size, condition, seed)
+        store_training_result(result)
     elif mode == "full":
         payload = DATA.read_bytes()
-        store_training_result(train_and_generate.remote(payload, size, "start", 1701))
-        requests = [(payload, size, c, s) for c in CONDITIONS for s in SEEDS]
-        for result in train_and_generate.starmap(requests, order_outputs=False):
+        completed = await completed_results.remote.aio(payload, size)
+        done = {(result["condition"], result["seed"]) for result in completed["models"]}
+        for result in completed["models"]:
+            store_training_result(result)
+        if ("start", None) not in done:
+            result = await train_and_generate.remote.aio(payload, size, "start", 1701)
+            store_training_result(result)
+        requests = [(payload, size, c, s) for c in CONDITIONS for s in SEEDS if (c, s) not in done]
+        async for result in train_and_generate.starmap.aio(requests, order_outputs=False):
             store_training_result(result)
     elif mode == "score":
         rows = []
@@ -334,7 +396,12 @@ def main(
             rows.extend(
                 json.loads(line) for line in gzip.decompress(path.read_bytes()).splitlines()
             )
-        result = score_generations.remote(rows)
+        completed = await completed_results.remote.aio(DATA.read_bytes(), size)
+        result = completed["score"]
+        if result is None:
+            result = await score_generations.remote.aio(rows, size)
+        elif result["generations_sha256"] != digest(rows) or result["reward_model"] != list(REWARD):
+            raise ValueError("Saved scores do not match these generations and reward model")
         save_compressed(RESULTS / "records.jsonl.gz", result.pop("rows"))
         (RESULTS / "reward-metadata.json").write_text(
             json.dumps(result, indent=2, sort_keys=True) + "\n")

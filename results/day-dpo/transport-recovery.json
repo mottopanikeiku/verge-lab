@@ -1,0 +1,20 @@
+{
+  "first_attempt_app": "ap-om3PBppaxTtqhbV8D4d0qz",
+  "first_attempt_budget_job": "verge-lab-1791399213199",
+  "first_attempt_client_python": "3.14.7",
+  "first_attempt_client_modal": "1.5.3",
+  "observed_failure": "Heartbeat DeadlineExceeded, grpclib missing _transport, app stopped, starmap submit ConflictError",
+  "first_attempt_elapsed_seconds": 1355.54,
+  "first_attempt_cost_upper_bound_usd": 1.19,
+  "first_attempt_trained_results_returned": 0,
+  "first_attempt_rewards_computed": false,
+  "superseded_start_gzip_sha256": "da89951d75b95d87691f4f65dc55824d7a0118ff26974d82de0adc263cedfae8",
+  "superseded_start_use": "Not scored or included as an evaluation observation; the complete-run start replaces it.",
+  "original_allocation_usd": 4.5,
+  "approved_allocation_usd": 5.55,
+  "relaunch_client_python": "3.12",
+  "relaunch_client_modal": "1.5.3",
+  "recovery": "Asynchronous client calls; adapters, complete generation units and scores saved inside the Volume before return; CPU recovery skips completed GPU units.",
+  "unchanged": ["selected 1.5B checkpoint", "training pairs and directions", "seeds", "hyperparameters", "evaluation prompts", "reward checkpoint", "bootstrap", "decision rule"],
+  "cost_label": "Conservative wrapper upper bound, not an invoice or measured GPU-only runtime."
+}

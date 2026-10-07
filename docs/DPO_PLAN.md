@@ -68,3 +68,9 @@ On October 7, 2026, I amend only the compute ceiling after the unscored 1.5B pil
 I choose **Qwen2.5-1.5B-Instruct** anyway, before any complete training run or reward scoring, because three parallel L4 containers make the workload fit the extended working window and the unchanged $4.50 allocation. A 70-minute booking for three training/generation containers plus a separate 30-minute scorer booking reserves approximately **$4.21**, excluding approximately $0.04 already used for downloads and the pilot. These are conservative booking estimates, not invoiced costs or local timings.
 
 I record the choice and measured pilot values in `results/day-dpo/model-choice.json`. The data, pair counts, seed IDs, hyperparameters, held-out prompts, scorer, bootstrap and decision rule are unchanged. No pilot validation answers or reward scores exist, and the pilot adapter is discarded. The original plan and this amendment remain separately visible in commit history.
+
+## Transport recovery, without changing the experiment
+
+The first complete-run attempt returned only the unscored starting-model generations before its Python 3.14 client lost Modal heartbeats and the app stopped. No trained result or reward was returned. The budget wrapper charged a conservative **$1.19 upper bound** for that attempt, not a measured GPU invoice.
+
+Before relaunching, I increase the compute allocation from **$4.50 to $5.55** to cover that infrastructure loss. I run the Modal client in **Python 3.12**, use an asynchronous entrypoint, and save each completed adapter, generation unit and scoring result inside the Modal Volume before returning it to the client. Reruns recover completed units on CPU and skip their GPU work. The initial unscored start is superseded by the complete-run start; it never contributes a reward observation. This is an infrastructure-only change: every data, model, training, evaluation and decision choice remains fixed.

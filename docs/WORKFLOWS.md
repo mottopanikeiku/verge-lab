@@ -90,16 +90,16 @@ uv run python tools/prepare_day_dpo.py --cache .cache/helpsteer2
 Training requires a configured Modal account and paid L4 GPUs. The client runs no local model inference. Its container image pins PyTorch, Transformers, TRL, PEFT, datasets and Accelerate. The cache command downloads both candidate models and the independent scorer using only a CPU container; GPU functions load locally from `verge-lab-day-hf`. Nine adapters are saved separately in `verge-lab-day-adapters`.
 
 ```bash
-uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode cache
-uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode pilot --size 1.5B
-uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode full --size 1.5B
-uv run --with modal==1.5.3 modal run tools/day_dpo_modal.py --mode score --size 1.5B
+uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode cache
+uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode pilot --size 1.5B
+uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode full --size 1.5B
+uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode score --size 1.5B
 uv run python tools/analyze_day_dpo.py
 ```
 
-Review the code and account costs first: complete training can use three parallel L4 containers, with a 30-minute timeout per call; scoring uses one. The pilot is compute-only and its adapter is not reused. A complete rerun starts each condition/seed from the same pinned base checkpoint; an already saved matching adapter may be loaded to resume generation. To retrain rather than resume, use a new adapter volume in your own account.
+Review the code and account costs first: complete training can use three parallel L4 containers, with a 30-minute timeout per call; scoring uses one. The pilot is compute-only and its adapter is not reused. I use a Python 3.12 client after encountering a Python 3.14 transport failure in the first attempt. Each completed unit is saved inside the adapter Volume before being returned; reruns recover completed generations and scores on CPU and skip their GPU work. An already saved matching adapter can also resume interrupted generation. To retrain rather than resume, use a new adapter volume in your own account.
 
-`generations-*.jsonl.gz` retain every generated answer and text hash; `training-*.json` retain actual optimizer progress, loss, adapter changes and settings. `records.jsonl.gz` binds the independent reward to each response. Analysis rejects missing, duplicate, nonfinite or unbalanced records and checks the exact committed prompt IDs. `summary.json` and `reward-difference.svg` are computed from those raw scores with the planned crossed prompt/seed bootstrap. Token lengths and scorer-input truncation are reported rather than hidden.
+`generations-*.jsonl.gz` retain every generated answer and text hash; `generation-metadata-*.json` identify the pinned checkpoint and evaluation set. `training-*.json` retain actual optimizer progress, loss, adapter changes and settings. `records.jsonl.gz` binds the independent reward to each response. Analysis rejects missing, duplicate, nonfinite or unbalanced records and checks the exact committed prompt IDs. `summary.json` and `reward-difference.svg` are computed from those raw scores with the planned crossed prompt/seed bootstrap. Response length counts generated Qwen tokens through the first EOS, including EOS when present; scorer-input truncation is reported rather than hidden.
 
 The reward model is an older proxy trained before HelpSteer2, not a human judge. Its declared training sources exclude HelpSteer2, but older-source prompt overlap and shared pretraining cannot be ruled out. Three training seeds, 1,024 pairs, truncation and a 192-token generation cap limit what the result can establish.
 
