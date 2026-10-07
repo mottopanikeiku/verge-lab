@@ -1,0 +1,49 @@
+{
+  "estimated_full_seconds_with_reward_allowance": 10915.051067568002,
+  "evaluated_reward": false,
+  "generated_tokens": 949,
+  "generation_seconds_8_prompts": 16.874047147,
+  "gpu": "L4",
+  "kind": "compute_only_pilot",
+  "size": "1.5B",
+  "training": {
+    "condition": "pilot",
+    "gpu": "NVIDIA L4",
+    "logs": [
+      {
+        "epoch": 1.0,
+        "step": 4,
+        "total_flos": 0.0,
+        "train_loss": 0.6945990324020386,
+        "train_runtime": 45.2665,
+        "train_samples_per_second": 1.414,
+        "train_steps_per_second": 0.088
+      }
+    ],
+    "lora_weight_l1_change": 773.1556023359299,
+    "metrics": {
+      "epoch": 1.0,
+      "total_flos": 0.0,
+      "train_loss": 0.6945990324020386,
+      "train_runtime": 45.2665,
+      "train_samples_per_second": 1.414,
+      "train_steps_per_second": 0.088
+    },
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "optimizer_steps": 4,
+    "pair_count": 64,
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "seed": 1701,
+    "size": "1.5B",
+    "training_data_sha256": "cfac11a764cc95b7bb76cb9a93aa1b22f1ab37b24720c107f1cc0f72441cb4e0",
+    "training_seconds": 45.592220502,
+    "versions": {
+      "accelerate": "1.10.1",
+      "datasets": "4.1.1",
+      "peft": "0.17.1",
+      "torch": "2.8.0",
+      "transformers": "4.56.2",
+      "trl": "0.23.1"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "condition": "pareto",
+  "evaluation_sha256": "e42427da8da953dadaec71968cc71d6131ca9d9c35284c949ff219a9cbadd22b",
+  "model": [
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  ],
+  "seed": 1702
+}
