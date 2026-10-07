@@ -1,0 +1,164 @@
+I reviewed 12 HelpSteer2 contradictions with AI assistance
+
+The primary rule uses correctness and coherence only. Overall helpfulness is
+held out. I selected defended pairs with a nonzero Pareto sign opposite the
+nonzero human preference sign. There were 151 such pairs: 143 train and 8
+validation. Eight validation cases cannot supply a twelve-case sample, so I
+sampled from all 151 IDs sorted lexicographically, using seed 20261007.
+I saved human-selection.json before reading the sampled text. The fixed draw
+contains 11 train cases and 1 validation case; it is not validation-only.
+
+I read every full conversation prompt, both full responses, the post-processed
+preference statement/elaboration, the most-similar preferences and all supplied
+unprocessed human justifications. human-samples.jsonl preserves all of them,
+plus the original five numeric aspect scores from the compact source.
+
+I lean toward the human preference direction in 8 cases, the Pareto direction
+in 2, and remain uncertain in 2. The primary category counts are:
+  Prompt constraint versus fluency: 4
+  Grounding or correctness tension: 3
+  Completeness versus scope: 2
+  Underspecified prompt: 1
+  Audience or conversation alignment: 2
+
+These are AI-assisted qualitative judgments, not independent human annotations,
+not a human-error audit, and not preference accuracy. I could see the ratings
+and human feedback. I assigned categories after reading. A preferred response
+can remain incomplete or wrong. The raw human preferences often contain real
+dissent; their aggregation and rounded aspect scores need not represent the
+same priorities. I did not execute response code or independently fact-check
+all philosophical, astronomical, financial or product claims.
+
+Per-case notes in fixed draw order
+
+1. helpsteer2:04586 — Philosophy and finance — Human preference, moderate.
+Pareto: response 2; human: response 1, strength -2.
+Response 1 applies broader philosophical ideas to course activities. Response 2
+asserts direct financial positions, including a sweeping claim that Kant thought
+borrowing morally wrong, without support. I prefer the interpretive framing,
+while noting that response 1's final topics are not tied to named philosophers.
+I have not independently checked those historical attributions.
+
+2. helpsteer2:06456 — Chronological summary — Human preference, strong.
+Pareto: response 2; human: response 1, strength -2.
+Response 1 orders Florida training, summer wins, the US Open start and victory.
+Response 2 is smoother but puts summer success in a clause after the US Open
+win. The prompt explicitly requires chronological ordering, so I prefer task
+fit over the sole decisive coherence advantage.
+
+3. helpsteer2:01458 — Research paper — Uncertain.
+Pareto: response 2; human: response 1, strength -2.
+Response 1 supplies a title, abstract, introduction and references but leaves
+most sections as descriptions and speaks as if a proposed study has results.
+Response 2 gives transparent but generic writing guidance, not the requested
+paper. The feedback divides over partial completion versus misleading simulated
+research. Neither is publication-ready, and I have not verified the references.
+
+4. helpsteer2:05630 — Radio astronomy — Uncertain.
+Pareto: response 2; human: response 1, strength -1.
+The full prompt is only 'please explain how radio astron'. Response 1 gives
+mechanism, interference, discoveries and applications; response 2 explains more
+observable objects. The intended scope is not established. A historical date
+is disputed in the human feedback, but I have not checked it independently.
+
+5. helpsteer2:08683 — Science day skit — Human preference, moderate.
+Pareto: response 1; human: response 2, strength +2. This is the validation case.
+Response 1 is a short crisis premise without a concrete resolution. Response 2
+has characters and a beginning-to-end experiment/accident/containment plot.
+I prefer the usable plot despite its longer four-act outline and mismatched
+'end credits roll' line. Four acts alone do not establish runtime, and the
+human feedback genuinely disagrees about what a short skit requires.
+
+6. helpsteer2:01908 — Unity tutoring — Pareto, strong.
+Pareto: response 2; human: response 1, strength -2.
+The full conversation says to give only one step at a time. Response 2 gives
+one Content-reference assignment. Response 1 gives several steps, introduces
+Content Size properties and prematurely declares the advanced UI complete.
+I prefer response 2's pacing and more plausible action, without claiming the
+inherited tutorial is correct. It should specify a RectTransform reference.
+Some human preferences explicitly value coverage despite the pacing violation.
+No Unity code was executed.
+
+7. helpsteer2:05448 — QR-menu owner pitch — Pareto, weak.
+Pareto: response 2; human: response 1, strength -2.
+Response 2 emphasizes owner-facing editing and dashboard screenshots. Response 1
+explains benefits but mostly suggests diner ordering and loyalty screens.
+I slightly prefer the owner focus. Both invent possible product capabilities
+not established by the prompt, so neither is a verified description of the app.
+Human preferences instead value broader benefits or more elaborate prose.
+
+8. helpsteer2:02300 — Resume without a resume — Human preference, strong.
+Pareto: response 1; human: response 2, strength +1.
+No resume exists in the full conversation. Response 1 nevertheless claims
+specific suggestions and says the resume looks good. Response 2 gives general
+tips without pretending it reviewed a document. Both should request the resume,
+but I prefer response 2's lack of fabricated review context.
+
+9. helpsteer2:08302 — E-commerce movie — Human preference, moderate.
+Pareto: response 1; human: response 2, strength +1.
+Response 1 tells a richer eventual-success story. Response 2 more explicitly
+narrates the website, social media, advertising, SEO, service and prices from
+the preceding conversation. I prefer those requested steps. Neither specifies
+an exact individual product or handles Australian requirements in useful detail.
+
+10. helpsteer2:08664 — Beginner crypto course — Human preference, moderate.
+Pareto: response 2; human: response 1, strength -1.
+Both have ten chapters. Response 1 supplies actual practical-lesson ideas and
+strategy/risk planning. Response 2 mostly relegates practical lessons to a
+closing suggestion and adds an advanced-techniques chapter for beginners.
+I prefer response 1's task fit but do not endorse its Martingale mention or
+response 2's leverage and derivatives material as a safe financial curriculum.
+
+11. helpsteer2:01915 — Continue Android blog from V — Human preference, weak.
+Pareto: response 2; human: response 1, strength -1.
+Both restart from I and give outlines rather than the requested code. Response 1
+at least retains the process name and code/path requirement; response 2 becomes
+more generic and repetitive. I slightly prefer the retained details, not the
+promises of persistence after uninstalling the parent app. Neither supplies a
+working mechanism, and Android feasibility was not checked.
+
+12. helpsteer2:08095 — Regression gradient — Human preference, strong.
+Pareto: response 2; human: response 1, strength -1.
+Response 1 gives (2/b) B^T (Bw-t). Response 2 gives -2/b (t-Bw) B^T. With B
+shaped b by d and the residual b by 1, response 2's product is not generally
+defined. This is static dimensional reasoning, not an executed numeric check.
+Most human preferences favor response 1 for concision and call both formulas
+correct; my reason is separate from those claims. The correctness scores rank
+response 2 higher, so the two-aspect rule selects the less defensible formula.
+
+What this adds
+
+This sample makes some mismatches concrete: coherence cannot substitute for
+chronological ordering, apparently specific feedback can invent missing context,
+and completeness can conflict with a one-step request. It also shows that
+neither a human preference direction nor two rounded aspect scores remove the
+need to read the actual task and response. I do not turn these twelve judgments
+into a superiority claim for either method.
+
+Source and reproduction
+
+After generating results/human-preferences, run:
+nice -n 19 python tools/review_disagreements.py --human-cache PATH_TO_HELPSTEER2_CACHE
+
+The cache must contain preference/preference.jsonl.gz from pinned HelpSteer2
+revision 990b2711a36180dd19d9c94b8627844866f8982a. The helper checks the cached
+compressed hash and existing compact hash, selects IDs before text, and retains
+only the twelve full preference rows. It matched all 12 prompt hashes, all 24
+response hashes, original preference strengths and normalized splits (upstream
+'val' means validation). It made no model calls and used no paid compute.
+The code fetches the sample; it does not regenerate these qualitative judgments.
+
+HelpSteer2 and HelpSteer2-Preference, NVIDIA and Scale AI; Zhilin Wang et al.
+License: CC-BY-4.0. Changes: sampled subset; full preference fields retained;
+aspect scores joined from the compact source by checked prompt/response hashes.
+https://creativecommons.org/licenses/by/4.0/
+https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/preference/preference.jsonl.gz
+https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/README.md
+https://arxiv.org/abs/2406.08673
+https://arxiv.org/abs/2410.01257
+
+The source card says statement/elaboration text is post-processed from human
+justifications and that the most-similar preferences determine the overall
+label. All supplied raw preferences remain available in the sample, including
+dissent. human-review.json contains structured decisions and exact supporting
+quotes; human-provenance.json records attribution and full-text hash matches.

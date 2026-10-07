@@ -52,10 +52,12 @@ def download(cache: Path, filename: str) -> Path:
     if not target.exists():
         partial = target.with_suffix(target.suffix + ".partial")
         try:
-            with urllib.request.urlopen(f"{BASE}/{filename}", timeout=120) as remote:
-                with partial.open("wb") as output:
-                    while block := remote.read(1024 * 1024):
-                        output.write(block)
+            with (
+                urllib.request.urlopen(f"{BASE}/{filename}", timeout=120) as remote,
+                partial.open("wb") as output,
+            ):
+                while block := remote.read(1024 * 1024):
+                    output.write(block)
             partial.replace(target)
         finally:
             partial.unlink(missing_ok=True)
@@ -208,7 +210,9 @@ def compare(rows: list[dict]) -> dict:
     eligible = [row for row in rows if row["helpfulness_gap"] != 0]
     matched_rule = [row for row in eligible if row["pareto"]]
     baseline = gap_selection(eligible, len(matched_rule))
-    full_baseline = gap_selection(eligible, len(defended)) if len(defended) <= len(eligible) else None
+    full_baseline = (
+        gap_selection(eligible, len(defended)) if len(defended) <= len(eligible) else None
+    )
     full_baseline_ids = {row["id"] for row in full_baseline} if full_baseline is not None else set()
     matched_ids = {row["id"] for row in matched_rule}
     baseline_ids = {row["id"] for row in baseline}
@@ -233,7 +237,9 @@ def compare(rows: list[dict]) -> dict:
             "feasible": full_baseline is not None,
             "yield_pairs_each": len(defended),
             "pareto": agreement(defended, "pareto"),
-            "helpfulness_gap": agreement(full_baseline, "gap") if full_baseline is not None else None,
+            "helpfulness_gap": (
+                agreement(full_baseline, "gap") if full_baseline is not None else None
+            ),
             "reason_if_infeasible": (
                 "Pareto yield exceeds all nonzero-helpfulness pairs; no arbitrary tie direction"
                 if full_baseline is None else None
@@ -318,7 +324,8 @@ def analyze(directory: Path) -> dict:
                                "methods. Select all defended pairs in that pool; select "
                                "the same number of largest absolute helpfulness gaps, "
                                "predicting gap sign. Human labels never select pairs. "
-                               "Human ties remain selected but not in strict agreement denominator."),
+                               "Human ties remain selected but not in strict "
+                               "agreement denominator."),
         "tie_break": f"Ascending SHA-256 of seed:pair_id; seed {SEED}; 20-seed sensitivity",
         "uncertainty": ("Wilson intervals describe binomial variation, not annotation "
                         "uncertainty; shared dataset population and correlated methods "

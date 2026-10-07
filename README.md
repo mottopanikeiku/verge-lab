@@ -39,6 +39,8 @@ The earlier [UltraFeedback result](results/public-preferences/summary.json) defe
 
 I reviewed a fixed random sample of **12** such disagreements against full upstream responses and rationales. Categories included factual failures, coverage versus concision, confidence cues, premise handling, boilerplate and rationale/text mismatches. I favored the overall direction in **6**, Pareto in **3**, and remained uncertain in **3**. This is an explicitly **AI-assisted qualitative review**, not independent human verification. [Full texts, selection and per-case notes](results/disagreement-review/review.txt).
 
+I also reviewed **12 of 151 human contradictions**: **8** favored the human direction, **2** Pareto, **2** were uncertain. Categories included prompt constraints versus fluency, grounding, scope and audience alignment. [Full-text human review](results/disagreement-review/human-review.txt); the same AI-assisted limitations apply.
+
 ## Reproduce
 
 Python and uv on a CPU; no models, GPU, paid APIs or inference. The recorded human analysis costs **$0** ([summary](results/human-preferences/summary.json)).

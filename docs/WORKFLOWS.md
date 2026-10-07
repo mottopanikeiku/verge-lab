@@ -31,6 +31,16 @@ The npm lockfile pins the React UI and its build tools. The app does not load re
 
 The older [browser smoke record](assets/pages-smoke.json) and [pair-review screenshot](assets/pages-pair-lab.png) describe the earlier UI. They are retained as historical checks, not verification of the current interface.
 
+The current [Chromium assertions](../tools/check_demo.mjs) exercise keyboard navigation, filters, pair details and page overflow at desktop and mobile widths, and reject browser errors or console warnings. With a preview server already running, install the optional browser dependency without changing the lockfile and run:
+
+```bash
+npm install --no-save --package-lock=false puppeteer
+node tools/check_demo.mjs http://127.0.0.1:4173/verge-lab/
+```
+
+Puppeteer downloads Chromium if needed. Close the preview server after the check; `npm ci` restores the locked dependency tree after this optional install.
+
+
 ## Analyze and export
 
 ```bash
