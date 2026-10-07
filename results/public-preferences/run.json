@@ -1,6 +1,7 @@
 {
   "analysis_seconds": 0.3124541709985351,
-  "command": "/home/alp/Projects/profile-program/work/verge-lab/.venv/bin/python3 tools/mine_public_preferences.py",
+  "command": "python3 tools/mine_public_preferences.py",
+  "command_note": "Original interpreter path redacted; recorded measurements unchanged.",
   "confidence_label": "INFERENCE (assumed, not calibrated)",
   "cpu": "Unknown",
   "determinism": "summary.json, pairs.csv and examples.json are deterministic for stored source and unchanged core; run.json contains variable timings and environment",

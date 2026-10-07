@@ -1,0 +1,210 @@
+{
+  "title": "AI-assisted full-text review of 12 HelpSteer2 primary-rule contradictions",
+  "review_date": "2026-10-07",
+  "reviewer_description": "I used an AI assistant to read the full conversation prompt, both full responses and every available human preference justification. My judgments are not independent human annotations or verified truth.",
+  "selection_manifest": "human-selection.json",
+  "full_content_file": "human-samples.jsonl",
+  "source_provenance": "human-provenance.json",
+  "primary_rule": "Pareto dominance on original correctness and coherence only; overall helpfulness held out",
+  "population_size": 151,
+  "population_split_counts": {"train": 143, "validation": 8},
+  "sample_size": 12,
+  "sample_split_counts": {"train": 11, "validation": 1},
+  "seed": 20261007,
+  "initial_selection_pairs_csv_sha256": "f505bc6a63bc6aebed3dbe5a432cb8d200ba32b4dcbc6c8d650cce6c9672ef31",
+  "final_csv_note": "The comparison later added an unrelated full_yield_gap baseline flag. The final CSV hash in the manifest and provenance was updated without changing selected IDs, responses or judgments. The helper projects the original decision columns when preserving this sample.",
+  "selection_reason": "There were only eight validation contradictions, fewer than twelve. I therefore sampled twelve from all 151 defended pairs whose nonzero Pareto sign opposes the nonzero human preference sign, after sorting IDs. I saved the manifest before reading any sampled text.",
+  "method": "I assigned one primary category per case after reading full content and feedback. A preferred direction is a relative qualitative judgment, not an assertion that the selected response is correct or complete. Human preference uses the separately collected dataset label; positive means response 2. Categories describe concrete tensions in the content, not human error labels.",
+  "category_definitions": {
+    "prompt_constraint_vs_fluency": "Explicit task constraints or requested details matter beyond smooth prose and the two selected quality scores.",
+    "grounding_or_correctness_tension": "Unsupported claims, invented context or a visible technical issue complicate the recorded aspect direction.",
+    "completeness_vs_scope": "Concrete deliverable coverage competes with brevity, caution or a narrower answer.",
+    "underspecified_prompt": "The prompt is too incomplete to establish the intended scope confidently.",
+    "audience_or_conversation_alignment": "A response better addresses the intended audience or details in the conversation despite a different aspect direction."
+  },
+  "category_counts": {
+    "prompt_constraint_vs_fluency": 4,
+    "grounding_or_correctness_tension": 3,
+    "completeness_vs_scope": 2,
+    "underspecified_prompt": 1,
+    "audience_or_conversation_alignment": 2
+  },
+  "more_defensible_direction_counts": {"human_preference": 8, "pareto": 2, "uncertain": 2},
+  "conclusion": "I lean toward the human preference direction in eight cases, the two-aspect Pareto direction in two, and remain uncertain in two. The sample shows reasons a correctness/coherence rule can miss task fit or useful completeness. It also contains cases where the human label favors extra content despite an explicit constraint. This is not a human-error audit, not new independent preference labels, and not a measured accuracy comparison.",
+  "limitations": [
+    "This is a random pair sample conditional on contradiction, not a representative sample of all HelpSteer2 pairs or users. Eleven sampled cases are from training and only one from validation.",
+    "I could see both score directions and the justifications; this review is not blinded. Categories were assigned after reading.",
+    "The source preference statements and elaborations are post-processed from human-written justifications. I also read all supplied unprocessed preferences and the most-similar subset, including dissenting judgments.",
+    "Original aspect scores are rounded human aggregates, and overall preference uses an aggregation of similar preferences. Their disagreement need not identify one bad annotation or one objectively correct ordering.",
+    "I did not execute Unity, Android or other response code, or independently verify philosophical, astronomical, financial or product claims. Static reasoning and supplied text support the rationales, not comprehensive fact-checking."
+  ],
+  "cases": [
+    {
+      "draw_index": 1, "id": "helpsteer2:04586", "split": "train",
+      "topic": "Philosophy and personal finance course",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -2,
+      "decisive_aspect_gap": "Correctness 2 versus 4; coherence tied at 4",
+      "category": "grounding_or_correctness_tension",
+      "more_defensible_direction": "human_preference", "strength": "moderate",
+      "rationale": "I prefer response 1's framing as applications of philosophical ideas over response 2's direct historical assertions about financial advice. In particular, response 2 says Kant believed borrowing money was morally wrong because one could not fulfill the obligation, a sweeping claim unsupported in the answer. Response 1 includes modern economic topics not tied to named philosophers, so its scope is imperfect too. The raw preferences split over broader applicability versus direct philosopher-specific views. I have not independently checked the philosophical attributions, so I do not certify response 1 or declare its lower correctness rating erroneous.",
+      "evidence": [
+        {"location": "response_1", "quote": "Discuss the importance of finding a balance between spending and saving"},
+        {"location": "response_2", "quote": "Immanuel Kant believed that borrowing money was morally wrong because it involved taking on an obligation that one could not fulfill."}
+      ]
+    },
+    {
+      "draw_index": 2, "id": "helpsteer2:06456", "split": "train",
+      "topic": "Chronological one-sentence summary",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -2,
+      "decisive_aspect_gap": "Coherence 3 versus 4; correctness tied at 4",
+      "category": "prompt_constraint_vs_fluency",
+      "more_defensible_direction": "human_preference", "strength": "strong",
+      "rationale": "Response 1 is clunky but explicitly orders Florida training, summer tournaments, the US Open start and the eventual victory. Response 2 is smoother yet places the summer success after the US Open win as a trailing clause. The user explicitly required chronological order, so I prefer response 1's task fit over response 2's fluency. The raw justifications show the same real tradeoff: some favor effective condensation, others favor chronological ordering. Both are one sentence.",
+      "evidence": [
+        {"location": "prompt", "quote": "Make sure to put the events in chronological order."},
+        {"location": "response_1", "quote": "this past summer she won several tournaments, and two weeks ago the US Open began"},
+        {"location": "response_2", "quote": "she won the tournament last week, continuing her success over the summer"}
+      ]
+    },
+    {
+      "draw_index": 3, "id": "helpsteer2:01458", "split": "train",
+      "topic": "Publication-ready ChatGPT education research",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -2,
+      "decisive_aspect_gap": "Coherence 3 versus 4; correctness tied at 1",
+      "category": "completeness_vs_scope",
+      "more_defensible_direction": "uncertain", "strength": "unresolved",
+      "rationale": "Response 1 offers an actual title, abstract, introduction and reference list, so it is closer to the requested deliverable. Most remaining sections are placeholders describing what analysis would contain, not a complete research paper, and its conclusion speaks as if a study had produced results. Response 2 transparently gives generic writing guidance instead of the requested paper. I cannot endorse either as publication-ready or verify the listed references. The raw preferences themselves distinguish partial task completion from misleading simulated research, so I cannot justify a firm relative winner.",
+      "evidence": [
+        {"location": "response_1", "quote": "The study will involve conducting surveys and interviews"},
+        {"location": "response_1", "quote": "The study provides valuable insights into the effectiveness of ChatGPT in education"},
+        {"location": "response_2", "quote": "I can provide you with some guidance on how to write a scientific research"}
+      ]
+    },
+    {
+      "draw_index": 4, "id": "helpsteer2:05630", "split": "train",
+      "topic": "Incomplete radio astronomy request",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -1,
+      "decisive_aspect_gap": "Coherence 3 versus 4; correctness tied at 4",
+      "category": "underspecified_prompt",
+      "more_defensible_direction": "uncertain", "strength": "unresolved",
+      "rationale": "The full prompt ends at 'please explain how radio astron'. Both infer a general radio astronomy question. Response 1 covers collection, interference, history and applications; response 2 gives more detail about observable objects. The human justifications divide on which scope is useful and flag a historical date in response 1 that I have not independently checked. The incomplete wording does not establish enough intent to choose between these reasonably different explanations.",
+      "evidence": [
+        {"location": "prompt", "quote": "please explain how radio astron"},
+        {"location": "response_1", "quote": "dealing with interference from man-made sources"},
+        {"location": "response_2", "quote": "Cosmic microwave background radiation"}
+      ]
+    },
+    {
+      "draw_index": 5, "id": "helpsteer2:08683", "split": "validation",
+      "topic": "Science day skit plot",
+      "pareto_winner_response": 1, "human_winner_response": 2, "preference_strength": 2,
+      "decisive_aspect_gap": "Correctness 4 versus 2; coherence tied at 4",
+      "category": "completeness_vs_scope",
+      "more_defensible_direction": "human_preference", "strength": "moderate",
+      "rationale": "Response 1 provides a short science-fiction crisis premise but no concrete resolution. Response 2 gives characters, setup, experiment, accident, containment and a lesson, making a more usable beginning-to-end stage plot. It is longer and its 'end credits roll' line does not fit an ordinary live skit. Four acts do not by themselves determine runtime. I lean toward response 2's usable structure, while recognizing the raw preferences' genuine disagreement over what 'short' requires. Neither fictional scenario is a demonstrated scientific account.",
+      "evidence": [
+        {"location": "response_1", "quote": "The rest of the skit follows the team as they scramble to find a way to stop the solar flare and save the planet."},
+        {"location": "response_2", "quote": "The scientists manage to contain the gas and evacuate the building safely."},
+        {"location": "response_2", "quote": "The end credits roll."}
+      ]
+    },
+    {
+      "draw_index": 6, "id": "helpsteer2:01908", "split": "train",
+      "topic": "Unity tutor, one step at a time",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -2,
+      "decisive_aspect_gap": "Correctness 0 versus 4; coherence tied at 4",
+      "category": "prompt_constraint_vs_fluency",
+      "more_defensible_direction": "pareto", "strength": "strong",
+      "rationale": "Response 2 gives one next action: assign the ScrollRect Content reference. Response 1 supplies several steps, introduces Content Size properties and prematurely declares the advanced system complete. I prefer response 2 for respecting the explicit one-step contract and avoiding the invented size-setting workflow. The inherited conversation already contains questionable Unity instructions, and response 2 loosely calls the referenced object a game object rather than specifying its RectTransform. I did not execute Unity or validate the whole prior tutorial. Several raw preferences favor response 1's coverage even while acknowledging that it violates the pacing request; the category describes that tension rather than labeling annotators wrong.",
+      "evidence": [
+        {"location": "prompt", "quote": "Only give me one step at a time"},
+        {"location": "response_1", "quote": "set its “Content Size” property to the size of the content"},
+        {"location": "response_2", "quote": "set its “Content” property to the game object that we just added as a child"}
+      ]
+    },
+    {
+      "draw_index": 7, "id": "helpsteer2:05448", "split": "train",
+      "topic": "QR menu pitch to restaurant owners",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -2,
+      "decisive_aspect_gap": "Correctness 3 versus 4 and coherence 3 versus 4",
+      "category": "audience_or_conversation_alignment",
+      "more_defensible_direction": "pareto", "strength": "weak",
+      "rationale": "Response 2 targets the restaurant owner with menu management, QR generation, editing and dashboard screenshots. Response 1 explains contactless and environmental benefits well but its screenshot suggestions mostly target diners: ordering, reservations and loyalty points. I weakly prefer response 2's owner-facing emphasis. Both invent possible app capabilities that the prompt does not establish, so neither should be published as a factual product description without confirmation. The raw preferences favoring response 1 focus on benefits and prose style; I do not equate those different priorities with a human error.",
+      "evidence": [
+        {"location": "prompt", "quote": "explain the benefits to a restaurant owner"},
+        {"location": "response_1", "quote": "Customers should be able to view their loyalty points balance"},
+        {"location": "response_2", "quote": "the dashboard where the restaurant owner can add, edit, or remove menu items"}
+      ]
+    },
+    {
+      "draw_index": 8, "id": "helpsteer2:02300", "split": "train",
+      "topic": "Resume review without a resume",
+      "pareto_winner_response": 1, "human_winner_response": 2, "preference_strength": 1,
+      "decisive_aspect_gap": "Correctness 4 versus 3; coherence tied at 4",
+      "category": "grounding_or_correctness_tension",
+      "more_defensible_direction": "human_preference", "strength": "strong",
+      "rationale": "The full conversation contains no resume. Response 1 nevertheless claims to give suggestions based on provided information and concludes that the resume looks good. Response 2 gives generic tips without pretending to have inspected a document. Both should have requested the missing resume, but I prefer response 2 for not fabricating a completed review. The raw preferences divide between valuing apparent specificity and recognizing that the specificity is ungrounded; this is directly visible in the full prompt.",
+      "evidence": [
+        {"location": "prompt", "quote": "I will provide you with my current resume"},
+        {"location": "response_1", "quote": "specific suggestions for improving your resume based on the information you provided"},
+        {"location": "response_1", "quote": "Overall, the resume looks good"}
+      ]
+    },
+    {
+      "draw_index": 9, "id": "helpsteer2:08302", "split": "train",
+      "topic": "E-commerce movie script with business steps",
+      "pareto_winner_response": 1, "human_winner_response": 2, "preference_strength": 1,
+      "decisive_aspect_gap": "Correctness 4 versus 3; coherence tied at 4",
+      "category": "audience_or_conversation_alignment",
+      "more_defensible_direction": "human_preference", "strength": "moderate",
+      "rationale": "Response 1 is a richer success story about handmade jewelry but spends much of the script on eventual wealth and reflection. Response 2 explicitly narrates a niche, product category, website, social media, advertising, SEO, customer service and competitive prices, tracking the earlier conversation's requested business steps. I prefer that task alignment. Both stop short of an exact individual product or genuinely detailed launch plan, and neither carries the Australian context into practical local requirements. This is a relative preference, not a usable business plan.",
+      "evidence": [
+        {"location": "prompt", "quote": "specific steps on how they will start their business"},
+        {"location": "response_2", "quote": "I'll use social media, advertising, and SEO to do that."},
+        {"location": "response_1", "quote": "He continues to work hard, expanding his business and hiring employees."}
+      ]
+    },
+    {
+      "draw_index": 10, "id": "helpsteer2:08664", "split": "train",
+      "topic": "Ten-chapter crypto course for beginners",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -1,
+      "decisive_aspect_gap": "Coherence 3 versus 4; correctness tied at 3",
+      "category": "prompt_constraint_vs_fluency",
+      "more_defensible_direction": "human_preference", "strength": "moderate",
+      "rationale": "Both give ten chapters. Response 1 includes concrete practical-lesson ideas, strategy development/testing and risk planning. Response 2 has cleaner bullets but postpones practical lessons to a generic closing suggestion and dedicates a chapter to advanced techniques despite the beginner audience. I prefer response 1's closer task fit, while noting its unqualified Martingale mention and response 2's leverage and derivatives content. Neither is an endorsed safe trading curriculum, and I did not validate financial advice. The human rationales also note imperfections in response 1, so agreement with their direction does not endorse all their factual claims.",
+      "evidence": [
+        {"location": "prompt", "quote": "I need 10 chapters, and practical lessons."},
+        {"location": "response_1", "quote": "Step-by-step walkthrough of a cryptocurrency trade from start to finish"},
+        {"location": "response_2", "quote": "10. Advanced Trading Techniques"}
+      ]
+    },
+    {
+      "draw_index": 11, "id": "helpsteer2:01915", "split": "train",
+      "topic": "Continue an Android blog from section V",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -1,
+      "decisive_aspect_gap": "Correctness 3 versus 4 and coherence 3 versus 4",
+      "category": "prompt_constraint_vs_fluency",
+      "more_defensible_direction": "human_preference", "strength": "weak",
+      "rationale": "Both restart at section I rather than V and both offer another outline instead of the requested source code. Response 1 at least retains the specific process name and a source-code/path section; response 2 replaces the request with generic repeated 'Explanation of' bullets. I weakly prefer response 1's retained details, but neither fulfills the request. Both imply persistence after deleting the parent application without supplying a mechanism, and I have not validated Android feasibility. The raw preferences disagree over specificity versus component-level detail; the higher two-aspect scores do not demonstrate that either outline would work.",
+      "evidence": [
+        {"location": "prompt", "quote": "You stopped without finish. begin again from V"},
+        {"location": "response_1", "quote": "spawn a new process named \"shifuproc\""},
+        {"location": "response_1", "quote": "Providing the full file name and path in Android Studio for each file"},
+        {"location": "response_2", "quote": "Explanation of the code used to ensure that the background process runs always, even if the parent application is closed or deleted"}
+      ]
+    },
+    {
+      "draw_index": 12, "id": "helpsteer2:08095", "split": "train",
+      "topic": "Mini-batch regression gradient",
+      "pareto_winner_response": 2, "human_winner_response": 1, "preference_strength": -1,
+      "decisive_aspect_gap": "Correctness 3 versus 4; coherence tied at 4",
+      "category": "grounding_or_correctness_tension",
+      "more_defensible_direction": "human_preference", "strength": "strong",
+      "rationale": "I prefer response 1, which gives the loss and the dimensionally consistent gradient (2/b) B^T (Bw-t). Response 2 puts the residual before B^T: -2/b (t-Bw) B^T. Under the column-vector convention implied by Bw, B is b by d, the residual is b by 1, and B^T is d by b, so that product is not generally defined. The human justifications largely prefer response 1 for concision and often call both formulas correct; my mathematical reason is separate from those claims. This is static algebraic reasoning, not an executed numerical check. The earlier assistant's update rule is also problematic, but it is inherited context rather than either sampled answer.",
+      "evidence": [
+        {"location": "response_1", "quote": "∇L(w) = (2/b) * B^T * (Bw - t)"},
+        {"location": "response_2", "quote": "dL/dw = -2/b * (t - Bw) * B^T"}
+      ]
+    }
+  ]
+}

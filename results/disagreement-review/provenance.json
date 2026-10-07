@@ -1,0 +1,170 @@
+{
+  "attribution": "UltraFeedback: Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Wei Zhu, Yuan Ni, Guotong Xie, Zhiyuan Liu and Maosong Sun (2023). TruthfulQA prompts: Stephanie Lin, Jacob Hilton and Owain Evans (2022).",
+  "card_local_path": "../public-preferences/source-card.txt",
+  "card_sha256": "70a22b5659215ab738b9dfd0dc6bd40d3bb040bf846b4e34955358f30625a4f7",
+  "card_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/raw/40b436560ca83a8dba36114c22ab3c66e43f6d5e/README.md",
+  "compact_source_sha256": "2f97554fd89d1dd0e8546f2d5a546d79a800f53db786cc93d759ba6c58f772b8",
+  "dataset": "openbmb/UltraFeedback",
+  "hash_definition": "Responses and instructions: UTF-8 original full text; source lines and prefix: exact downloaded bytes including newlines",
+  "license": "UltraFeedback card declares MIT; this does not erase upstream source dataset terms",
+  "matched_prompt_count": 12,
+  "matched_response_count": 24,
+  "matched_unique_response_count": 24,
+  "paid_compute_usd": 0,
+  "response_hash_checks": [
+    {
+      "candidate_id": "truthful_qa:0159:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_63566383e3b3",
+      "response_sha256": "113441e71d66f34882e26b7b9557a72652f60347ca4b7163920c82304ef80678"
+    },
+    {
+      "candidate_id": "truthful_qa:0159:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_63566383e3b3",
+      "response_sha256": "04adb924adc3286bd2818d3b517d97098a568401b66616e783f18f4fb67aff55"
+    },
+    {
+      "candidate_id": "truthful_qa:0010:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_bbab6fd559e9",
+      "response_sha256": "cdb2d70103837c7d4727ddecd6d3ac1992ab11cf1996374269c6e061beb7f482"
+    },
+    {
+      "candidate_id": "truthful_qa:0010:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_bbab6fd559e9",
+      "response_sha256": "16bbfe558503d6ef2183646640006b3bffc7fa93879dda4e1ae96026343abb8d"
+    },
+    {
+      "candidate_id": "truthful_qa:0062:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_26ea51038d83",
+      "response_sha256": "3d9d6d13b062f54438962f75e21b89e478c03d541b5827ce62df41cf2cc0a9d2"
+    },
+    {
+      "candidate_id": "truthful_qa:0062:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_26ea51038d83",
+      "response_sha256": "e3fe25a65a89b2ae4dd2e789b97eeffc9c5966dc380b3eda33f3c0a1457b3b01"
+    },
+    {
+      "candidate_id": "truthful_qa:0096:completion:1",
+      "matches_compact_source": true,
+      "pair_id": "pair_9663ebad0e35",
+      "response_sha256": "de173a5e4fe70e11a48df7bc528b4df10bf43543e34ec51887642a9dcc4c8610"
+    },
+    {
+      "candidate_id": "truthful_qa:0096:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_9663ebad0e35",
+      "response_sha256": "3d197cc5e211e4937da70ed2422bfbd58226ab006a357be0ee44325136619568"
+    },
+    {
+      "candidate_id": "truthful_qa:0167:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_2f87f2257da9",
+      "response_sha256": "5be14bd9becee0e94c9081414ed3308137ba1c792ed61186c786b0a9af46a4b9"
+    },
+    {
+      "candidate_id": "truthful_qa:0167:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_2f87f2257da9",
+      "response_sha256": "4b6119e21e432ae56cdd7240284d11e1ab03359d49090b79d1b6b9bf760244de"
+    },
+    {
+      "candidate_id": "truthful_qa:0026:completion:2",
+      "matches_compact_source": true,
+      "pair_id": "pair_8cad29cd8b29",
+      "response_sha256": "eb27b5e3b605d2eaffd4d5247a6a96d93091c14d3ad10c6014a6a78135750194"
+    },
+    {
+      "candidate_id": "truthful_qa:0026:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_8cad29cd8b29",
+      "response_sha256": "432924b6c1e91b230ec102698070159a20c79f887cfcc386e64646528a67ffb0"
+    },
+    {
+      "candidate_id": "truthful_qa:0039:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_3e00e1d6e8b6",
+      "response_sha256": "e99dbac18b02e1d65cd9cdae1f5e6519f784c8889d48684448b75a4a93b2989e"
+    },
+    {
+      "candidate_id": "truthful_qa:0039:completion:2",
+      "matches_compact_source": true,
+      "pair_id": "pair_3e00e1d6e8b6",
+      "response_sha256": "a96e9fc957cc3b67cf634ba718f5869d57423ad6b711bc30ae1ac3cd1a75ca2f"
+    },
+    {
+      "candidate_id": "truthful_qa:0042:completion:1",
+      "matches_compact_source": true,
+      "pair_id": "pair_f9c94769ec1d",
+      "response_sha256": "b412e6b463ed0975c3cdeddf6bc2e31995b7a7fd33481479325152c2765de0e9"
+    },
+    {
+      "candidate_id": "truthful_qa:0042:completion:2",
+      "matches_compact_source": true,
+      "pair_id": "pair_f9c94769ec1d",
+      "response_sha256": "35b535e2f9f221377fcee645f9060a3511647a791d4170b73f96a3d791ea3070"
+    },
+    {
+      "candidate_id": "truthful_qa:0025:completion:1",
+      "matches_compact_source": true,
+      "pair_id": "pair_2fcae7281937",
+      "response_sha256": "b2e3d0b6deb6df2832221dc924c21a50bf59b78a88139b546125654a7a83a554"
+    },
+    {
+      "candidate_id": "truthful_qa:0025:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_2fcae7281937",
+      "response_sha256": "dd46158037795af0a337aa1acf61a94dcc9bdd832d90fe0118594103d8a2a5fc"
+    },
+    {
+      "candidate_id": "truthful_qa:0163:completion:2",
+      "matches_compact_source": true,
+      "pair_id": "pair_f225e3f743cb",
+      "response_sha256": "15064435fdc8abeda68395afcaef56c1291446789de847b38ccc60262352a026"
+    },
+    {
+      "candidate_id": "truthful_qa:0163:completion:1",
+      "matches_compact_source": true,
+      "pair_id": "pair_f225e3f743cb",
+      "response_sha256": "8375df052f35e734ed047b997adff8e89042770a4faf4ae70affc2ce9689d184"
+    },
+    {
+      "candidate_id": "truthful_qa:0097:completion:1",
+      "matches_compact_source": true,
+      "pair_id": "pair_083e639341aa",
+      "response_sha256": "5090c883f1577b4ee938d93635077a349e062cbeee8659f01d1d6a47337b76cd"
+    },
+    {
+      "candidate_id": "truthful_qa:0097:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_083e639341aa",
+      "response_sha256": "c93da77c030b6a60a8df1087ede7601a0ac18455b290b3d89bd8a6424df28974"
+    },
+    {
+      "candidate_id": "truthful_qa:0194:completion:3",
+      "matches_compact_source": true,
+      "pair_id": "pair_571bc6de1852",
+      "response_sha256": "4768eb2aba996c07a3511440d55da25b512235e5bc0abd793716bdacabfc26ff"
+    },
+    {
+      "candidate_id": "truthful_qa:0194:completion:0",
+      "matches_compact_source": true,
+      "pair_id": "pair_571bc6de1852",
+      "response_sha256": "1e798d9f5662dda3d0cbb3a2430e46e6976d4abb47d9f4186c12d815279e7f4c"
+    }
+  ],
+  "revision": "40b436560ca83a8dba36114c22ab3c66e43f6d5e",
+  "samples_sha256": "b0b6146388ba91e2fba08cb0815c26c9ed8c1203c6f2e93025f39b4eef1d8efe",
+  "score_caveat": "Original aspect ratings, full rationales and critiques are GPT-4 feedback, not verified facts or independent human truth. Overall scores come from a separate feedback field, not an independent judge.",
+  "source_prefix_bytes_consumed": 2425518,
+  "source_prefix_lines_consumed": 200,
+  "source_prefix_sha256": "301b543f3587d2666ee1ded62304df635c79867c816f3ccc565cc9a74b17a125",
+  "source_url": "https://huggingface.co/datasets/openbmb/UltraFeedback/resolve/40b436560ca83a8dba36114c22ab3c66e43f6d5e/truthful_qa.jsonl",
+  "text_scope": "All original prompt fields and both full completion objects per sampled pair; no excerpt truncation",
+  "truthfulqa_caveat": "These prompts originate in TruthfulQA. UltraFeedback's MIT card is not a claim that every upstream asset has identical terms; consult TruthfulQA's license and source notices before reuse.",
+  "truthfulqa_url": "https://github.com/sylinrl/TruthfulQA"
+}

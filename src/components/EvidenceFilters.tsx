@@ -15,11 +15,11 @@ export function EvidenceFilters({ run, filters, onChange, resultCount, resultLab
   return (
     <section className="filter-bar" aria-label="Illustrative example filters">
       <label className="search-field">
-        <span>Example candidate or evidence</span>
+        <span>Search example answers</span>
         <span className="input-shell"><Search size={15} aria-hidden="true" /><input type="search" value={filters.candidate} placeholder="Search ID or output" onChange={(event) => onChange({ ...filters, candidate: event.target.value })} /></span>
       </label>
       <label><span>Domain</span><select value={filters.domain} onChange={(event) => onChange({ ...filters, domain: event.target.value })}><option value="all">All domains</option>{domains.map((domain) => <option value={domain} key={domain}>{domain}</option>)}</select></label>
-      <label><span>Example verdict</span><select value={filters.verdict} onChange={(event) => onChange({ ...filters, verdict: event.target.value as LabFilters['verdict'] })}><option value="all">All verdicts</option><option value="defended">Defended</option><option value="ambiguous">Ambiguous</option></select></label>
+      <label><span>Pair verdict</span><select value={filters.verdict} onChange={(event) => onChange({ ...filters, verdict: event.target.value as LabFilters['verdict'] })}><option value="all">All verdicts</option><option value="defended">Selected (defended)</option><option value="ambiguous">Abstain (ambiguous)</option></select></label>
       <p className="filter-result" aria-live="polite"><strong>{resultCount}</strong> illustrative {resultLabel}</p>
     </section>
   )

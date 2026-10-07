@@ -1,0 +1,137 @@
+{
+  "aggregation_caveat": "The source card considers the three most similar preferences for the overall label; original aspect scores are rounded aggregates. Disagreement is not proof that a human annotator was wrong.",
+  "attribution": "HelpSteer2 and HelpSteer2-Preference, NVIDIA and Scale AI; Zhilin Wang et al.",
+  "card_sha256": "835effb9e7d9cd0e8b7b8c1816d1d97a8961a036543108e4a0b6a5e22712ff7b",
+  "card_url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/README.md",
+  "changes": "Selected pairs only; full prompt, both responses and all upstream preference fields retained. Original numeric aspect ratings joined from compact source by checked full-text hashes.",
+  "compact_source_sha256": "0ff82d149ac25b057d711a806c5278710c835a98f6dec1436d9677f0ea4b381a",
+  "compressed_source_sha256": "a5cd48600fb7a330cf0ccc8f59051e24e8f236907c379f42eff1ba18da55204b",
+  "dataset": "nvidia/HelpSteer2",
+  "hash_checks": [
+    {
+      "id": "helpsteer2:04586",
+      "matches_compact_source": true,
+      "prompt_sha256": "08b2ceabe02f19d7909b27cedbba60dcb6c2e3b40732733844609f1e60ea6f9c",
+      "response_sha256": [
+        "73ab66e13cfeffc2b2a7c08235742a31b95d9ea05d17a3ee15d306dcb3908cf9",
+        "972922c5871648165402d119678db9d6ddbc8799e5017c9ba33d900e1dcc2f42"
+      ]
+    },
+    {
+      "id": "helpsteer2:06456",
+      "matches_compact_source": true,
+      "prompt_sha256": "894c255acd14f1b3a9eba666fe3636173cde665d0b32f5e303c7162e2db7df4d",
+      "response_sha256": [
+        "3f83893498d5263379210c18d3f489a64a32b2ea220fa6cc86ec8b3beb20c678",
+        "98a6af61d2dea953bd5f978430d22540747221fc84c1768c60e8df78548aca52"
+      ]
+    },
+    {
+      "id": "helpsteer2:01458",
+      "matches_compact_source": true,
+      "prompt_sha256": "2f74ef18d01357f95e8f311ad09302eaa1ca4509748c2c845df11de2e3205011",
+      "response_sha256": [
+        "9026abdc35f54f63f37144326cf7b010585e55d0cc1452bc84edd6ef9fbd76d1",
+        "38e4624e42bfc9ca150bdbdf58e6959874514644c54d0dd4027dfe9eb281bf79"
+      ]
+    },
+    {
+      "id": "helpsteer2:05630",
+      "matches_compact_source": true,
+      "prompt_sha256": "e2c1c51983a78ef911d5fb6289fb3fcd9f515454c6249ba878de74ca9d7c2394",
+      "response_sha256": [
+        "c2b3c816746a4b5f635969cf9b8dee437763e8847b99ef2257370f91d072221a",
+        "f9d14a1e651ae786636848ce2bd7820566161bb96e9647e8e4e689fe7f8008b3"
+      ]
+    },
+    {
+      "id": "helpsteer2:08683",
+      "matches_compact_source": true,
+      "prompt_sha256": "885704e4c60b06ab46e9ef6298a835e25993a5f354ac04c2f2ef08cf4fb2b77c",
+      "response_sha256": [
+        "27de14a606201906165b8333e2c6ba0383190dbf92ff94be0d333b9d534f7965",
+        "0bfc554736f7623e9011e19bfff2ff400a6ec799a5ae4398d3ae0a938a554563"
+      ]
+    },
+    {
+      "id": "helpsteer2:01908",
+      "matches_compact_source": true,
+      "prompt_sha256": "9617443492eb04c5d41d2266c3cf48196914d4df4305a98dc722493af80a8eed",
+      "response_sha256": [
+        "5bfc8b943b8a1ddb833369dcfc1f9f3d61f89b8a94e4e3d2045671dc81166e6d",
+        "38a27816d0066d0cec0779ff7008080b018b3d6fa148ee53a194df0f4d7c1382"
+      ]
+    },
+    {
+      "id": "helpsteer2:05448",
+      "matches_compact_source": true,
+      "prompt_sha256": "cddcb8f32e5fdb45858543cb832e243c7443a11f6eda1d5b0ea5a7fc05f179f8",
+      "response_sha256": [
+        "75b46d3e79f1559c33420c711696e00f573a5e1ff84375f5dc72c921460073bf",
+        "2b87e5f87be6f94f71efb3a1e96dd3d28f0d4d335a9ed539afe58d34ce34c0e9"
+      ]
+    },
+    {
+      "id": "helpsteer2:02300",
+      "matches_compact_source": true,
+      "prompt_sha256": "7363dc8d80d6db398c35b08ff92fbbed72e4274cc1e5199c3fc356fa4370e2d9",
+      "response_sha256": [
+        "6d2e1262808f4e53945b7889ae53ef1ac38a36ea432fc0f49a814ababd2d6571",
+        "aa2e14bb7015c0ba702a7feb60cb96d6ceaa17cb514909a738e5cd78f6dc1a96"
+      ]
+    },
+    {
+      "id": "helpsteer2:08302",
+      "matches_compact_source": true,
+      "prompt_sha256": "dac7a4d235948767364a47a3a98f5acaf17b84860892d2414d8c49c40bd4327c",
+      "response_sha256": [
+        "f85e71b7640c4ff8cd16588ec4714925a0b1a5925d2b405c48a9a9e7f7c20a79",
+        "cab2f63d5497dca734fedf7942851086bf973620cf9b72f4789ef63e4fba839d"
+      ]
+    },
+    {
+      "id": "helpsteer2:08664",
+      "matches_compact_source": true,
+      "prompt_sha256": "18da78ac87204ea5389845b59290809e75a8ce872f2973b6f3404670004149d6",
+      "response_sha256": [
+        "1cbdcc7ac7b4c73161ae71000345017b6c23a2fc483779d8d59786e1cbb55c16",
+        "83ac45aa5ff05f21c21d9338b8b2d73094140457601b9d6ace98dd0df1ce72cc"
+      ]
+    },
+    {
+      "id": "helpsteer2:01915",
+      "matches_compact_source": true,
+      "prompt_sha256": "1c30f6edd4d6a29acdcd8c62bf85c35804dac8e0fd642fd3927c2a6218b58d97",
+      "response_sha256": [
+        "2424ab2e0a01582e45d460468973eaf73dd1512871654d5596cd9df03e2916e3",
+        "ddd555edc92aebc9b6f4039569924a534a5e3b7f69a1fdcbb1bfac6eea50d3d3"
+      ]
+    },
+    {
+      "id": "helpsteer2:08095",
+      "matches_compact_source": true,
+      "prompt_sha256": "b5abb34de449e09dec54a531c0c39f1412b7d5a634e393a2cd0d2ae40daac06f",
+      "response_sha256": [
+        "637e61081de5b9a0193822529392da992816bd961aef8c87b1eea3e27b5f3bb4",
+        "5f537d516756daa4eab42f39539a43935403e021cfd14363459d0aa67b14969d"
+      ]
+    }
+  ],
+  "human_label_caveat": "Dataset human judgments, not independently verified truth. My qualitative review is AI-assisted and not an additional human annotation.",
+  "justification_provenance": "The source card says preference statements and elaborations were post-processed from human-written justifications; all upstream raw preference fields are also retained in each sampled row.",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "matched_prompt_count": 12,
+  "matched_response_count": 24,
+  "paid_compute_usd": 0,
+  "pairs_csv_sha256": "26ba579aaff6064a65488f6bc99326111004e9a628c62fa5b19edbf9c09c1f04",
+  "papers": [
+    "https://arxiv.org/abs/2406.08673",
+    "https://arxiv.org/abs/2410.01257"
+  ],
+  "preference_sign": "Positive favors response 2; negative favors response 1",
+  "revision": "990b2711a36180dd19d9c94b8627844866f8982a",
+  "samples_sha256": "9c7572a66643983c70908d9fba6003bc5df4a2c118fdf96fb4c34baee373d33c",
+  "source_card_local_path": "../human-preferences/source-card.txt",
+  "source_url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/preference/preference.jsonl.gz"
+}
