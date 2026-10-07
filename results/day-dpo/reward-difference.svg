@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="630" viewBox="0 0 920 630" role="img" aria-labelledby="title desc">
+<title id="title">Day DPO: paired reward differences and response lengths</title>
+<desc id="desc">Three matched training seed effects and the crossed bootstrap 95 percent interval for Pareto minus gap reward, with mean response token lengths for each condition.</desc>
+<rect width="920" height="630" fill="white"/>
+<g font-family="sans-serif" font-size="14" fill="#17212b">
+<text x="28" y="34" font-size="20">Pareto minus gap: raw reward difference</text>
+<text x="28" y="58">192 paired prompts; 3 matched seeds; 10,000 crossed bootstrap draws</text>
+<line x1="683.72" x2="683.72" y1="82" y2="255" stroke="#9aa4ae" stroke-dasharray="4 4"/>
+<text x="210.00" y="280" text-anchor="middle">-0.307</text>
+<text x="360.00" y="280" text-anchor="middle">-0.210</text>
+<text x="510.00" y="280" text-anchor="middle">-0.112</text>
+<text x="660.00" y="280" text-anchor="middle">-0.015</text>
+<text x="810.00" y="280" text-anchor="middle">0.082</text>
+<line x1="210" x2="810" y1="260" y2="260" stroke="#9aa4ae"/>
+<text x="28" y="110">Seed 1701</text>
+<circle cx="641.75" cy="105" r="5" fill="#245a85"/>
+<text x="840" y="110">-0.027</text>
+<text x="28" y="150">Seed 1702</text>
+<circle cx="501.63" cy="145" r="5" fill="#245a85"/>
+<text x="840" y="150">-0.118</text>
+<text x="28" y="190">Seed 1703</text>
+<circle cx="390.47" cy="185" r="5" fill="#245a85"/>
+<text x="840" y="190">-0.190</text>
+<text x="28" y="235">Aggregate + 95% CI</text>
+<line x1="287.22" x2="732.78" y1="230" y2="230" stroke="#245a85" stroke-width="3"/>
+<circle cx="511.28" cy="230" r="6" fill="#245a85"/>
+<text x="840" y="235">-0.112</text>
+<text x="28" y="315">95% CI [-0.257, +0.032]; inconclusive</text>
+<text x="28" y="358" font-size="20">Generated response tokens</text>
+<text x="28" y="382">Bars: means; dots: seed means; text: median and observed range</text>
+<text x="28" y="419">start</text>
+<rect x="210" y="402" width="371.73" height="22" fill="#d8e7f0"/>
+<text x="620" y="419">mean 159.9; median 192.0; range 6–192</text>
+<circle cx="581.73" cy="413" r="4" fill="#245a85"/>
+<text x="28" y="455">pareto</text>
+<rect x="210" y="438" width="376.22" height="22" fill="#d8e7f0"/>
+<text x="620" y="455">mean 161.8; median 192.0; range 6–192</text>
+<circle cx="590.00" cy="449" r="4" fill="#245a85"/>
+<circle cx="580.98" cy="449" r="4" fill="#245a85"/>
+<circle cx="587.68" cy="449" r="4" fill="#245a85"/>
+<text x="28" y="491">gap</text>
+<rect x="210" y="474" width="366.60" height="22" fill="#d8e7f0"/>
+<text x="620" y="491">mean 157.7; median 192.0; range 5–192</text>
+<circle cx="574.00" cy="485" r="4" fill="#245a85"/>
+<circle cx="577.41" cy="485" r="4" fill="#245a85"/>
+<circle cx="578.39" cy="485" r="4" fill="#245a85"/>
+<text x="28" y="527">human</text>
+<rect x="210" y="510" width="371.22" height="22" fill="#d8e7f0"/>
+<text x="620" y="527">mean 159.7; median 192.0; range 6–192</text>
+<circle cx="583.80" cy="521" r="4" fill="#245a85"/>
+<circle cx="579.74" cy="521" r="4" fill="#245a85"/>
+<circle cx="580.11" cy="521" r="4" fill="#245a85"/>
+<text x="28" y="566">Paired length difference: +4.14 tokens; 95% CI [+0.04, +8.47]</text>
+<text x="28" y="593">Reward is a model logit, not human preference truth. Length may confound the comparison.</text>
+</g></svg>
