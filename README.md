@@ -51,4 +51,6 @@ uv run python tools/analyze_day_dpo.py
 
 [HelpSteer2](https://arxiv.org/abs/2406.08673) and [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257), by NVIDIA, Scale AI and Zhilin Wang et al., are CC-BY-4.0. Qwen2.5 is Apache-2.0; the scorer and project code are MIT. [DPO](https://arxiv.org/abs/2305.18290) supplies the training objective.
 
+Earlier GPT-4-rated results use [UltraFeedback](https://arxiv.org/abs/2310.01377) on [TruthfulQA](https://arxiv.org/abs/2109.07958); the former's MIT card does not erase upstream content terms.
+
 Written with AI coding assistance.
