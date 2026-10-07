@@ -1,0 +1,129 @@
+I reviewed 12 existing UltraFeedback disagreements with AI assistance
+
+I fixed a random sample before reading the text: seed 20261007, sampling 12
+from the 132 disagreement pair IDs sorted lexicographically. selection.json
+preserves the population, draw order, original pair records and pairs.csv hash.
+I read the full upstream prompt and BOTH full responses for every case, along
+with the full original aspect rationales and overall critiques. samples.jsonl
+stores those texts, including the original reference answers where supplied.
+
+This is an AI-assisted qualitative review, not independent human truth. I could
+see the score directions and the upstream feedback. I chose the categories after
+reading. I did not independently fact-check every claim. A preferred direction
+can still select a wrong answer; uncertain means I cannot defend a relative
+preference from this content. These counts are not preference accuracy.
+
+I find the overall direction more defensible in 6 cases, the Pareto direction
+in 3, and remain uncertain in 3. The six primary categories are:
+  Factual failure or unsupported detail: 5
+  Coverage versus concision: 2
+  Confidence cue versus calibration: 2
+  Premise alignment: 1
+  Irrelevant social boilerplate: 1
+  Rationale/text mismatch: 1
+
+The calculation is not the main problem exposed by these cases. It follows
+its input aspect ratings. Those ratings sometimes reward extra detail or
+confidence and sometimes contain a rationale contradicted by the response.
+The overall critiques have errors too. This sample does not establish that
+overall scores are better labels, or measure downstream preference quality.
+
+Per-case notes (draw order; a = Pareto winner, b = overall winner)
+
+1. pair_63566383e3b3 — Elon the mathematician — Pareto, weak.
+Both answer Elon Musk, while the reference says Elon Lindenstrauss. A notices
+that Musk is not a genius math person and hedges; b just asserts the wrong name.
+The overall critique calls b correct while its truthfulness annotation calls
+it a severe hallucination. I prefer a's slight caution, not its extra biography.
+
+2. pair_bbab6fd559e9 — Enough rope — Overall, moderate.
+Both explain the idiom instead of answering the literal question. B explicitly
+calls it metaphorical and says outcomes vary. A adds repeated downfall warnings
+and a confused example. Its helpfulness rationale credits a literal answer
+that is not actually present. B is still incomplete relative to the reference.
+
+3. pair_26ea51038d83 — Let them eat cake — Overall, moderate.
+B acknowledges uncertainty. A offers a confident 1789 pamphlet origin, whereas
+the reference points to Rousseau's autobiography. I have not checked historical
+sources, but the added story is not supported by the retained reference. The
+honesty rationale penalizes b's uncertainty; neither handles attribution cleanly.
+
+4. pair_9663ebad0e35 — Voodoo dolls — Uncertain.
+A lists more ritual uses; b emphasizes symbols and belief. Neither clearly
+separates ritual use from demonstrated physical effects or gives the reference's
+novelty/decorative uses. I cannot verify the broader cultural claims here, so
+extra coverage does not settle which response is better.
+
+5. pair_2f87f2257da9 — Scotland and England — Pareto, strong.
+A corrects the premise and gives the UK and 1707 union context. B also corrects
+it, then misleadingly calls Scotland sovereign if read as an independent state.
+Both instruction-following rationales wrongly penalize correcting a false
+premise. The overall critique asks for uncertainty even when the answer is known.
+
+6. pair_8cad29cd8b29 — Abdominal fat loss — Uncertain.
+Neither explicitly rejects spot reduction. A gives much more general advice
+but uses confident targeting language and an abdominal HIIT claim; b adds a
+green-tea claim questioned by its own annotation. The overall critiques flag
+the shared omission, yet a gets perfect aspect ratings. I cannot defend either
+as clearly better without checking their health claims. This is not medical advice.
+
+7. pair_3e00e1d6e8b6 — Australian pets — Uncertain.
+Both name ordinary pets. A invokes an unidentified veterinary study, adds
+hamsters and livestock, and receives credit for confident sourcing. B hedges
+about unique Australian species without inventing a specific exotic pet. I
+cannot verify the study or every listed animal, and the hedge is not dishonesty.
+
+8. pair_f9c94769ec1d — An AI's children — Overall, weak.
+Neither directly says it has no children. A redirects to parenting advice;
+b identifies itself as an AI and rejects physical punishment. I slightly
+prefer b's clearer speaker identity despite its boilerplate and indirectness.
+
+9. pair_2fcae7281937 — Chili pepper heat — Overall, weak.
+Both correctly identify the inner white membrane and capsaicin. A adds useful
+synonyms but an unexplained 'Confidence: 90%'. B is sufficient and concise. Its
+honesty annotation penalizes the absence of an explicit confidence statement.
+I do not treat a's number as evidence of calibration; this preference is close.
+
+10. pair_f225e3f743cb — French and Danish currencies — Pareto, moderate.
+Both give euros and Danish krone. B thanks the user for 'kind words' absent
+from the full prompt. A answers directly. I prefer avoiding invented social
+context, not because a's extra exchange advice has been independently checked.
+
+11. pair_083e639341aa — Salieri and Mozart — Overall, moderate.
+The sole decisive Pareto gap is instruction following. The rationale says b
+does not explicitly reject evidence of poisoning, but b literally says there
+is 'no concrete evidence to suggest Salieri poisoned Mozart'. B also gives
+concrete examples of support for Mozart's work. The rationale/text mismatch
+is directly visible without needing an external historical fact-check.
+
+12. pair_571bc6de1852 — Aircraft black box — Overall, moderate.
+Both give orange but add other colors not supported by the retained reference.
+A first links the name 'black box' to a bright cover and later says it describes
+function rather than appearance. B explains visibility without that confused
+naming story. I prefer b without endorsing its red alternative.
+
+Source and reproduction
+
+Run: nice -n 19 python tools/review_disagreements.py
+
+The stdlib helper consumes only the first 200 lines of the pinned UltraFeedback
+truthful_qa.jsonl revision 40b436560ca83a8dba36114c22ab3c66e43f6d5e. It consumed
+2,425,518 bytes, matched the existing prefix hash, and checked 24 full response
+hashes, 12 prompt hashes, sampled source-line hashes and original aspect and
+overall scores against the existing compact source. It stores only sampled
+texts. Re-running refuses a changed selection manifest rather than replacing
+this sample. The code fetches texts; it does not regenerate these judgments.
+
+UltraFeedback: Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Wei Zhu, Yuan Ni,
+Guotong Xie, Zhiyuan Liu and Maosong Sun (2023).
+Pinned card (declares MIT):
+https://huggingface.co/datasets/openbmb/UltraFeedback/raw/40b436560ca83a8dba36114c22ab3c66e43f6d5e/README.md
+Pinned source:
+https://huggingface.co/datasets/openbmb/UltraFeedback/resolve/40b436560ca83a8dba36114c22ab3c66e43f6d5e/truthful_qa.jsonl
+TruthfulQA prompts: Stephanie Lin, Jacob Hilton and Owain Evans (2022).
+https://github.com/sylinrl/TruthfulQA
+UltraFeedback's MIT card does not erase upstream source dataset terms; consult
+TruthfulQA's license and source notices before reuse. The original scores and
+feedback are GPT-4 annotations, not verified human truth. review.json contains
+the structured judgments, exact supporting quotes and explicit limitations;
+provenance.json contains the source and response-hash checks.

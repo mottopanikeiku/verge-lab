@@ -84,7 +84,7 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
         </ul>
       </figcaption>
 
-      <div className="checkpoint-trace__plot">
+      <div className="checkpoint-trace__plot" tabIndex={0} role="region" aria-label="Illustrative checkpoint plot; scroll horizontally to view all steps">
         <svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
           <title id={titleId}>Illustrative checkpoint reward, win-rate and loss curves, not measured training results</title>
           <desc id={descriptionId}>Authored demo values, not observations from training or evaluation. From illustrative step {stepFormatter.format(first.step)} to {stepFormatter.format(latest.step)}. Illustrative evaluation reward goes from {formatDecimal(first.evalReward)} to {formatDecimal(latest.evalReward)}, illustrative defended win rate from {Math.round(first.defendedWinRate * 100)} percent to {Math.round(latest.defendedWinRate * 100)} percent, and illustrative training loss from {formatDecimal(first.trainLoss)} to {formatDecimal(latest.trainLoss)}.</desc>

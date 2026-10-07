@@ -1,55 +1,65 @@
 # Verge Lab
 
-Verge Lab is an offline preference-pair miner and review tool for scored language-model responses.
+Verge Lab chooses preference pairs from multi-aspect response scores and abstains when the aspects trade off.
 
-Live demo: https://mottopanikeiku.github.io/verge-lab/
+**Human-ratings result:** I found no clear validation advantage over a simple overall-score-gap selector. On HelpSteer2, both methods selected **310 pairs** at matched yield: Pareto agreed with **281/286 (98.25%)** strict human preferences, versus **277/282 (98.23%)** for the helpfulness-gap baseline. Both contradicted **5 human preferences**; the remaining selected pairs had human ties. [Results and denominators](results/human-preferences/summary.json).
 
-**Question:** When several scoring aspects disagree, which response pairs can a Pareto rule defend, and when should it abstain?
+[Live demo](https://mottopanikeiku.github.io/verge-lab/) · [Core rule](verge_lab/pareto.py) · [Human comparison](tools/compare_human_preferences.py)
 
-The rule in [`verge_lab/pareto.py`](verge_lab/pareto.py) changes minimization scores to a higher-is-better direction, subtracts an assumed uncertainty penalty, and keeps an edge only if every adjusted margin is nonnegative and at least one clears the strict threshold. [`verge_lab/export.py`](verge_lab/export.py) recomputes comparisons before exporting defended pairs for DPO. The React UI reviews **authored illustrative examples**, not model measurements; its ambient instruments come from [ThreeUI](https://github.com/MengTo/threeui), not model internals.
+![Human preference agreement at matched pair yield](results/human-preferences/human-agreement.svg)
 
-## Result: mining public annotations, not training a model
+## What I tested
 
-[`tools/mine_public_preferences.py`](tools/mine_public_preferences.py) analyzes the first **200 prompts** in the pinned UltraFeedback TruthfulQA file: **800 responses, 1,200 within-prompt pairs**. It uses the recorded helpfulness, honesty, instruction-following and truthfulness ratings, rescaled to a common range. The reference preference is the upstream judge's separate `overall_score`, not a human preference label or an aspect average.
+**Question:** Does refusing aspect tradeoffs select better human preference labels than simply choosing pairs with a large overall-score gap?
 
-| Nominal point-score comparison | Pairs |
-| --- | ---: |
-| Defended | 820 |
-| Abstained | 380 |
-| Defended, agreeing with overall ranking | 574 |
-| Defended, opposing overall ranking | 132 |
-| Defended, overall score tied | 114 |
+I joined the pinned HelpSteer2 human ratings to its separately collected pairwise preferences by exact prompt and response hashes: **8,677 train and 448 validation pairs**, with no unmatched preference pairs. [Source, license and join metadata](results/human-preferences/source-metadata.json).
 
-All counts and assumptions are in [`summary.json`](results/public-preferences/summary.json). Abstentions include **283 aspect tradeoffs, 79 aspect ties and 18 missing-score comparisons**. Among strictly ranked defended pairs, disagreement is **132/706 (18.7%)**. Comparing each overall-top response against strictly lower-ranked responses gives **344 top defended, 95 other defended and 196 abstentions**; tied tops are handled explicitly.
+The primary rule maximizes **correctness and coherence**. I hold out overall **helpfulness**, which supplies the baseline; complexity and verbosity describe style rather than universal quality. Ratings are divided by their scale maximum, confidence is assumed complete, and the uncertainty penalty is zero. These are nominal score comparisons, not calibrated reliability estimates.
 
-Confidence is absent from the dataset. The nominal run assumes full confidence with no uncertainty penalty; it is a score-consistency check, not a reliability estimate. With assumed confidence **0.9** and penalty scale **0.05**, only **343** pairs remain defended and **857** abstain. Tied aspects lose their nonnegative margin under any positive penalty. This sensitivity is a limitation of the rule, not evidence that either setting is calibrated.
+The existing [Pareto implementation](verge_lab/pareto.py) keeps a winner only when no aspect score worsens and at least one improves beyond the threshold. The [comparison script](tools/compare_human_preferences.py) uses that implementation, selects the baseline by absolute helpfulness gap, and evaluates both against the sign of the separate human preference—not an aspect average. The [exporter](verge_lab/export.py) recomputes decisions before writing DPO pairs.
 
-[`examples.json`](results/public-preferences/examples.json) includes actual disagreements and abstentions. For example, on source row `0001`, completion `3` dominates completion `0` on instruction-following with the other aspects tied, but has a lower overall score (**7.0 versus 7.5**). [`pairs.csv`](results/public-preferences/pairs.csv) records every comparison; [source metadata](results/public-preferences/source-metadata.json) records the revision, hashes, attribution and dataset-card license.
+## Matched-yield comparison
 
-The browser's curves, candidate scores, judge confidences, costs and model metadata remain **illustrative**. Its calculated example verdicts are not a benchmark. The [historical GPU smoke run](artifacts/modal-training.json) used **two pairs**, one epoch and **3.3742 seconds**, with training loss **0.693147** (approximately ln 2): it supplies no evidence of improved model quality.
+All numbers below come from [summary.json](results/human-preferences/summary.json); [pairs.csv](results/human-preferences/pairs.csv) identifies every decision.
+
+| Split / selector | Selected | Human agree | Contradict | Human tie | Strict agreement |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Train / Pareto | 5,851 | 5,244 | 96 | 511 | 98.20% |
+| Train / helpfulness gap | 5,851 | 5,196 | 110 | 545 | 97.93% |
+| Validation / Pareto | 310 | 281 | 5 | 24 | 98.25% |
+| Validation / helpfulness gap | 310 | 277 | 5 | 28 | 98.23% |
+
+Matching the unrestricted Pareto yield is impossible without inventing directions for helpfulness ties: it defends **338 validation pairs**, but only **333** have a nonzero helpfulness gap. I therefore exclude helpfulness ties from **both** selectors for the table. Among all defended validation pairs, humans contradict **8/300 strictly ranked pairs (2.67%)**, or **8/338 selected pairs (2.37%)**, with **38 human ties**.
+
+Equal gaps are broken without looking at preference labels. Across the recorded tie-breaking seeds, validation baseline agreement ranges from **98.21% to 98.95%**. The tiny headline difference does not establish superiority. The summary also reports three-quality-aspect and naive five-aspect sensitivities, tie counts, abstention reasons and Wilson intervals. [Method details](docs/WORKFLOWS.md#human-ratings-and-preferences).
+
+## Why disagreements matter
+
+The earlier [UltraFeedback result](results/public-preferences/summary.json) defended **820/1,200** pairs and opposed the separate GPT-4 overall ranking in **132/706 (18.7%)** strictly ranked cases. These are not human error labels.
+
+I reviewed a fixed random sample of **12** such disagreements against full upstream responses and rationales. Categories included factual failures, coverage versus concision, confidence cues, premise handling, boilerplate and rationale/text mismatches. I favored the overall direction in **6**, Pareto in **3**, and remained uncertain in **3**. This is an explicitly **AI-assisted qualitative review**, not independent human verification. [Full texts, selection and per-case notes](results/disagreement-review/review.txt).
+
+I also reviewed **12 of 151 human contradictions**: **8** favored the human direction, **2** Pareto, **2** were uncertain. Categories included prompt constraints versus fluency, grounding, scope and audience alignment. [Full-text human review](results/disagreement-review/human-review.txt); the same AI-assisted limitations apply.
 
 ## Reproduce
 
-From a checkout, with Python and uv, on a local CPU:
+Python and uv on a CPU; no models, GPU, paid APIs or inference. The recorded human analysis costs **$0** ([summary](results/human-preferences/summary.json)).
 
 ```bash
 uv sync --locked --dev
-nice -n 19 uv run python tools/mine_public_preferences.py
-nice -n 19 uv run pytest -q -x
+nice -n 19 uv run python tools/compare_human_preferences.py
+nice -n 19 uv run pytest
 ```
 
-The mining command uses the committed compact source without network access. Add `--fetch` to refresh from the pinned public file. [The recorded offline run](results/public-preferences/run.json) took **0.312 seconds**, used **34,816 KiB** peak process RSS, and cost **$0**; no model inference or training was run. [Workflow details](docs/WORKFLOWS.md) cover the illustrative UI, CLI export, checks and optional historical GPU entrypoints.
+The analysis uses committed compact scores offline. Add `--fetch --cache .cache/helpsteer2` to rebuild from pinned upstream files. [UI, export and checks](docs/WORKFLOWS.md).
 
-## Limitations
+## Limits and attribution
 
-- This is a small deterministic prefix of one dataset subset, not a representative sample.
-- GPT-4 aspect and overall annotations are unverified and share a judge; disagreement is not an error rate.
-- Ordinal-score rescaling and confidence penalties are modelling choices. Pareto selection can favor easy dominance and discard useful tradeoffs.
-- Built-in phrase, keyword, JSON, regex and word-count checks do not establish semantic correctness; supplied judge confidences are not calibrated by this tool.
-- Stored excerpts support score reproduction, not full offline response review. No downstream training or held-out evaluation was performed.
+- The validation sample is small, and human ratings are rounded, filtered annotations—not objective truth.
+- Equal yield does not imply identical pairs or identical numbers of strict human labels. Human ties are never counted as agreement.
+- Separate preference collection does not guarantee independent annotators; no downstream training benefit is measured.
+- The browser uses authored **illustrative examples**, not these benchmark rows or measured training curves.
 
-## Prior work and attribution
-
-[UltraFeedback](https://arxiv.org/abs/2310.01377) supplies GPT-4 annotations on responses to [TruthfulQA](https://arxiv.org/abs/2109.07958) prompts; its pinned card declares MIT, with upstream-content terms noted in the source metadata. [DPO](https://arxiv.org/abs/2305.18290) motivates the export format. The Pareto rule is this repository's engineering choice, not a reproduction of those papers. Project code and ThreeUI are MIT licensed; upstream assets retain their own terms.
+[HelpSteer2](https://arxiv.org/abs/2406.08673) and [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257), by NVIDIA, Scale AI and Zhilin Wang et al., are CC-BY-4.0. HelpSteer3 has preferences and free-text feedback but no suitable matched numeric aspect ratings; I do not invent them. [UltraFeedback](https://arxiv.org/abs/2310.01377) supplies GPT-4 ratings on [TruthfulQA](https://arxiv.org/abs/2109.07958); its MIT card does not remove upstream content terms. [DPO](https://arxiv.org/abs/2305.18290) motivates the export format. Project code is MIT.
 
 Written with AI coding assistance.

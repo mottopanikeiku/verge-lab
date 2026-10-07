@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
-import type { CSSProperties, KeyboardEvent, PointerEvent, WheelEvent } from 'react'
+import type { KeyboardEvent, PointerEvent } from 'react'
 import { CircleAlert, Focus, GitBranch, Minus, Plus, RotateCcw } from 'lucide-react'
 import { ConfidenceDial } from './ConfidenceDial'
 import { candidateLabel, formatNumber, formatPercent, promptFor, shortId } from '../lib'
@@ -141,14 +141,6 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
     () => pairs.filter((pair) => nodeById[pair.chosenId] && nodeById[pair.rejectedId]),
     [nodeById, pairs],
   )
-  const pairOrder = useMemo(
-    () => new Map(run.pairs.map((pair, index) => [pair.id, index])),
-    [run.pairs],
-  )
-  const candidateOrder = useMemo(
-    () => new Map(run.candidates.map((candidate, index) => [candidate.id, index])),
-    [run.candidates],
-  )
   const [viewport, setViewport] = useState<GraphViewport>(INITIAL_VIEWPORT)
   const panOrigin = useRef<PanOrigin | null>(null)
   const selectedCandidate = candidates.find((candidate) => candidate.id === selectedCandidateId)
@@ -171,7 +163,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
   }
 
   const beginPan = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 || (event.target as Element).closest('.graph-node')) return
+    if (event.pointerType === 'touch' || event.button !== 0 || viewport.scale <= MIN_ZOOM || (event.target as Element).closest('.graph-node')) return
     event.currentTarget.setPointerCapture(event.pointerId)
     panOrigin.current = {
       pointerId: event.pointerId,
@@ -204,30 +196,23 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
     }
   }
 
-  const handleWheel = (event: WheelEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    const bounds = event.currentTarget.getBoundingClientRect()
-    const anchorX = clampNumber((event.clientX - bounds.left) / Math.max(bounds.width, 1), 0, 1)
-    const anchorY = clampNumber((event.clientY - bounds.top) / Math.max(bounds.height, 1), 0, 1)
-    zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP, anchorX, anchorY)
-  }
 
   if (candidates.length === 0) {
-    return <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No candidates cross this aperture</h3><p>Clear the search or widen the domain and verdict filters.</p></div>
+    return <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No example answers match</h3><p>Clear the search or widen the domain and verdict filters.</p></div>
   }
 
   return (
     <div className="topology-stack">
       <figure className="order-graph calibration-chrome" data-armed={selectedCandidate ? 'true' : 'false'} aria-labelledby="order-graph-title">
         <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Illustrative partial order</strong></span><span>{visiblePairs.length} computed example edges</span></figcaption>
-        <div className="graph-key" aria-label="Illustrative graph legend"><span><i className="key-line key-line--defended" />Example defended preference</span><span><i className="key-line key-line--ambiguous" />Example ambiguous comparison</span><span><i className="key-node" />Example candidate</span></div>
+        <div className="graph-key" aria-label="Example graph legend"><span><i className="key-line key-line--defended" />Arrow: selected answer</span><span><i className="key-line key-line--ambiguous" />Dashed: abstain</span><span><i className="key-node" />Example answer</span></div>
         <div className="graph-controls" role="group" aria-label="Graph viewport controls">
           <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM} aria-label="Zoom graph out"><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
           <button type="button" onClick={() => setViewport(INITIAL_VIEWPORT)} disabled={viewport.scale === MIN_ZOOM && viewport.x === 0 && viewport.y === 0}><RotateCcw size={14} aria-hidden="true" /><span>Reset view</span></button>
           <button type="button" onClick={() => zoomBy(ZOOM_STEP)} disabled={viewport.scale >= MAX_ZOOM} aria-label="Zoom graph in"><Plus size={14} aria-hidden="true" /><span>Zoom in</span></button>
           <output aria-label="Current graph zoom">{Math.round(viewport.scale * 100)}%</output>
         </div>
-        <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan} onWheel={handleWheel}>
+        <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan}>
           <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Illustrative candidate partial-order graph computed from authored example scores. Coordinates are authored, not model embeddings. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
             <defs>
               <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
@@ -238,14 +223,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
                 const rejected = nodeById[pair.rejectedId]
                 const markerEnd = pair.verdict === 'defended' ? 'url(#arrow-defended)' : undefined
                 const edgeLabel = pair.verdict === 'defended' ? 'preference edge' : 'undirected comparison'
-                const confidence = clampNumber(pair.confidence, 0, 1)
-                const style = {
-                  '--edge-confidence': confidence,
-                  '--enter-delay': `${(pairOrder.get(pair.id) ?? 0) * 24}ms`,
-                  strokeWidth: 1.25 + confidence * 3,
-                  strokeOpacity: 0.35 + confidence * 0.65,
-                } as CSSProperties
-                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd} style={style}><title>{`Computed example ${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} illustrative confidence, not a measurement. ${pair.reason}`}</title></line>
+                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd}><title>{`Computed example ${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} illustrative confidence, not a measurement. ${pair.reason}`}</title></line>
               })}
             </g>
             <g aria-label="Illustrative candidates">
@@ -253,9 +231,8 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
                 const label = candidateLabel(run, candidate)
                 const prompt = promptFor(run, candidate.promptId)
                 const selected = candidate.id === selectedCandidateId
-                const style = { '--enter-delay': `${(candidateOrder.get(candidate.id) ?? 0) * 32}ms` } as CSSProperties
                 return (
-                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} style={style} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`Illustrative candidate ${label}, ${prompt?.domain ?? 'unknown domain'}, ${candidate.tokens} illustrative tokens. Select example candidate.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
+                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`Example answer ${label}, ${prompt?.domain ?? 'unknown domain'}, ${shortId(candidate.id)}. Select answer.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
                     <title>{`Illustrative candidate ${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
                   </g>
                 )
@@ -263,7 +240,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
             </g>
           </svg>
         </div>
-        <p className="graph-note">Illustrative projection of authored x/y coordinates, not measured model embeddings. Arrows show preferences computed from example scores; dashed ambiguous comparisons are undirected. No scalar rank or measured model quality is inferred.</p>
+        <p className="graph-note">Arrows point to the selected answer, not to a global rank. Dashed lines mean no winner was selected. Positions are authored coordinates, not measured model embeddings. Use zoom buttons, then drag with a mouse to pan. Tab to an answer; arrow keys move between answers; Enter selects it. The table below offers the same selection controls.</p>
       </figure>
 
       {selectedCandidate ? (
@@ -282,10 +259,10 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
       ) : null}
 
       <details className="candidate-register-disclosure" open>
-        <summary><span>Open illustrative accessible register</span><small>{candidates.length} example candidate rows</small></summary>
+        <summary><span>Example answer table</span><small>{candidates.length} rows · score / confidence</small></summary>
         <section className="candidate-table-section" aria-labelledby="candidate-table-title">
           <header className="section-heading section-heading--compact"><div><span className="eyebrow">Illustrative accessible register</span><h3 id="candidate-table-title">Example candidate scores and confidences</h3></div><span>{candidates.length} example rows</span></header>
-          <div className="table-wrap"><table className="data-table candidate-table"><caption>All scores, confidences, token counts and latencies are illustrative authored inputs, not model measurements. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
+          <div className="table-wrap" tabIndex={0} role="region" aria-label="Example scores table; scroll horizontally for all objectives"><table className="data-table candidate-table"><caption>All scores, confidences, token counts and latencies are illustrative authored inputs, not model measurements. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
             {candidates.map((candidate) => {
               const selected = candidate.id === selectedCandidateId
               return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Example candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Example domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={`Illustrative ${objective.label} score / confidence`} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Illustrative tokens">{candidate.tokens}</td><td data-label="Illustrative latency">{candidate.latencyMs} ms</td></tr>
