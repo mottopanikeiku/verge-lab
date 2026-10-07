@@ -1,0 +1,61 @@
+{
+  "attribution": "HelpSteer2 and HelpSteer2-Preference, NVIDIA and Scale AI; Zhilin Wang et al.",
+  "card_sha256": "835effb9e7d9cd0e8b7b8c1816d1d97a8961a036543108e4a0b6a5e22712ff7b",
+  "card_url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/README.md",
+  "changes": "Text omitted; retain hashes, original numeric ratings and preference strengths",
+  "counts": {
+    "train_matched_pairs": 8677,
+    "train_preference_pairs": 8677,
+    "train_rating_responses": 20324,
+    "validation_matched_pairs": 448,
+    "validation_preference_pairs": 448,
+    "validation_rating_responses": 1038
+  },
+  "dataset": "nvidia/HelpSteer2",
+  "duplicate_handling": "Use first row only when exact text, split and all scores agree",
+  "files": {
+    "preference/preference.jsonl.gz": {
+      "bytes": 15339272,
+      "compressed_sha256": "a5cd48600fb7a330cf0ccc8f59051e24e8f236907c379f42eff1ba18da55204b",
+      "url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/preference/preference.jsonl.gz"
+    },
+    "train.jsonl.gz": {
+      "bytes": 11315813,
+      "compressed_sha256": "c0d7e91d738d42e8a08070db26c4c09a9c7631308e1f0fd380ff43d130c9f713",
+      "url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/train.jsonl.gz"
+    },
+    "validation.jsonl.gz": {
+      "bytes": 581833,
+      "compressed_sha256": "610eeb5289494d613c4c0f70aade2df8df0b499f3a24e76d232f74e6909d010a",
+      "url": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/validation.jsonl.gz"
+    }
+  },
+  "helpsteer3": {
+    "card": "https://huggingface.co/datasets/nvidia/HelpSteer3/blob/f6d145777bcbde96137596340fab89793acd1031/README.md",
+    "decision": "Not suitable for this score rule: preferences and free-text feedback, not matched numeric multi-aspect ratings. No scores inferred from text.",
+    "license": "CC-BY-4.0",
+    "revision": "f6d145777bcbde96137596340fab89793acd1031"
+  },
+  "identical_duplicate_rating_keys": [
+    {
+      "duplicate_row": 8931,
+      "first_row": 8930,
+      "split": "train"
+    }
+  ],
+  "join": "Exact UTF-8 prompt and response SHA-256, both responses, with split equality",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "papers": [
+    "https://arxiv.org/abs/2406.08673",
+    "https://arxiv.org/abs/2410.01257"
+  ],
+  "reference": "Separately collected human pairwise preference_strength; positive prefers response 2",
+  "revision": "990b2711a36180dd19d9c94b8627844866f8982a",
+  "split_names": {
+    "preference/train": "train",
+    "preference/val": "validation"
+  },
+  "stored_source_sha256": "0ff82d149ac25b057d711a806c5278710c835a98f6dec1436d9677f0ea4b381a",
+  "unmatched": []
+}

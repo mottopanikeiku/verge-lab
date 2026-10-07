@@ -1,0 +1,590 @@
+{
+  "aspect_choice": "Hold overall helpfulness out of primary rule; complexity and verbosity describe style, not monotone quality. Three-quality and naive-five maximization are sensitivities, not tuned variants.",
+  "configurations": {
+    "correctness_coherence": {
+      "train": {
+        "abstained": 2282,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 183,
+          "equivalent within epsilon": 2099
+        },
+        "all_pairs": 8677,
+        "defended": 6395,
+        "full_yield_matched": {
+          "feasible": false,
+          "helpfulness_gap": null,
+          "pareto": {
+            "agree": 5457,
+            "contradict": 143,
+            "contradiction_among_all_selected": 0.022361219702892884,
+            "human_tie": 795,
+            "no_prediction": 0,
+            "selected": 6395,
+            "strict_agreement": 0.9744642857142857,
+            "strict_human_pairs": 5600,
+            "wilson_95": [
+              0.9699961364748847,
+              0.9782819400998065
+            ]
+          },
+          "reason_if_infeasible": "Pareto yield exceeds all nonzero-helpfulness pairs; no arbitrary tie direction",
+          "yield_pairs_each": 6395
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9791117802032367,
+            0.9813559322033898
+          ],
+          "eligible_at_cutoff": 2803,
+          "eligible_nonzero_helpfulness_pairs": 6342,
+          "excluded_helpfulness_ties": 2335,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 5196,
+            "contradict": 110,
+            "contradiction_among_all_selected": 0.01880020509314647,
+            "human_tie": 545,
+            "no_prediction": 0,
+            "selected": 5851,
+            "strict_agreement": 0.9792687523558236,
+            "strict_human_pairs": 5306,
+            "wilson_95": [
+              0.9750739660675345,
+              0.9827700749350741
+            ]
+          },
+          "overlap": 5424,
+          "pareto": {
+            "agree": 5244,
+            "contradict": 96,
+            "contradiction_among_all_selected": 0.016407451717655102,
+            "human_tie": 511,
+            "no_prediction": 0,
+            "selected": 5851,
+            "strict_agreement": 0.9820224719101124,
+            "strict_human_pairs": 5340,
+            "wilson_95": [
+              0.9780967191024853,
+              0.9852552140845608
+            ]
+          },
+          "selected_at_cutoff": 2312,
+          "yield_of_all_pairs": 0.6743113979485997,
+          "yield_pairs_each": 5851
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 5799,
+          "contradict": 52,
+          "tie": 544
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 5457,
+          "contradict": 143,
+          "contradiction_among_all_selected": 0.022361219702892884,
+          "human_tie": 795,
+          "no_prediction": 0,
+          "selected": 6395,
+          "strict_agreement": 0.9744642857142857,
+          "strict_human_pairs": 5600,
+          "wilson_95": [
+            0.9699961364748847,
+            0.9782819400998065
+          ]
+        },
+        "yield": 0.737005877607468
+      },
+      "validation": {
+        "abstained": 110,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 6,
+          "equivalent within epsilon": 104
+        },
+        "all_pairs": 448,
+        "defended": 338,
+        "full_yield_matched": {
+          "feasible": false,
+          "helpfulness_gap": null,
+          "pareto": {
+            "agree": 292,
+            "contradict": 8,
+            "contradiction_among_all_selected": 0.023668639053254437,
+            "human_tie": 38,
+            "no_prediction": 0,
+            "selected": 338,
+            "strict_agreement": 0.9733333333333334,
+            "strict_human_pairs": 300,
+            "wilson_95": [
+              0.9482710570494102,
+              0.9864269301913529
+            ]
+          },
+          "reason_if_infeasible": "Pareto yield exceeds all nonzero-helpfulness pairs; no arbitrary tie direction",
+          "yield_pairs_each": 338
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9821428571428571,
+            0.9894736842105263
+          ],
+          "eligible_at_cutoff": 156,
+          "eligible_nonzero_helpfulness_pairs": 333,
+          "excluded_helpfulness_ties": 115,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 277,
+            "contradict": 5,
+            "contradiction_among_all_selected": 0.016129032258064516,
+            "human_tie": 28,
+            "no_prediction": 0,
+            "selected": 310,
+            "strict_agreement": 0.9822695035460993,
+            "strict_human_pairs": 282,
+            "wilson_95": [
+              0.9591730361408778,
+              0.9924034115941697
+            ]
+          },
+          "overlap": 289,
+          "pareto": {
+            "agree": 281,
+            "contradict": 5,
+            "contradiction_among_all_selected": 0.016129032258064516,
+            "human_tie": 24,
+            "no_prediction": 0,
+            "selected": 310,
+            "strict_agreement": 0.9825174825174825,
+            "strict_human_pairs": 286,
+            "wilson_95": [
+              0.9597347447408923,
+              0.9925099794023956
+            ]
+          },
+          "selected_at_cutoff": 133,
+          "yield_of_all_pairs": 0.6919642857142857,
+          "yield_pairs_each": 310
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 308,
+          "contradict": 2,
+          "tie": 28
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 292,
+          "contradict": 8,
+          "contradiction_among_all_selected": 0.023668639053254437,
+          "human_tie": 38,
+          "no_prediction": 0,
+          "selected": 338,
+          "strict_agreement": 0.9733333333333334,
+          "strict_human_pairs": 300,
+          "wilson_95": [
+            0.9482710570494102,
+            0.9864269301913529
+          ]
+        },
+        "yield": 0.7544642857142857
+      }
+    },
+    "five_aspects_naive_maximize": {
+      "train": {
+        "abstained": 3143,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 2238,
+          "equivalent within epsilon": 905
+        },
+        "all_pairs": 8677,
+        "defended": 5534,
+        "full_yield_matched": {
+          "feasible": true,
+          "helpfulness_gap": {
+            "agree": 4951,
+            "contradict": 96,
+            "contradiction_among_all_selected": 0.01734730755330683,
+            "human_tie": 487,
+            "no_prediction": 0,
+            "selected": 5534,
+            "strict_agreement": 0.980978799286705,
+            "strict_human_pairs": 5047,
+            "wilson_95": [
+              0.976828099338071,
+              0.9843978745085876
+            ]
+          },
+          "pareto": {
+            "agree": 4163,
+            "contradict": 263,
+            "contradiction_among_all_selected": 0.04752439465124684,
+            "human_tie": 1108,
+            "no_prediction": 0,
+            "selected": 5534,
+            "strict_agreement": 0.9405784003615002,
+            "strict_human_pairs": 4426,
+            "wilson_95": [
+              0.9332240309175626,
+              0.9471686504580485
+            ]
+          },
+          "reason_if_infeasible": null,
+          "yield_pairs_each": 5534
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9830549503752118,
+            0.9873969946679593
+          ],
+          "eligible_at_cutoff": 2803,
+          "eligible_nonzero_helpfulness_pairs": 6342,
+          "excluded_helpfulness_ties": 2335,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 4057,
+            "contradict": 55,
+            "contradiction_among_all_selected": 0.012666973744818056,
+            "human_tie": 230,
+            "no_prediction": 0,
+            "selected": 4342,
+            "strict_agreement": 0.9866245136186771,
+            "strict_human_pairs": 4112,
+            "wilson_95": [
+              0.982631528563095,
+              0.9897091313093306
+            ]
+          },
+          "overlap": 2909,
+          "pareto": {
+            "agree": 3810,
+            "contradict": 60,
+            "contradiction_among_all_selected": 0.013818516812528788,
+            "human_tie": 472,
+            "no_prediction": 0,
+            "selected": 4342,
+            "strict_agreement": 0.9844961240310077,
+            "strict_human_pairs": 3870,
+            "wilson_95": [
+              0.9800956343550428,
+              0.9879357215646197
+            ]
+          },
+          "selected_at_cutoff": 803,
+          "yield_of_all_pairs": 0.5004033652183935,
+          "yield_pairs_each": 4342
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 4342,
+          "tie": 1192
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 4163,
+          "contradict": 263,
+          "contradiction_among_all_selected": 0.04752439465124684,
+          "human_tie": 1108,
+          "no_prediction": 0,
+          "selected": 5534,
+          "strict_agreement": 0.9405784003615002,
+          "strict_human_pairs": 4426,
+          "wilson_95": [
+            0.9332240309175626,
+            0.9471686504580485
+          ]
+        },
+        "yield": 0.6377780338826784
+      },
+      "validation": {
+        "abstained": 143,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 98,
+          "equivalent within epsilon": 45
+        },
+        "all_pairs": 448,
+        "defended": 305,
+        "full_yield_matched": {
+          "feasible": true,
+          "helpfulness_gap": {
+            "agree": 273,
+            "contradict": 5,
+            "contradiction_among_all_selected": 0.01639344262295082,
+            "human_tie": 27,
+            "no_prediction": 0,
+            "selected": 305,
+            "strict_agreement": 0.9820143884892086,
+            "strict_human_pairs": 278,
+            "wilson_95": [
+              0.9585954349736424,
+              0.9922937674928408
+            ]
+          },
+          "pareto": {
+            "agree": 240,
+            "contradict": 12,
+            "contradiction_among_all_selected": 0.03934426229508197,
+            "human_tie": 53,
+            "no_prediction": 0,
+            "selected": 305,
+            "strict_agreement": 0.9523809523809523,
+            "strict_human_pairs": 252,
+            "wilson_95": [
+              0.9186238416022449,
+              0.9725530655767954
+            ]
+          },
+          "reason_if_infeasible": null,
+          "yield_pairs_each": 305
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9830508474576272,
+            0.9957264957264957
+          ],
+          "eligible_at_cutoff": 156,
+          "eligible_nonzero_helpfulness_pairs": 333,
+          "excluded_helpfulness_ties": 115,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 228,
+            "contradict": 3,
+            "contradiction_among_all_selected": 0.012195121951219513,
+            "human_tie": 15,
+            "no_prediction": 0,
+            "selected": 246,
+            "strict_agreement": 0.987012987012987,
+            "strict_human_pairs": 231,
+            "wilson_95": [
+              0.9625195871840329,
+              0.9955735924865623
+            ]
+          },
+          "overlap": 177,
+          "pareto": {
+            "agree": 224,
+            "contradict": 2,
+            "contradiction_among_all_selected": 0.008130081300813009,
+            "human_tie": 20,
+            "no_prediction": 0,
+            "selected": 246,
+            "strict_agreement": 0.9911504424778761,
+            "strict_human_pairs": 226,
+            "wilson_95": [
+              0.9683134158664736,
+              0.9975697678684005
+            ]
+          },
+          "selected_at_cutoff": 69,
+          "yield_of_all_pairs": 0.5491071428571429,
+          "yield_pairs_each": 246
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 246,
+          "tie": 59
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 240,
+          "contradict": 12,
+          "contradiction_among_all_selected": 0.03934426229508197,
+          "human_tie": 53,
+          "no_prediction": 0,
+          "selected": 305,
+          "strict_agreement": 0.9523809523809523,
+          "strict_human_pairs": 252,
+          "wilson_95": [
+            0.9186238416022449,
+            0.9725530655767954
+          ]
+        },
+        "yield": 0.6808035714285714
+      }
+    },
+    "three_quality_aspects": {
+      "train": {
+        "abstained": 1973,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 235,
+          "equivalent within epsilon": 1738
+        },
+        "all_pairs": 8677,
+        "defended": 6704,
+        "full_yield_matched": {
+          "feasible": false,
+          "helpfulness_gap": null,
+          "pareto": {
+            "agree": 5652,
+            "contradict": 145,
+            "contradiction_among_all_selected": 0.021628878281622913,
+            "human_tie": 907,
+            "no_prediction": 0,
+            "selected": 6704,
+            "strict_agreement": 0.9749870622735898,
+            "strict_human_pairs": 5797,
+            "wilson_95": [
+              0.9706415342566773,
+              0.9787034942350284
+            ]
+          },
+          "reason_if_infeasible": "Pareto yield exceeds all nonzero-helpfulness pairs; no arbitrary tie direction",
+          "yield_pairs_each": 6704
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9787502251035476,
+            0.9800180018001801
+          ],
+          "eligible_at_cutoff": 2803,
+          "eligible_nonzero_helpfulness_pairs": 6342,
+          "excluded_helpfulness_ties": 2335,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 5437,
+            "contradict": 118,
+            "contradiction_among_all_selected": 0.019155844155844155,
+            "human_tie": 605,
+            "no_prediction": 0,
+            "selected": 6160,
+            "strict_agreement": 0.9787578757875788,
+            "strict_human_pairs": 5555,
+            "wilson_95": [
+              0.974622151291023,
+              0.9822319053325713
+            ]
+          },
+          "overlap": 5987,
+          "pareto": {
+            "agree": 5439,
+            "contradict": 98,
+            "contradiction_among_all_selected": 0.015909090909090907,
+            "human_tie": 623,
+            "no_prediction": 0,
+            "selected": 6160,
+            "strict_agreement": 0.9823008849557522,
+            "strict_human_pairs": 5537,
+            "wilson_95": [
+              0.9784786125894938,
+              0.9854544000574286
+            ]
+          },
+          "selected_at_cutoff": 2621,
+          "yield_of_all_pairs": 0.709922784372479,
+          "yield_pairs_each": 6160
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 6160,
+          "tie": 544
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 5652,
+          "contradict": 145,
+          "contradiction_among_all_selected": 0.021628878281622913,
+          "human_tie": 907,
+          "no_prediction": 0,
+          "selected": 6704,
+          "strict_agreement": 0.9749870622735898,
+          "strict_human_pairs": 5797,
+          "wilson_95": [
+            0.9706415342566773,
+            0.9787034942350284
+          ]
+        },
+        "yield": 0.7726172640313472
+      },
+      "validation": {
+        "abstained": 94,
+        "abstention_reasons": {
+          "cross-objective tradeoff": 8,
+          "equivalent within epsilon": 86
+        },
+        "all_pairs": 448,
+        "defended": 354,
+        "full_yield_matched": {
+          "feasible": false,
+          "helpfulness_gap": null,
+          "pareto": {
+            "agree": 302,
+            "contradict": 7,
+            "contradiction_among_all_selected": 0.01977401129943503,
+            "human_tie": 45,
+            "no_prediction": 0,
+            "selected": 354,
+            "strict_agreement": 0.9773462783171522,
+            "strict_human_pairs": 309,
+            "wilson_95": [
+              0.9539855153457235,
+              0.9889841316826777
+            ]
+          },
+          "reason_if_infeasible": "Pareto yield exceeds all nonzero-helpfulness pairs; no arbitrary tie direction",
+          "yield_pairs_each": 354
+        },
+        "matched": {
+          "baseline_agreement_range_20_label_blind_tie_seeds": [
+            0.9829931972789115,
+            0.9897959183673469
+          ],
+          "eligible_at_cutoff": 156,
+          "eligible_nonzero_helpfulness_pairs": 333,
+          "excluded_helpfulness_ties": 115,
+          "gap_cutoff": 1,
+          "helpfulness_gap": {
+            "agree": 291,
+            "contradict": 5,
+            "contradiction_among_all_selected": 0.015337423312883436,
+            "human_tie": 30,
+            "no_prediction": 0,
+            "selected": 326,
+            "strict_agreement": 0.9831081081081081,
+            "strict_human_pairs": 296,
+            "wilson_95": [
+              0.9610736473657249,
+              0.9927637609928994
+            ]
+          },
+          "overlap": 319,
+          "pareto": {
+            "agree": 291,
+            "contradict": 4,
+            "contradiction_among_all_selected": 0.012269938650306749,
+            "human_tie": 31,
+            "no_prediction": 0,
+            "selected": 326,
+            "strict_agreement": 0.9864406779661017,
+            "strict_human_pairs": 295,
+            "wilson_95": [
+              0.9656607001492518,
+              0.9947147481991013
+            ]
+          },
+          "selected_at_cutoff": 149,
+          "yield_of_all_pairs": 0.7276785714285714,
+          "yield_pairs_each": 326
+        },
+        "unrestricted_pareto_vs_helpfulness": {
+          "agree": 326,
+          "tie": 28
+        },
+        "unrestricted_pareto_vs_human": {
+          "agree": 302,
+          "contradict": 7,
+          "contradiction_among_all_selected": 0.01977401129943503,
+          "human_tie": 45,
+          "no_prediction": 0,
+          "selected": 354,
+          "strict_agreement": 0.9773462783171522,
+          "strict_human_pairs": 309,
+          "wilson_95": [
+            0.9539855153457235,
+            0.9889841316826777
+          ]
+        },
+        "yield": 0.7901785714285714
+      }
+    }
+  },
+  "cost_usd": 0,
+  "dataset_revision": "990b2711a36180dd19d9c94b8627844866f8982a",
+  "matched_comparison": "Within each split, exclude helpfulness ties from BOTH methods. Select all defended pairs in that pool; select the same number of largest absolute helpfulness gaps, predicting gap sign. Human labels never select pairs. Human ties remain selected but not in strict agreement denominator.",
+  "method": "Existing compare_candidates; ratings / 4, confidence 1, epsilon 0.01, no penalty",
+  "model_calls": 0,
+  "primary_aspects": [
+    "correctness",
+    "coherence"
+  ],
+  "tie_break": "Ascending SHA-256 of seed:pair_id; seed 20261007; 20-seed sensitivity",
+  "uncertainty": "Wilson intervals describe binomial variation, not annotation uncertainty; shared dataset population and correlated methods prevent treating them as a superiority test."
+}

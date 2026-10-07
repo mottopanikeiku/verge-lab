@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-The UI has an overview, a candidate partial-order graph with a data table, a pair review view, and an example configuration/checkpoint view. ThreeUI provides ambient visual instruments, not model internals or measurements. Its upstream runtime assets run in opaque-origin `allow-scripts` iframes; candidate data is not passed into them. Deployments with stricter privacy requirements should replace those assets with vetted self-hosted ones.
+The UI has an overview, a candidate partial-order graph with a data table, a pair review view, and an example configuration/checkpoint view. I removed the decorative WebGL instruments so the explanation and pair decisions do not compete with unrelated graphics.
 
 ### GitHub Pages
 
@@ -27,9 +27,9 @@ npm run preview -- --host 127.0.0.1
 
 Open `http://127.0.0.1:4173/verge-lab/`. The `pages.yml` workflow builds with the committed npm lockfile on pushes to `main` or manual dispatch, uploads `dist` with `actions/upload-pages-artifact`, and deploys with `actions/deploy-pages`. It does not enable Pages or change repository settings; the repository must already use GitHub Actions as its Pages source.
 
-The npm lockfile pins installed dependencies, including ThreeUI 0.3.0. Its three used iframe scenes reference Tailwind, Iconify, GSAP and Three.js. A Vite transform pins Tailwind to 3.4.17 and adds SHA-384 integrity checks to the already-versioned Iconify 1.0.7, GSAP 3.12.2 and Three.js r128 scripts. Tailwind's CDN endpoint does not send a CORS header, so it cannot support cross-origin SRI. Google Fonts stylesheets and decorative image endpoints remain remote assets, not pinned executable dependencies.
+The npm lockfile pins the React UI and its build tools. The app does not load remote executable scripts or ThreeUI iframe scenes.
 
-The checked-in [browser smoke record](assets/pages-smoke.json) and [pair-review screenshot](assets/pages-pair-lab.png) come from the prefixed production build in headless Chromium. The run visited every view, filtered 12 comparisons to 10 ambiguous pairs, opened pair details, exercised an empty candidate search, and restored the register. It recorded no console errors, uncaught page errors, failed requests or HTTP error responses.
+The older [browser smoke record](assets/pages-smoke.json) and [pair-review screenshot](assets/pages-pair-lab.png) describe the earlier UI. They are retained as historical checks, not verification of the current interface.
 
 ## Analyze and export
 
@@ -45,6 +45,26 @@ For each objective, `verge_lab/pareto.py` changes the sign of minimization score
 `verge_lab/export.py` recomputes each comparison and refuses artifacts whose stored evidence differs. It exports only defended edges in TRL-compatible JSONL. This protects consistency, not the truth of externally supplied scores.
 
 Artifacts contain run/model metadata, summary counts, prompt rubrics and constraints, candidate scores and projection coordinates, pair decisions, mutation results, and optional checkpoint inputs. Content hashes and deterministic ordering make repeat runs comparable; hashes are not proof of valid scoring.
+
+## Human ratings and preferences
+
+```bash
+uv run python tools/compare_human_preferences.py
+uv run python tools/compare_human_preferences.py --fetch --cache .cache/helpsteer2
+```
+
+The first command uses the committed compact source without the network. The second downloads the pinned original rating and preference files. `source-metadata.json` records their revision, hashes, join counts and exclusions. I join each human preference pair to both rating responses by the exact prompt and response text hashes, checking that the split agrees after mapping the preference file's `val` label to the rating file's `validation`. Identical duplicate rating keys are allowed only when the split and all scores agree; conflicting duplicates stop the analysis.
+
+The primary Pareto rule maximizes **correctness and coherence**, rescaled from 0–4 to 0–1. I leave helpfulness out because it is the dataset's overall rating and supplies the baseline. Complexity and verbosity measure style, not universal quality: blindly maximizing them would reward sophistication and length regardless of the prompt. I also report the three quality aspects together and naive five-aspect maximization as sensitivities, without selecting the best variant.
+
+The human reference is the separately collected `preference_strength`, not helpfulness and not an aspect average. Its sign is positive when response 2 is preferred. Human ties remain in selected counts; I separately report strict preference agreement, contradictions among all selected pairs, and tie counts. The ratings and preferences come from the same dataset population, so separate collection is not a claim of fully independent annotators or unbiased ground truth.
+
+For equal-yield comparison, I exclude helpfulness ties from **both** selectors. Otherwise the gap baseline cannot choose a direction, and forcing a winner would be misleading. Within each split, Pareto selects all defended pairs in that common eligible pool; the baseline selects exactly as many pairs by descending absolute helpfulness gap and predicts the gap's sign. At equal gaps I use a label-blind SHA-256 ordering with a fixed seed, and report variation across twenty seeds. The baseline's agreement with helpfulness itself is tautological; its agreement with the separate human preferences is the useful test.
+
+I report train and validation separately and do not tune on validation. Wilson intervals describe nominal binomial variation of agreement, not uncertainty in human annotations or a test of one selector's superiority. There is no model training, inference, timing benchmark or paid compute.
+
+HelpSteer2 and HelpSteer2-Preference are by NVIDIA, Scale AI and Zhilin Wang et al., released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). I retain their card and source links; compact files omit text but preserve scores, strengths and identifying hashes. HelpSteer3 also declares CC-BY-4.0, but its preferences and free-text feedback do not supply matched numeric multi-aspect ratings. I do not invent aspect scores for it.
+
 
 ## Historical GPU smoke run
 
