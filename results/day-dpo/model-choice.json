@@ -1,0 +1,23 @@
+{
+  "selected_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "original_plan_commit": "12c887e",
+  "selected_before_complete_training": true,
+  "pilot_reward_scored": false,
+  "pilot_evaluation_prompts_used": false,
+  "pilot_pairs": 64,
+  "pilot_optimizer_steps": 4,
+  "pilot_training_seconds": 45.592220502,
+  "pilot_generation_prompts": 8,
+  "pilot_generation_seconds": 16.874047147,
+  "estimated_aggregate_l4_minutes": 181.9175177928,
+  "original_aggregate_l4_ceiling_minutes": 90,
+  "original_compute_ceiling_met": false,
+  "amendment": "I lift the compute-only ceiling before complete training. Parallel cloud execution fits the working window and unchanged allocation; no reward result informs this choice.",
+  "training_booking": {"gpu": "L4", "containers": 3, "minutes": 70},
+  "scoring_booking": {"gpu": "L4", "containers": 1, "minutes": 30},
+  "estimated_future_booking_usd": 4.2128064,
+  "allocation_usd": 4.5,
+  "cost_label": "Conservative booking estimate including CPU, memory and margin; not an invoice.",
+  "unchanged": ["datasets", "1024 pairs per condition", "1701/1702/1703 seeds", "training hyperparameters", "192 evaluation prompts", "reward model", "crossed bootstrap", "decision rule"]
+}
