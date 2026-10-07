@@ -1,0 +1,643 @@
+{
+  "bootstrap": {
+    "draws": 10000,
+    "interval": "95% percentile; linear interpolation of sorted draws",
+    "method": "Crossed paired bootstrap of prompts and matched seed IDs",
+    "random_seed": 20261007
+  },
+  "conditions": {
+    "gap": {
+      "mean_reward": 0.7314071889406679,
+      "per_seed": [
+        {
+          "mean_reward": 0.6724922197148165,
+          "response_tokens": {
+            "max": 192,
+            "mean": 156.5625,
+            "median": 192.0,
+            "min": 6,
+            "p25": 126.75,
+            "p75": 192.0,
+            "stddev": 60.526391024219066
+          },
+          "seed": 1701,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 87,
+              "tie": 6,
+              "win": 99
+            },
+            "mean_reward_delta": 0.12236729043797823,
+            "rates": {
+              "loss": 0.453125,
+              "tie": 0.03125,
+              "win": 0.515625
+            }
+          }
+        },
+        {
+          "mean_reward": 0.7261615433141438,
+          "response_tokens": {
+            "max": 192,
+            "mean": 158.02604166666666,
+            "median": 192.0,
+            "min": 5,
+            "p25": 143.25,
+            "p75": 192.0,
+            "stddev": 58.416824318840405
+          },
+          "seed": 1702,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 86,
+              "tie": 2,
+              "win": 104
+            },
+            "mean_reward_delta": 0.1760366140373056,
+            "rates": {
+              "loss": 0.4479166666666667,
+              "tie": 0.010416666666666666,
+              "win": 0.5416666666666666
+            }
+          }
+        },
+        {
+          "mean_reward": 0.7955678037930435,
+          "response_tokens": {
+            "max": 192,
+            "mean": 158.44791666666666,
+            "median": 192.0,
+            "min": 5,
+            "p25": 148.75,
+            "p75": 192.0,
+            "stddev": 58.58165060261096
+          },
+          "seed": 1703,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 75,
+              "tie": 4,
+              "win": 113
+            },
+            "mean_reward_delta": 0.24544287451620525,
+            "rates": {
+              "loss": 0.390625,
+              "tie": 0.020833333333333332,
+              "win": 0.5885416666666666
+            }
+          }
+        }
+      ],
+      "records": 576,
+      "response_tokens": {
+        "max": 192,
+        "mean": 157.67881944444446,
+        "median": 192.0,
+        "min": 5,
+        "p25": 141.0,
+        "p75": 192.0,
+        "stddev": 59.188223502518355
+      },
+      "reward_length_pearson": 0.32770809646625526,
+      "reward_stddev": 2.012888875366751,
+      "vs_start": {
+        "comparisons": 576,
+        "counts": {
+          "loss": 248,
+          "tie": 12,
+          "win": 316
+        },
+        "mean_reward_delta": 0.1812822596638297,
+        "rates": {
+          "loss": 0.4305555555555556,
+          "tie": 0.020833333333333332,
+          "win": 0.5486111111111112
+        }
+      }
+    },
+    "human": {
+      "mean_reward": 0.6512409123170073,
+      "per_seed": [
+        {
+          "mean_reward": 0.6909718740862445,
+          "response_tokens": {
+            "max": 192,
+            "mean": 160.77604166666666,
+            "median": 192.0,
+            "min": 6,
+            "p25": 159.5,
+            "p75": 192.0,
+            "stddev": 57.667481168606606
+          },
+          "seed": 1701,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 92,
+              "tie": 4,
+              "win": 96
+            },
+            "mean_reward_delta": 0.1408469448094062,
+            "rates": {
+              "loss": 0.4791666666666667,
+              "tie": 0.020833333333333332,
+              "win": 0.5
+            }
+          }
+        },
+        {
+          "mean_reward": 0.6507348371863676,
+          "response_tokens": {
+            "max": 192,
+            "mean": 159.03125,
+            "median": 192.0,
+            "min": 6,
+            "p25": 149.75,
+            "p75": 192.0,
+            "stddev": 58.539597198000656
+          },
+          "seed": 1702,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 80,
+              "tie": 7,
+              "win": 105
+            },
+            "mean_reward_delta": 0.10060990790952928,
+            "rates": {
+              "loss": 0.4166666666666667,
+              "tie": 0.036458333333333336,
+              "win": 0.546875
+            }
+          }
+        },
+        {
+          "mean_reward": 0.6120160256784098,
+          "response_tokens": {
+            "max": 192,
+            "mean": 159.1875,
+            "median": 192.0,
+            "min": 6,
+            "p25": 153.75,
+            "p75": 192.0,
+            "stddev": 59.21224403575666
+          },
+          "seed": 1703,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 98,
+              "tie": 7,
+              "win": 87
+            },
+            "mean_reward_delta": 0.06189109640157161,
+            "rates": {
+              "loss": 0.5104166666666666,
+              "tie": 0.036458333333333336,
+              "win": 0.453125
+            }
+          }
+        }
+      ],
+      "records": 576,
+      "response_tokens": {
+        "max": 192,
+        "mean": 159.66493055555554,
+        "median": 192.0,
+        "min": 6,
+        "p25": 151.75,
+        "p75": 192.0,
+        "stddev": 58.48183970849089
+      },
+      "reward_length_pearson": 0.3382329683197791,
+      "reward_stddev": 1.9382617853222108,
+      "vs_start": {
+        "comparisons": 576,
+        "counts": {
+          "loss": 270,
+          "tie": 18,
+          "win": 288
+        },
+        "mean_reward_delta": 0.10111598304016904,
+        "rates": {
+          "loss": 0.46875,
+          "tie": 0.03125,
+          "win": 0.5
+        }
+      }
+    },
+    "pareto": {
+      "mean_reward": 0.6197554350785341,
+      "per_seed": [
+        {
+          "mean_reward": 0.6453211723419372,
+          "response_tokens": {
+            "max": 192,
+            "mean": 163.44270833333334,
+            "median": 192.0,
+            "min": 6,
+            "p25": 187.0,
+            "p75": 192.0,
+            "stddev": 56.71067698706829
+          },
+          "seed": 1701,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 80,
+              "tie": 8,
+              "win": 104
+            },
+            "mean_reward_delta": 0.09519624306509893,
+            "rates": {
+              "loss": 0.4166666666666667,
+              "tie": 0.041666666666666664,
+              "win": 0.5416666666666666
+            }
+          }
+        },
+        {
+          "mean_reward": 0.6082564893683108,
+          "response_tokens": {
+            "max": 192,
+            "mean": 159.5625,
+            "median": 192.0,
+            "min": 6,
+            "p25": 154.0,
+            "p75": 192.0,
+            "stddev": 58.08539197093075
+          },
+          "seed": 1702,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 91,
+              "tie": 11,
+              "win": 90
+            },
+            "mean_reward_delta": 0.058131560091472544,
+            "rates": {
+              "loss": 0.4739583333333333,
+              "tie": 0.057291666666666664,
+              "win": 0.46875
+            }
+          }
+        },
+        {
+          "mean_reward": 0.6056886435253546,
+          "response_tokens": {
+            "max": 192,
+            "mean": 162.44270833333334,
+            "median": 192.0,
+            "min": 6,
+            "p25": 179.5,
+            "p75": 192.0,
+            "stddev": 56.485219757014875
+          },
+          "seed": 1703,
+          "vs_start": {
+            "comparisons": 192,
+            "counts": {
+              "loss": 92,
+              "tie": 7,
+              "win": 93
+            },
+            "mean_reward_delta": 0.055563714248516284,
+            "rates": {
+              "loss": 0.4791666666666667,
+              "tie": 0.036458333333333336,
+              "win": 0.484375
+            }
+          }
+        }
+      ],
+      "records": 576,
+      "response_tokens": {
+        "max": 192,
+        "mean": 161.81597222222223,
+        "median": 192.0,
+        "min": 6,
+        "p25": 175.0,
+        "p75": 192.0,
+        "stddev": 57.12183149879743
+      },
+      "reward_length_pearson": 0.32008769722269964,
+      "reward_stddev": 1.9411556361929747,
+      "vs_start": {
+        "comparisons": 576,
+        "counts": {
+          "loss": 263,
+          "tie": 26,
+          "win": 287
+        },
+        "mean_reward_delta": 0.06963050580169591,
+        "rates": {
+          "loss": 0.4565972222222222,
+          "tie": 0.04513888888888889,
+          "win": 0.4982638888888889
+        }
+      }
+    },
+    "start": {
+      "mean_reward": 0.5501249292768383,
+      "per_seed": [
+        {
+          "mean_reward": 0.5501249292768383,
+          "response_tokens": {
+            "max": 192,
+            "mean": 159.88541666666666,
+            "median": 192.0,
+            "min": 6,
+            "p25": 160.5,
+            "p75": 192.0,
+            "stddev": 58.23531105775134
+          },
+          "seed": null,
+          "vs_start": null
+        }
+      ],
+      "records": 192,
+      "response_tokens": {
+        "max": 192,
+        "mean": 159.88541666666666,
+        "median": 192.0,
+        "min": 6,
+        "p25": 160.5,
+        "p75": 192.0,
+        "stddev": 58.23531105775134
+      },
+      "reward_length_pearson": 0.3261373006084068,
+      "reward_stddev": 1.9515217068758126,
+      "vs_start": null
+    }
+  },
+  "design": {
+    "prompt_ids": [
+      "00548b2b257bb4ba60cfd4779e798d63ab44e1b1ed15f44f8abee061ace34f1c",
+      "010b6a9b53c29ff335a8fb79997c5580a30824291125a52b12af29df8d9dca33",
+      "01b5514a53d9bbebfb8fdf44baf7af23158c02cf96fc98ef711f88938b7cc1e5",
+      "01d9d93cfb573963174be0e7cf47c9b79cc123f205aec938c33b9d3a380cfa65",
+      "02c10489c749a35fa431710431fadb1f14d678dcd12bf686285bd8c12f152704",
+      "0460793a401130af59a7d9e8ccbc70aabb8a8e826e1654240598bc9521e57c12",
+      "04d76501486141966ee56625f59ecb172522494119da70cc38bb12b12c3219cb",
+      "057673847bc4ce78c7ffc8ee67e18aca2f00b32d6ffd701bc7d04519f5d81f6b",
+      "068fa5d16e8609fc2f9cba270a3dcad8025fd111666f426e366e9fd192a450f9",
+      "077c4c0a37a345bd71f7f704eee0a5dcaa1af210c4020c7477ed57274bc6e781",
+      "09a07bdff8c96a53f68f2d21966dc1d14209ed289f9dd4d74f40dbc9a88f0a81",
+      "09d7726cfb89e597432469b0a3fc2dfd52be2223ca7cf4bc47b91d7c37df5e2a",
+      "09f3c50a569f38f152e8fb59611d6cb0257e9e37bb5d5f960422d8ee8d696bff",
+      "0b87044600fb78fc424cbcec1b782c9a971ab78350d58f6171a934d110fe1a2b",
+      "0b898b9b8aaecc4bedfcecfec8c01ff23894cbe904bbf3b442b57088d0e24785",
+      "0cd461df866bcdc0a552a1143913cc5402ba148870bfac79012e815fd1280041",
+      "0fcd730c928e477da42da65039ef225bf1623ad18b4e170a037c94f6c5552b4a",
+      "10180873a0f21d458bd10d317116f8a133b0e200f5073625849e241d0dbc4c2f",
+      "117b4caba95697332d628d78b899fdfda66fd0a5b076fc5d8db68c9fbb8f60f4",
+      "137245588ec258d4eb417aa83841be45df13741be8e56fb6eea886cdf1c9635c",
+      "17fa2cd169c677465657c54d7929331352b6b47b7654d0a7d75982187dac35a3",
+      "182443cee78733d73288033846701c596ab1e3494005477c5daec566475135ed",
+      "1919db8490e5b855f45c84f66584579a9c8461aa5b3a3773f33c44aa3f2f38ad",
+      "1a4473afe3289c2a95df30d82d76b1da72fefee9513d8e8854de2d2e976661f2",
+      "1c75c29118e3460ed67828c6e0c097d595f77da5368e6ed5474ef3e56cb2f374",
+      "2257e777a1ca301969760d62038531ea362d74f83c4beed057c151865c278555",
+      "23df43d7fd49d5c12bbd259bc93dfb77918621caababdb585664f78e4b091994",
+      "2521da07016499bc82e07857463d3a56b67d11a12775ba68546285bc96cdb8c7",
+      "28458ce87d293c74ed8c0fca9a5fface90d7320e48beb75dc691e28ca70c26b3",
+      "2876e8fb65607489988fadca98182118835bf2b170069f2ebddac9e104acac49",
+      "2a7c051b343a464b5eb17a53251f706cb048badd86a44aa8f0f974c918ad5abd",
+      "2af41489a5c1ea3f12c50f26b8b1dcfd739269dc51b4581e4b377cc5f7bda5e4",
+      "2c5a3018c967e0a4ed684cfcb61436716cde877b7af76f064a520cdf6d9fbd27",
+      "2d61b5cf0fccd8bec3bc3de184d380d32196f71a9b92e5dd9cba5b6349bd2043",
+      "2d6ab5a8717bd9b65d69519def645eca7d48c163a5d4db88cb3aaced6ff36fda",
+      "2ec41cb3ef4b256d93808e1e3a52fd7c90aeea7d477a22a6082a4cbb6c37f744",
+      "2f3b767d3a2f5dada4f200bfbc7ddbed253245adc86f982eba564f4a194babf2",
+      "3051b8ddab35ec1f1b13aae176be24e69c36e2a9f86c24dc22361560c452cb2e",
+      "30c66a462fe17b0f388c09c8f3d9a1fe7932b31dec6b0a999a08b97f049f2d66",
+      "323ad732cf13b360ce1c73ac19a0c4868234b1efa50ccfde4c2cb5f65718affd",
+      "32948e0880fc6828e24c10936bef8cb436e4732ad11ed19667544dc36222a64b",
+      "32e25ec55110770a275ae2786af3c48b853b50e5cfc538d77bcaf6409547e20d",
+      "33f95b5f831ab6d2861c928bff7fe077980ef16e8fee3056c8a656ffc1962861",
+      "353683d03fc132db98ea22bc4b9e7630c3951265779d85c57d74489dedeaef9f",
+      "35895522a5cbb3f6c9dc78c80051d10d01a82e26af9e87b14d65ca60b359c44e",
+      "36a8417935983053668d2383e556ee5f0017a1cd5294bf1b2b7ed776d315da6a",
+      "390ca5e46306a6581602606b8df8396755a0f1e041ae285c52df0b19cdc9662b",
+      "3c4c8bc233ff5a9d800cf1a53ab7662a47e44466de4345ee3bd5070228fe534c",
+      "3d170387c024170b77fbc34582ba7ccc88ba3af60b53b09c59ebd23e6978d9f9",
+      "3dc44cff9232386de8d7d952e1c8a6a92c9643a282629fc4241442ea94433611",
+      "3e7dab47ee3bec52f91dab63133e7552adaaef0a369a03073614fab007f076b8",
+      "3ea32c8a5602f65b35510686c7297868e817ba6d55fd4b236c219ac53b57dcaf",
+      "41525a9a43c79bc3c12226b55c172970a10bca89c317ade6443ee8029ab73b25",
+      "43139d22f997ad367c7293fa43405fc3ce0706af3017de5097cc414005cc5342",
+      "46234e6a72207fd5a48ded6a3afcea5b8031008f43df97df65ac0ae64a66247a",
+      "47f07c9107970563e5b33380dfd2746533cd041b07e3bb594a29b86d6848b6af",
+      "498be3db2bfe195e1b73729c06dcc18571df33b46960cf705f8ce52d1ac895f6",
+      "49cc1385e8f6d31b5af118f0ca7f069c7c0acc78282ea130dd48911b245ee1ad",
+      "4a9c859da89e8e9d64ef9e5f37c3fba874a6710e88eb0b16588d8b274cc88838",
+      "4b26d47f8a031fe24ab23afa9f07e0d14319a41fe6271f05c056d46b77c5a875",
+      "4d3e9b8fe495b3cabf25992dbfa441d02600ac38090858537cb6df262e373ca1",
+      "4db3c1b759b46780d3ac75596f08e8a94d6c929a6adf053c7fda2c2a989e453a",
+      "5247b9ca9b3a3f239bbd468f01e0e10e8d4348a782971bbbb20c562753f105eb",
+      "53dd02ef11dc43ede2626fa8a8f3e2a15614db931dfe5646cce7336d6afd535d",
+      "551ab6831d956df99ffe48400ea32b7b85b24a050ddd818da6ca297dcc62b96a",
+      "551e78a441a50c6c523dc0c36c322818d2e50dc95cf973eb6404dff43390492a",
+      "581d43745726e0ee62911178bfb3887c3fe295d29eeb741f0e40f91e8a70907a",
+      "598e7fcc2c06410c6110be611d06007d8a666a69a7d7a42c69deb6ba20f5c26b",
+      "5cb5c1b67d1f728b600300b32af90b0a2827cd67cfc9429d5964e5035bb671f0",
+      "5d0ccd23a4dc32f5c56e51959e975d24433212eff373e3491a0838c8936bdd7a",
+      "5e2225973b07c43230b3052e397d1f6fa24ceb3c64f98770fa25e2362c8e6f4d",
+      "5ff41e90dc1e4f6ecb39d480be22e4d0e6617dbf1d033a51ff6504ee7ddb70a3",
+      "60cadf0373cb3c7c1ad77b1e327ea2fc70500f035d8f718698844ff26aa9d084",
+      "61119768f76f6badacc0ec10ce68370d6b05653a11e5c8406a954adcbbbbd5e8",
+      "627a26d96cb2030a80d51cd5b269e1a466aeb33941a215a88c9594f78bbf3cc1",
+      "6417310532946c87751ec2d919610e4d3450d1924e1becb125a207cf9dc2773c",
+      "6436537b4db5ee720514693d19f21921057c92b973773aeae1d4dfa4c87cf3f2",
+      "65dfb78276a4099112cf492275688f3980b147aa04b1140a2449937acfaa7059",
+      "6608b94f7ed00828bcba274a703e7809765f8e98a351d463636861d5277a9deb",
+      "67ff002030531547804fb93104d94c156a17ea64c991d152bfbefb5dc912efe0",
+      "689372ab6fbd451180c5ec07a22e54967c0ef21bcc938439ae7c0c3f95e4693e",
+      "69cbc617eca16cab451336573e4ce9d2d318b051766966a96653a02add889eba",
+      "6a76631e5265398172a856a67cbf40c74ed1906fde75b45d16dee259ef8197ba",
+      "6b93b3adcff29606411a64a69032507e251f01c298ac2cb4619f3930f08664cb",
+      "6c36e7c416573618b79c8b0a936f6157f1ce9727678117649c37e24442bc45c4",
+      "72f1f127068ab01472dcd6c69302adcc12379a07e94d5ed7c57805afc39ba96e",
+      "756bd3c3996fb3440e4c3302f243b5020ac656354ccc0d81918ca30fab9fcaf6",
+      "773cc9bfea9052aad05cea3f7ea46cd38c65d735a215907cdf03e8eb1b0e25d0",
+      "7bf331d61e527b40dc8521576f4058e5d54d2e86a105e8806541b9c47f3996eb",
+      "7d45d04bc6edf3da58ddc5b499bf401def1d34e9c53ee2cf412c50b8c21a978b",
+      "7d67721ac0a6d25bc3c848886b7a86b86538e1f383a76974e11333b2f1cfa3c2",
+      "7e01c57750d8851129e6956d928bc2ad55acbbeb68e305d161bfb2833e3180ea",
+      "7e5176c0a59d95bd320cb69f1c2d25682958bddea223bbaa141cfb7155b5d8b5",
+      "7f7b4a31a29c80ab21510e1b59eb112691b7dc8dc6a5638dec12da583535df02",
+      "83e4225227026b1de81b0aeaf7de90d0e8fe367bde2d393428a553955c5e78f3",
+      "84cf3be5ae26feb0b201b664c1042087c15104b17ba3c3c309fb1f8e40605044",
+      "8559a4f0d8e68ea338cefddef7c10446a1f1ad0a6f9f87d43a5771b2cb930e3e",
+      "86b787b57a4679e9c9cdc17e1cfaa1b533e23f13bbd596da963a261b3c521926",
+      "870f15376124deb8d4c0c1f5c5dbb05be90ab1247d635111713db8b79881f3f8",
+      "8c36b2b53ac84daedd53e412a69c42bc3e41bdccc7f1315920fc1ad6525eeea3",
+      "8d53f72766e8392320ed432f874e86c38246c879f0280e8b5f53df4034e06111",
+      "8dfb9fa3689235dc5326d82e1b2e0620efad22e84179ec072d6e417a35a22cd9",
+      "8e0737a105c90ff4b63d72502b93b3f171f2ed706b9ed3ecbc8aabd06814f4d6",
+      "8eb8ef9079d1cff8681ed138a1ae90772f16ffd8b5cdb9f764a725852dfdb874",
+      "93bbc354d901455953a39d13c7367ae4f63a65894a53c166008c8a496022f159",
+      "93c1e8dca050a44ab808e1ddf11d7c44bdf7091f04b6712038b35697b8f4210f",
+      "947a3f2101f6b4cf40ba344aec7a5b4bfd4c37bbf91e35fa7d5141ba077ab7fa",
+      "983c94f7d3d243d3cf9c961b8f8caf3ee562c7af5a4f70c179c042b346bb63b4",
+      "994500b9c4e36cb4e48a4cd8b043c41820e01087334659eb6e335a73fe22b01f",
+      "9a3bdb82706dfad47e4917e963a907fbb7795242d5a936089f9c2260fe01d78e",
+      "9e21bf264d423e6daac09454099567f3aaa823f116110e40c5cb143a6c146c68",
+      "a1ddded4f7061b766e60cf419dcbe1e02ff6b68759928cf777e28d2f25cf4850",
+      "a3775ecb69a430b718751f361c0858bc3e48c28fff05c2949915bf31c75fdd0f",
+      "a514210a50bad124ea5d6b1fb1c06dc490636203e43564707814cdfaaf820a6d",
+      "a53998f7295aa6d69f625330e0fd2681adb0435d3a1df8f236504c5967c32a6e",
+      "a7647d0a04abe0c5720e8c288973c8cc74780e7b4f22c242b3a27ac84028b97e",
+      "a791f350202a7cb1a1516277949f6828070d059f1f614447b90abd0694b8957d",
+      "a79d4a5de3a1263d31619c175bdb061f69d9f08986c4505cec35b9ad9367abed",
+      "a8be038975737fa4afe5d3c45a80e3e7c296cc8d2f285b32f6aa57b0b4ddc541",
+      "a8e867a0b87e65e931ebba41004bbc92f96f76824e9f2ee342ad0c6a95c37ca8",
+      "a9830da464499c856a77c67406cf530b1365aaccdcbbc1b42c098037ca2eb400",
+      "aa7b1727a5a8ca37463c54508cae7ef968c471c9effbd67fb80bbf58a0d85b0d",
+      "aab97a69485973d8bdedaf05ed153feac8d5e68748ceabbcead8650e0b532f4c",
+      "aae0ec54fec9ce4c6817fa255cd9a32987b2d52d0003cff496cdeed94f5ee108",
+      "aca76968fe9c0b52d6006a00396f7fd90bc384e04b757b78d1531ce2bbcc313a",
+      "ade802560d53429549eacd2afd1a350e232355608b5225e1920327b673154d46",
+      "ae159ae6857db1e6422efc565a97a5ff814e68184ada8ede3f7ac3f985cda4ee",
+      "afb63d3ea061840fec3552043252ffcaaf50c3887919ce3adcb3668fcfeca9c3",
+      "b0226cc3193d63e89592c7d42327eda0a515430f35ff0837e07ee0182c78ee8e",
+      "b0d67cfcc8051b94e37569795d1afe1584e94404cf56aa9026d533626f19332a",
+      "b60f7e07e15d9ff8dda0462cbc14b416daa66862abc17d663084c8d75aae442e",
+      "b820c77571fa4d311e5a505c5e847c8b8d16d1c497fb4e1bf8c7fc901228b888",
+      "b97e4d3e7f09ba422f510a2bfdf8fbdb2d0c362f92183610bec843c546a3da87",
+      "b9fa246e99675bf0f6f3ba41d630fe86488fcb1175abf2d4c719a906527731ef",
+      "ba55986e48abba6dfc5e9c4b48b321e3e0026418942e22fcb0428638e4e86ce5",
+      "ba6f66ad218daa847fa36abf9b832a07b7fce518648d38c6d561c2218e1b2679",
+      "bc6c76f8fc70b8ad603cda56ff82586945b939f68f00cbe6c32beb7cb64a236d",
+      "bc87bfa0ebf02f7b0d12a89aa75ee28b1b5a3631067a58dff343cb6e4b48e021",
+      "bec3948ff9f4c2019c3c6f1f1572ceca0c9234cd16aaee8fc66f5a1123b2c63c",
+      "bfeb0070e3708b6b24c62f490f6d6a8ddaba1ccce9fcd9f418745592c9367337",
+      "c12b68491c6ef8753420987fe5052680b303718e9156935af71e7ca0ff8e8379",
+      "c251c95efcf1895cc30ba8ab948e338d5ee663279876e5e9b30a75ed7d0ce248",
+      "c28e4631a23cbc9783fb3f26b3aa49cfa944c4f261b710441780b04fa68ebd74",
+      "c437ac3f57d719557ebed7bd6f483c1ea4d1f9ef0dc10320e576c5a77375197f",
+      "c49e1ccb07080ead50aec106eb5b93c9e99a7666ba5c2460a74e8f259a891bc8",
+      "c6469d3129c876ffa20b03d614f99c234b2e41d96b158713bf5439e4f4fe1260",
+      "c682feed13c6dc2fbbb0bd6315b55252693a93079bed39e3e2b2230f3f70f0cd",
+      "c90afc8d8d8d4caab8e6e5a8eb7669eb8f206fbbfdab7c4ff8556188d80a8ba0",
+      "cb401894e50655402871cf286ced49a0526f23f63593241f1c46159059a3cf31",
+      "cb6c0d9f4482c9f776657b365d03b48e6203208575342c74a8b4f7fd5146f546",
+      "cebbca8993669e15c3d54fe228fd13dff5d1123c2daff4982c7f279f364c47ef",
+      "cfd77cb5a7b284281ed2b102efe8375839c04099f65cca77fea5acb95b141a41",
+      "d18747e888c9bf79cd6c5707fb671c973a093c8d7d0caf3258ffef4e4984030d",
+      "d1c0ad750cf32d915faf99d86d37a3b8d334ccfde191eade93fbe53cc072e6fb",
+      "d2316b3af9b7b3e128a58acb9d803c295d3cbf23e34afc9e86b4769d94b4efcd",
+      "d320db4e5d4c7538858f4f78f9751a1b30abd25c925b6eb9726717dd630e7912",
+      "d3456781aa68a1e0ba5cff7f1e4ab325ca8e3871067ee9855213ed6b011e4c6d",
+      "d4d483796998d2b9b86ab7bb7920ec85f2fc9e0aa2eae354fde2a2992fb2cb51",
+      "d54d72e2e9ed1db75d1aab6a8863989302478e761af9d3206e0b2233ac2bf520",
+      "d5dad80b97810789a95d7ca5e900e889fe5ea1593acfe317d28cd9a52f20f328",
+      "d764be38a5e9308546a480e395a95c6aed0d23170b43d19ac4d3b0f50e15dbcc",
+      "d7d0a82a819c12d3ea8e4856f3591ede81f2403aa2ecce7664dad5edda8393c1",
+      "d8079c747286f6dce6ab01fadc840b195f55acd274b23b4fe8a2697e7d340c1c",
+      "d9a8a344a1fca0c74a3672f65e3832f9cefa347aa37f202fdaf649641d2820f7",
+      "dc019a6a091f09a82dd7cbeac3b5e0c0c184c2e8c3f291849668cec227ed8d0c",
+      "dd14f9a372d8cb414239d79505fac43a3ca978864ad802f2d5e80d48d6635d42",
+      "dd506caebbcb5a2916b502b2d5c5313207ec8d700089aa8a29c43b7c07137afb",
+      "e0128827ff9f286716d56321399dd9624259e7cc6a47ef4625c81deefd8f3296",
+      "e0bb8a678792ce797b071c31f9d90434f735878e55c295862b200e3677e1d495",
+      "e30fb07225c391d310ec5f0c2f0022183837c2e9d52ef29eae4c144daca447e0",
+      "e4295b9fbb0099f589fc6e5faef440376b09fa698c882806cd2d0525608d0059",
+      "e764092fcc65df0e8ac34c73b6fce23e39a45c3378a8d852815b89b7cd5e74bc",
+      "e8010e79551af8a336f28cd4c37eec8936b3ca9705916cc1c9bc3ddc749a262e",
+      "ea79b86770dfcda36a6298a4afdb9ada0e30b51646130326e70416dc14d062bd",
+      "ec2701150b5721ac6d91db83df7d4bf526bf3fe4009670433cb51ef104cd3446",
+      "ed3b2f62394482ae9a1cd64bbec38dcbb0475c2bb60e6315367f8f48c1897f8d",
+      "ee1d447cc0863b7b5c169d9461606bd6c9144c16730e45f236017f4257054c9a",
+      "eee0efe4ca83972412b2517fc59081ee5cda738fcb264cfc85818196b94cb1d5",
+      "eef7bdb2d0746587448ebb71a197aea0901d7e17e5e60875fe3b02419f1a11f1",
+      "ef2fd2067f53ae73b8c2df475c32557e16dfb136761b9bcc2ffe9131bb4f5e42",
+      "efad6d833a2eb47b4850022de5e31ebad9522b45a77a478abd85d77bd20aee53",
+      "f233216047d419b2a34c2001eed51f7c067622020332373decc3853e408f343d",
+      "f3d977c77da9e7c3f19a7d0e469b460ef2392bc37e01f31af9ecf1d306b0c67e",
+      "f52289625c2bda62fa1beb1e726666db19682c912a60fd9ae79a4f05b0808e9e",
+      "f54e8abd70196ea39872b48229335b22544f9f8903339cf5fa2c8d5c54d25e37",
+      "f5d683fa73a3c2e0d7466b4757f62a837523db25d6163f3278e1713a9c07525f",
+      "f6a6036d4327d0419f7f1facd1217d0ea39944ccf339d2b2546b63319c163ad9",
+      "fb03c664789f9bfc1ca28ce99fb178e1291e26e5a4ca07fbe271668038e08b78",
+      "fcc11a936f7aa90fc0dc6b8c5d124a8c927043b558e11ea32390d049fdc18fda",
+      "fd6524b86eb73df2c7e5feb246a24d86c4331fc8ea86cf3c75b1fd90c1ab0127",
+      "fda2fc0d772d4dcc707f7992d155e89b7d0afcc0579599df90e375370ccd3ba5",
+      "fda9caf02085157be69f20527aac9233397169eb0e55adf59836221805b9eff9"
+    ],
+    "prompts": 192,
+    "records": 1920,
+    "start_generations_per_prompt": 1,
+    "training_seeds": [
+      1701,
+      1702,
+      1703
+    ]
+  },
+  "length_confounding": {
+    "interpretation": "I report response lengths and paired length differences because the reward model may favor longer answers. These outputs are not length-matched. Correlations are descriptive, not a causal adjustment. I do not regress out length or treat the reward model as human preference truth.",
+    "paired_delta_pearson": 0.1664155777586282
+  },
+  "pareto_minus_gap_response_tokens": {
+    "ci95": [
+      0.03624131944444464,
+      8.467057291666666
+    ],
+    "mean": 4.137152777777778,
+    "per_seed": [
+      {
+        "mean": 6.880208333333333,
+        "seed": 1701
+      },
+      {
+        "mean": 1.5364583333333333,
+        "seed": 1702
+      },
+      {
+        "mean": 3.9947916666666665,
+        "seed": 1703
+      }
+    ]
+  },
+  "primary_pareto_minus_gap_reward": {
+    "ci95": [
+      -0.2567360822823427,
+      0.031770176391119544
+    ],
+    "conclusion": "inconclusive",
+    "mean": -0.11165175386213377,
+    "per_seed": [
+      {
+        "mean": -0.027171047372879304,
+        "seed": 1701
+      },
+      {
+        "mean": -0.11790505394583306,
+        "seed": 1702
+      },
+      {
+        "mean": -0.18987916026768895,
+        "seed": 1703
+      }
+    ]
+  },
+  "reward_measure": {
+    "model": "OpenAssistant/reward-model-deberta-v3-large-v2",
+    "model_card": "https://huggingface.co/OpenAssistant/reward-model-deberta-v3-large-v2",
+    "revision": "c355404efa9ad2ad069f3a197cae0523c14244fc",
+    "tokenization": "Question + answer pair, max_length=512, longest_first",
+    "units": "Raw single logit, not a probability or human preference label"
+  },
+  "schema_version": 1,
+  "source": {
+    "data_file": "data.json.gz",
+    "data_sha256": "991a0d3eb61d6b41fc3b1a4cddf5e19b893d658781700620b2dc8e44e28a2b7e",
+    "records_file": "records.jsonl.gz",
+    "records_sha256": "d356c183047759d4b257644b21c2df9d0010c26c9c91bf5e20f23e1d6623e922"
+  }
+}
