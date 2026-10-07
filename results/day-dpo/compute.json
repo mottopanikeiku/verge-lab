@@ -1,0 +1,39 @@
+{
+  "gpu": "L4",
+  "cpu_cores_per_container": 2,
+  "memory_gib_per_container": 8,
+  "selected_model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "completed_training_runs": 9,
+  "pairs_per_run": 1024,
+  "optimizer_steps_per_run": 64,
+  "epochs_per_run": 1,
+  "evaluation_prompts": 192,
+  "scored_generations": 1920,
+  "original_plan_commit": "12c887e",
+  "model_choice_amendment_commit": "3b062bd",
+  "complete_training_runner_commit": "46303a3",
+  "scoring_runner_commit": "6ab3859",
+  "complete_results_commit_before_cache_deletion": "9e77a4b",
+  "original_allocation_usd": 4.5,
+  "approved_allocation_usd": 5.55,
+  "settled_project_cost_upper_bound_usd_rounded": 4.7,
+  "cost_label": "Conservative wrapper accounting, including unsuccessful attempts and cleanup; not a Modal invoice. Per-job displayed values are independently rounded and need not sum exactly to the rounded ledger total.",
+  "minutes_label": "Cloud-job client wall minutes, conservatively charged at the maximum booked container count; these are resource-accounting bounds, not GPU-kernel throughput or local benchmark claims.",
+  "attempts": [
+    {"kind": "CPU model download", "budget_job": "verge-lab-1791398217107", "app": "ap-JVqAsaaUM3pmVVZmkSIoMS", "gpu": null, "containers": 1, "wall_minutes_rounded": 3.2, "cost_upper_bound_usd_rounded": 0.01, "outcome": "completed"},
+    {"kind": "Unscored 64-pair pilot", "budget_job": "verge-lab-1791398431884", "app": "ap-6eNHdUSifNPuyDd2SEnC3Y", "gpu": "L4", "containers": 1, "wall_minutes_rounded": 1.6, "cost_upper_bound_usd_rounded": 0.03, "outcome": "completed; adapter discarded"},
+    {"kind": "First full attempt", "budget_job": "verge-lab-1791399213199", "app": "ap-om3PBppaxTtqhbV8D4d0qz", "gpu": "L4", "containers": 3, "wall_minutes_rounded": 22.6, "cost_upper_bound_usd_rounded": 1.19, "outcome": "client transport failure; no trained results returned"},
+    {"kind": "Interrupted unscored retry", "budget_job": "verge-lab-1791401248375", "app": "ap-Ru0vghn6BwJrVEWNWE0E87", "gpu": "L4", "containers": 3, "wall_minutes_rounded": 7.4, "cost_upper_bound_usd_rounded": 0.39, "outcome": "stopped to return primitive scheduler metadata"},
+    {"kind": "Complete nine-run training and generation", "budget_job": "verge-lab-1791401807438", "app": "ap-nDpyI3eKUEUuuxzXqJzB0q", "gpu": "L4", "containers": 3, "wall_minutes_rounded": 57.7, "cost_upper_bound_usd_rounded": 3.04, "outcome": "completed"},
+    {"kind": "Independent reward scoring", "budget_job": "verge-lab-1791405356934", "app": "ap-oiW9egA0mta2k4SK62uUaj", "gpu": "L4", "containers": 1, "wall_minutes_rounded": 2.9, "cost_upper_bound_usd_rounded": 0.05, "outcome": "completed"},
+    {"kind": "Post-commit downloaded-weight deletion", "budget_job": "verge-lab-1791405794940", "app": "ap-KzvGWKo9UCClJNgsvZwh8J", "gpu": null, "containers": 1, "wall_minutes_rounded": 0.1, "cost_upper_bound_usd_rounded": 0.0, "outcome": "completed; rounded near-zero cost, not free"}
+  ],
+  "volumes": {
+    "verge-lab-day-hf": "Downloaded base and scorer cache removed after complete results commit; named Volume retained empty of that cache.",
+    "verge-lab-day-adapters": "Nine learned adapters, completed generation units and scoring output retained for recovery."
+  },
+  "cache_cleanup_record": "cache-cleanup.json",
+  "no_local_model_inference": true,
+  "no_local_timing_benchmark": true
+}

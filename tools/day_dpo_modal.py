@@ -382,7 +382,7 @@ def store_training_result(result: dict) -> None:
 
 @app.local_entrypoint()
 async def main(
-    mode: str = "cache", size: str = "0.5B", condition: str = "pareto", seed: int = 1701,
+    mode: str = "cache", size: str = "1.5B", condition: str = "pareto", seed: int = 1701,
 ) -> None:
     RESULTS.mkdir(parents=True, exist_ok=True)
     if mode == "cache":

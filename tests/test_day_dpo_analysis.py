@@ -303,7 +303,7 @@ def test_svg_length_domain_contains_seed_means_above_condition_mean():
     svg = ElementTree.fromstring(analysis.render_svg(summary))
     dots = [element for element in svg.iter()
             if element.tag.endswith("circle") and float(element.attrib["cy"]) >= 400]
-    assert len(dots) == 9
+    assert len(dots) == 10  # Nine training-seed means plus the common unseeded start.
     assert all(210 <= float(dot.attrib["cx"]) <= 590 for dot in dots)
     assert max(float(dot.attrib["cx"]) for dot in dots) == 590
 
