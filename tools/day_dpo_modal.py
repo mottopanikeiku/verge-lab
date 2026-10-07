@@ -193,11 +193,12 @@ def train_adapter(records: list[dict], size: str, condition: str, seed: int,
             key: getattr(config, key) for key in (
                 "learning_rate", "beta", "num_train_epochs", "per_device_train_batch_size",
                 "gradient_accumulation_steps", "max_prompt_length", "max_length",
-                "weight_decay", "lr_scheduler_type", "warmup_ratio", "seed", "data_seed",
+                "weight_decay", "warmup_ratio", "seed", "data_seed",
             )
         },
         "lora": {"rank": 16, "alpha": 32, "dropout": 0.0, "targets": "all-linear"},
     }
+    metadata["hyperparameters"]["lr_scheduler_type"] = config.lr_scheduler_type.value
     Path(output, "experiment.json").write_text(json.dumps(metadata, indent=2, sort_keys=True))
     trained = trainer.model
     del trainer

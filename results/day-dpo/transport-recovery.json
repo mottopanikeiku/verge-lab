@@ -14,6 +14,13 @@
   "approved_allocation_usd": 5.55,
   "relaunch_client_python": "3.12",
   "relaunch_client_modal": "1.5.3",
+  "interrupted_retry_app": "ap-Ru0vghn6BwJrVEWNWE0E87",
+  "interrupted_retry_budget_job": "verge-lab-1791401248375",
+  "interrupted_retry_wall_minutes": 7.4,
+  "interrupted_retry_cost_upper_bound_usd": 0.39,
+  "interrupted_retry_reason": "I stopped the unscored retry before any trained result returned to serialize the scheduler enum as its primitive string value. Cloudpickle inspection showed that returning the enum references transformers.trainer_utils, which the minimal client does not install.",
+  "interrupted_retry_training_recipe_changed": false,
+  "next_training_booking": {"gpu": "L4", "containers": 3, "minutes": 65},
   "recovery": "Asynchronous client calls; adapters, complete generation units and scores saved inside the Volume before return; CPU recovery skips completed GPU units.",
   "unchanged": ["selected 1.5B checkpoint", "training pairs and directions", "seeds", "hyperparameters", "evaluation prompts", "reward checkpoint", "bootstrap", "decision rule"],
   "cost_label": "Conservative wrapper upper bound, not an invoice or measured GPU-only runtime."
