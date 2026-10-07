@@ -546,7 +546,8 @@ def main() -> None:
     summary = analyze(args.results_dir)
     finished = time.perf_counter()
     run = {
-        "command": " ".join(sys.orig_argv),
+        "command": "python tools/mine_public_preferences.py" + (" --fetch" if args.fetch else ""),
+        "command_note": "Portable command template; interpreter and results-directory paths omitted.",
         "external_invocation_note": (
             "Run under nice -n 19; process niceness recorded below. "
             "No GPU, model or paid provider calls."
