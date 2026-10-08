@@ -28,6 +28,13 @@ function clampNumber(value: number, minimum: number, maximum: number) {
   return Math.min(Math.max(value, minimum), maximum)
 }
 
+// Short node caption, cut at a word boundary when the first word fits.
+function nodeDomain(domain: string, maximum = 12) {
+  if (domain.length <= maximum) return domain
+  const cut = domain.slice(0, maximum + 1).replace(/\s+\S*$/, '')
+  return cut.length > maximum ? cut.slice(0, maximum) : cut
+}
+
 function positionCandidates(candidates: Candidate[]): PositionedCandidate[] {
   if (candidates.length === 0) return []
   const xValues = candidates.map((candidate) => candidate.embedding.x)
@@ -207,9 +214,9 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
         <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Illustrative partial order</strong></span><span>{visiblePairs.length} computed example edges</span></figcaption>
         <div className="graph-key" aria-label="Example graph legend"><span><i className="key-line key-line--defended" />Arrow: selected answer</span><span><i className="key-line key-line--ambiguous" />Dashed: abstain</span><span><i className="key-node" />Example answer</span></div>
         <div className="graph-controls" role="group" aria-label="Graph viewport controls">
-          <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM} aria-label="Zoom graph out"><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
+          <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM}><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
           <button type="button" onClick={() => setViewport(INITIAL_VIEWPORT)} disabled={viewport.scale === MIN_ZOOM && viewport.x === 0 && viewport.y === 0}><RotateCcw size={14} aria-hidden="true" /><span>Reset view</span></button>
-          <button type="button" onClick={() => zoomBy(ZOOM_STEP)} disabled={viewport.scale >= MAX_ZOOM} aria-label="Zoom graph in"><Plus size={14} aria-hidden="true" /><span>Zoom in</span></button>
+          <button type="button" onClick={() => zoomBy(ZOOM_STEP)} disabled={viewport.scale >= MAX_ZOOM}><Plus size={14} aria-hidden="true" /><span>Zoom in</span></button>
           <output aria-label="Current graph zoom">{Math.round(viewport.scale * 100)}%</output>
         </div>
         <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan}>
@@ -232,8 +239,9 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
                 const prompt = promptFor(run, candidate.promptId)
                 const selected = candidate.id === selectedCandidateId
                 return (
-                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`Example answer ${label}, ${prompt?.domain ?? 'unknown domain'}, ${shortId(candidate.id)}. Select answer.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
-                    <title>{`Illustrative candidate ${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{label}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt?.domain.slice(0, 12)}</text>
+                  <g key={candidate.id} id={`graph-node-${candidate.id}`} className={`graph-node${selected ? ' graph-node--selected' : ''}`} transform={`translate(${candidate.graphX} ${candidate.graphY})`} role="button" tabIndex={0} aria-pressed={selected} aria-label={`${label} ${prompt?.domain ?? 'unknown domain'}, example answer ${shortId(candidate.id)}. Select answer.`} onClick={() => onSelectCandidate(candidate.id)} onKeyDown={(event) => moveGraphFocus(event, candidate.id, candidates, onSelectCandidate)}>
+                    {/* The trailing space keeps the label and domain separate words for speech-input name matching; SVG strips it visually. */}
+                    <title>{`Illustrative candidate ${candidate.id}: ${candidate.output.slice(0, 120)}`}</title><circle r={selected ? 24 : 19} /><text textAnchor="middle" dominantBaseline="central">{`${label} `}</text><text className="graph-node-domain" textAnchor="middle" y="37">{prompt ? nodeDomain(prompt.domain) : null}</text>
                   </g>
                 )
               })}
