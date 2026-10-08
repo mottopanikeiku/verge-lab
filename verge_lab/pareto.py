@@ -192,6 +192,7 @@ def mine_pareto_edges(
 ) -> tuple[Pair, ...]:
     """Mine every within-prompt unordered pair in stable order."""
 
+    objectives = tuple(objectives)
     grouped: dict[str, list[Candidate]] = defaultdict(list)
     for candidate in candidates:
         grouped[candidate.prompt_id].append(candidate)

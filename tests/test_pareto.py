@@ -65,3 +65,17 @@ def test_mining_order_and_ids_do_not_depend_on_input_order() -> None:
 
     assert [pair.id for pair in forward] == [pair.id for pair in reverse]
     assert [pair.to_dict() for pair in forward] == [pair.to_dict() for pair in reverse]
+
+
+def test_mining_accepts_a_one_shot_objective_iterator() -> None:
+    objectives = (objective("quality"),)
+    candidates = [
+        candidate("a", {"quality": Score(0.9, 1, "verified")}),
+        candidate("b", {"quality": Score(0.7, 1, "verified")}),
+        candidate("c", {"quality": Score(0.6, 1, "verified")}),
+    ]
+
+    from_iterator = mine_pareto_edges(candidates, iter(objectives))
+
+    assert from_iterator == mine_pareto_edges(candidates, objectives)
+    assert {pair.verdict for pair in from_iterator} == {"defended"}
