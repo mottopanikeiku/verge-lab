@@ -1,3 +1,5 @@
+import pytest
+
 from verge_lab.models import Candidate, Embedding, Objective, Score
 from verge_lab.pareto import compare_candidates, mine_pareto_edges
 
@@ -79,3 +81,11 @@ def test_mining_accepts_a_one_shot_objective_iterator() -> None:
 
     assert from_iterator == mine_pareto_edges(candidates, objectives)
     assert {pair.verdict for pair in from_iterator} == {"defended"}
+
+
+def test_comparison_requires_at_least_one_objective() -> None:
+    left = candidate("a", {"quality": Score(0.9, 1, "verified")})
+    right = candidate("b", {"quality": Score(0.7, 1, "verified")})
+
+    with pytest.raises(ValueError, match="at least one objective"):
+        compare_candidates(left, right, ())
