@@ -25,6 +25,15 @@ def test_demo_cli_creates_canonical_artifact(tmp_path) -> None:
     assert len(artifact.checkpoints) >= 4
 
 
+def test_committed_demo_artifact_matches_cli_output(tmp_path) -> None:
+    committed = Path(__file__).resolve().parent.parent / "artifacts" / "demo-run.json"
+    destination = tmp_path / "demo.json"
+
+    assert main(["demo", "--output", str(destination)]) == 0
+
+    assert destination.read_text(encoding="utf-8") == committed.read_text(encoding="utf-8")
+
+
 def test_specifications_cannot_select_arbitrary_code() -> None:
     specification = ScorerSpecification(
         "correctness", "__import__('os').system", {"command": "false"}

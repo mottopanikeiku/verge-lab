@@ -25,9 +25,10 @@ export const formatDate = (value: string) =>
     timeZoneName: 'short',
   }).format(new Date(value))
 
+// Artifact IDs are `prefix_hash`; keep the prefix and enough hash to tell items apart.
 export const shortId = (value: string) => {
-  const segments = value.split('-')
-  return segments.length > 1 ? segments.slice(-2).join('-') : value.slice(0, 10)
+  const separator = value.lastIndexOf('_')
+  return separator > 0 ? value.slice(0, separator + 7) : value.slice(0, 10)
 }
 
 export const candidateFor = (run: RunArtifact, id: string) =>
