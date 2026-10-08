@@ -205,7 +205,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
 
 
   if (candidates.length === 0) {
-    return <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No example answers match</h3><p>Clear the search or widen the domain and verdict filters.</p></div>
+    return <div className="empty-state"><CircleAlert aria-hidden="true" /><h2>No example answers match</h2><p>Clear the search or widen the domain and verdict filters.</p></div>
   }
 
   return (
@@ -253,7 +253,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
 
       {selectedCandidate ? (
         <section className="candidate-inspector" aria-labelledby="candidate-inspector-title">
-          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected illustrative candidate</span><h3 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h3><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
+          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected illustrative candidate</span><h2 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h2><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
           <blockquote>{selectedCandidate.output}</blockquote>
           <dl className="specimen-facts"><div><dt>Illustrative tokens</dt><dd>{selectedCandidate.tokens}</dd></div><div><dt>Illustrative latency</dt><dd>{selectedCandidate.latencyMs} ms</dd></div><div><dt>Illustrative coordinate z</dt><dd>{formatNumber(selectedCandidate.embedding.z)}</dd></div></dl>
           <div className="score-evidence-list">
@@ -269,7 +269,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
       <details className="candidate-register-disclosure" open>
         <summary><span>Example answer table</span><small>{candidates.length} rows · score / confidence</small></summary>
         <section className="candidate-table-section" aria-labelledby="candidate-table-title">
-          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Illustrative accessible register</span><h3 id="candidate-table-title">Example candidate scores and confidences</h3></div><span>{candidates.length} example rows</span></header>
+          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Illustrative accessible register</span><h2 id="candidate-table-title">Example candidate scores and confidences</h2></div><span>{candidates.length} example rows</span></header>
           <div className="table-wrap" tabIndex={0} role="region" aria-label="Example scores table; scroll horizontally for all objectives"><table className="data-table candidate-table"><caption>All scores, confidences, token counts and latencies are illustrative authored inputs, not model measurements. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
             {candidates.map((candidate) => {
               const selected = candidate.id === selectedCandidateId
