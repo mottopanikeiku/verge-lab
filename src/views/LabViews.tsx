@@ -150,7 +150,7 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
             <section className="mutation-evidence"><header><span className="eyebrow">Illustrative mutation comparisons</span><strong>{relevantMutations.length} linked examples</strong></header><p>Verdict flips and deltas are computed from authored before/after scores, not measured rescoring or model bias tests.</p>{relevantMutations.length === 0 ? <p className="empty-inline">No example mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} · computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
           </section>
         </div>
-      ) : <div className="empty-state"><CircleAlert aria-hidden="true" /><h3>No comparisons match</h3><p>Clear the candidate search or widen the domain and verdict filters.</p></div>}
+      ) : <div className="empty-state"><CircleAlert aria-hidden="true" /><h2>No comparisons match</h2><p>Clear the candidate search or widen the domain and verdict filters.</p></div>}
     </div>
   )
 }

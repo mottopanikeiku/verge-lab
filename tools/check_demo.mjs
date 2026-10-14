@@ -49,7 +49,7 @@ const checkDemo = async (page, isMobile) => {
   await overflow('Overview')
 
   await navigate(2, 'Not every pair has a winner.')
-  await page.focus('[aria-label="Zoom graph in"]')
+  await page.focus('.graph-controls button:nth-child(3)')
   await page.keyboard.press('Enter')
   assert(await page.$eval('.graph-controls output', (element) => element.textContent === '125%'),
     'Keyboard zoom')

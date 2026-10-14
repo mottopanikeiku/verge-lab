@@ -67,6 +67,8 @@ def compare_candidates(
         raise ValueError("min_confidence must be between 0 and 1")
 
     ordered_objectives = tuple(sorted(objectives, key=lambda item: item.id))
+    if not ordered_objectives:
+        raise ValueError("at least one objective is required")
     objective_ids = [item.id for item in ordered_objectives]
     first, second = sorted((left, right), key=lambda item: item.id)
     pair_id = stable_id("pair", left.prompt_id, first.id, second.id)
@@ -192,6 +194,7 @@ def mine_pareto_edges(
 ) -> tuple[Pair, ...]:
     """Mine every within-prompt unordered pair in stable order."""
 
+    objectives = tuple(objectives)
     grouped: dict[str, list[Candidate]] = defaultdict(list)
     for candidate in candidates:
         grouped[candidate.prompt_id].append(candidate)

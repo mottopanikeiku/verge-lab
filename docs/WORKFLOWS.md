@@ -50,9 +50,9 @@ uv run verge export-dpo artifacts/my-run.json --output artifacts/my-run.dpo.json
 
 `analyze` trusts supplied scores and confidences. It does not verify a judge's identity, reliability, or calibration. The local package runs no model inference and executes no generated code. Built-in checkers inspect phrases, JSON fields, and regular expressions; built-in scorers use keywords, phrases, JSON fields, and word counts. These checks do not establish semantic correctness.
 
-For each objective, `verge_lab/pareto.py` changes the sign of minimization scores so higher is better; it does not rescale objectives to equal ranges. The conservative margin is the directional score difference minus `uncertainty_scale * ((1 - left_confidence) + (1 - right_confidence))`. Defaults are uncertainty scale 0.05, minimum confidence 0.8, and strict margin epsilon 0.01, in the objective's native units. This is an assumed penalty, not a statistical confidence interval. A defended edge requires all margins to be nonnegative and at least one to exceed epsilon. Missing scores, low confidence, ties, or tradeoffs lead to abstention.
+For each objective, `verge_lab/pareto.py` changes the sign of minimization scores so higher is better; it does not rescale objectives to equal ranges. The conservative margin is the directional score difference minus `uncertainty_scale * ((1 - left_confidence) + (1 - right_confidence))`. Defaults are uncertainty scale 0.05, minimum confidence 0.8, and strict margin epsilon 0.01, in the objective's native units. This is an assumed penalty, not a statistical confidence interval. A defended edge requires all margins to be nonnegative and at least one to exceed epsilon. Missing scores, low confidence, ties on every objective, or tradeoffs lead to abstention. With any nonzero penalty, an exact tie on one objective also blocks dominance.
 
-`verge_lab/export.py` recomputes each comparison and refuses artifacts whose stored evidence differs. It exports only defended edges in TRL-compatible JSONL. This protects consistency, not the truth of externally supplied scores.
+`verge_lab/export.py` recomputes each comparison with the default thresholds and refuses artifacts whose stored evidence differs. Artifacts do not record thresholds, so an artifact mined with other settings is refused whenever those settings change a stored decision or margin. It exports only defended edges in TRL-compatible JSONL. This protects consistency, not the truth of externally supplied scores.
 
 Artifacts contain run/model metadata, summary counts, prompt rubrics and constraints, candidate scores and projection coordinates, pair decisions, mutation results, and optional checkpoint inputs. Content hashes and deterministic ordering make repeat runs comparable; hashes are not proof of valid scoring.
 
@@ -134,4 +134,4 @@ uv run ruff check .
 npm run check
 ```
 
-The tests cover Pareto direction handling, abstention, stable pair ordering, artifact validation, mutation behavior, CLI specifications, and export recomputation. They do not measure model performance.
+The tests cover Pareto direction handling, tie, epsilon and confidence-penalty boundaries, abstention, stable pair ordering, artifact validation, mutation behavior, CLI specifications, export recomputation, that `artifacts/demo-run.json` matches `verge demo`, and the recorded human-preference and DPO analyses. They do not measure model performance.
