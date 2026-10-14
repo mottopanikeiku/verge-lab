@@ -18,6 +18,7 @@
 .rail-footer { margin-top: auto; padding: 1.25rem; border-top: 1px solid var(--assay-2); font-size: .75rem; }
 .rail-footer dl { display: grid; gap: .5rem; margin-top: 1rem; }
 .rail-footer dl div { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); }
+.rail-footer dt { color: #abc9c3; }
 .rail-footer dd { overflow-wrap: anywhere; }
 .status-dot { display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; background: var(--lime-muted); border-radius: 50%; }
 .mobile-header, .bottom-nav { display: none; }
@@ -45,7 +46,7 @@ dd { overflow-wrap: anywhere; }
 .hero-readout strong { margin-right: .25rem; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--mineral-3); }
 .section-heading h2 { margin-top: .5rem; font-size: clamp(1.4rem, 2vw, 2rem); font-weight: 550; }
-.section-heading h3 { margin-top: .5rem; font-size: 1.2rem; }
+.section-heading--compact h2 { margin-top: .5rem; font-size: 1.2rem; font-weight: 700; }
 .section-heading > span { color: var(--ink-2); font-size: .8rem; }
 .ledger-grid { display: grid; grid-template-columns: minmax(0, .6fr) minmax(0, 1fr); gap: 2rem; padding-top: 1.5rem; }
 .ledger-lead > span { color: var(--ink-2); font-size: .85rem; }
@@ -101,7 +102,7 @@ dd { overflow-wrap: anywhere; }
 .graph-node .graph-node-domain { fill: var(--ink-2); font-size: 9px; }
 .graph-note { padding: 1rem; color: var(--ink-2); font-size: .85rem; line-height: 1.6; }
 .candidate-inspector header { padding: 1rem; border-bottom: 1px solid var(--mineral-3); }
-.candidate-inspector h3 { margin-top: .5rem; font-size: 1.2rem; overflow-wrap: anywhere; }
+.candidate-inspector h2 { margin-top: .5rem; font-size: 1.2rem; overflow-wrap: anywhere; }
 .candidate-inspector header p { margin-top: .5rem; color: var(--ink-2); }
 blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .95rem; line-height: 1.7; }
 .specimen-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; padding: 1rem; border-block: 1px solid var(--mineral-3); }
@@ -122,6 +123,7 @@ blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font
 .data-table th button { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .5rem; background: transparent; border: 1px solid var(--ink-2); font-size: .8rem; }
 .empty-state { display: grid; gap: 1rem; padding: 3rem 1rem; text-align: center; border: 1px dashed var(--ink-2); }
 .empty-state svg { justify-self: center; }
+.empty-state h2 { font-size: 1.17em; }
 .empty-state p { color: var(--ink-2); line-height: 1.6; }
 .verdict-counts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; background: var(--mineral-2); }
 .verdict-counts dd { margin-top: .5rem; font-size: 2rem; }
