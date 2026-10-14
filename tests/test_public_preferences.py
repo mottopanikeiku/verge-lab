@@ -96,7 +96,10 @@ def test_top_ties_compare_each_top_to_strictly_lower_only():
 def test_positive_penalty_removes_equal_aspect_dominance():
     row = prompt(completion("a", [5, 5, 5, 5], 9), completion("b", [5, 4, 4, 4], 7))
     assert pairs_for(row)[0].verdict == "defended"
-    assert pairs_for(row, confidence=0.9, scale=0.05)[0].reason == "confidence bounds overlap"
+    assert (
+        pairs_for(row, confidence=0.9, scale=0.05)[0].reason
+        == "heuristic penalty prevents dominance"
+    )
     assert pairs_for(row, confidence=0.5)[0].reason.startswith("confidence below threshold")
 
 

@@ -101,7 +101,7 @@ def test_tie_on_one_objective_with_gain_on_another_is_defended() -> None:
     assert pair.verdict == "defended"
     assert pair.chosen_id == "better"
     assert pair.margins == {"a": 0.0, "b": 0.3}
-    assert pair.reason == "lower-bound Pareto dominance: b"
+    assert pair.reason == "Pareto dominance after heuristic penalty: b"
 
 
 def test_gain_no_larger_than_epsilon_is_equivalent() -> None:
@@ -124,7 +124,7 @@ def test_confidence_penalty_can_remove_dominance_on_a_tie() -> None:
     unpenalized = compare_candidates(better, worse, objectives, uncertainty_scale=0.0)
 
     assert penalized.verdict == "ambiguous"
-    assert penalized.reason == "confidence bounds overlap"
+    assert penalized.reason == "heuristic penalty prevents dominance"
     assert unpenalized.verdict == "defended"
     assert unpenalized.chosen_id == "better"
 

@@ -1,4 +1,4 @@
-"""Verifier-grounded preference mining for defensible post-training data."""
+"""Pareto preference-pair selection."""
 
 from .ids import stable_id
 from .models import (

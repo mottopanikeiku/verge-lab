@@ -1,4 +1,4 @@
-"""Confidence-bound, direction-normalized Pareto preference mining."""
+"""Pareto preference-pair selection with a heuristic confidence penalty."""
 
 from __future__ import annotations
 
@@ -22,24 +22,23 @@ def point_margin(left: Score, right: Score, objective: Objective) -> float:
     )
 
 
-def lower_confidence_margin(
+def penalized_margin(
     left: Score,
     right: Score,
     objective: Objective,
     *,
     uncertainty_scale: float = 0.05,
 ) -> float:
-    """Conservative lower bound for left's normalized advantage.
+    """Subtract a heuristic confidence penalty from the directional advantage.
 
-    Confidence represents verifier reliability, not a fabricated sample count.
-    The configurable scale converts each score's untrusted fraction into a
-    bounded uncertainty radius in normalized score units.
+    Supplied confidence values and the scale set the penalty in score units.
+    This is not a statistical bound or the DPO experiment's bootstrap interval.
     """
 
     if uncertainty_scale < 0:
         raise ValueError("uncertainty_scale must be non-negative")
-    uncertainty = uncertainty_scale * ((1.0 - left.confidence) + (1.0 - right.confidence))
-    return point_margin(left, right, objective) - uncertainty
+    penalty = uncertainty_scale * ((1.0 - left.confidence) + (1.0 - right.confidence))
+    return point_margin(left, right, objective) - penalty
 
 
 def _reason(prefix: str, objective_ids: Iterable[str]) -> str:
@@ -73,9 +72,9 @@ def compare_candidates(
     first, second = sorted((left, right), key=lambda item: item.id)
     pair_id = stable_id("pair", left.prompt_id, first.id, second.id)
 
-    def conservative_margins(candidate: Candidate, other: Candidate) -> dict[str, float]:
+    def penalized_margins(candidate: Candidate, other: Candidate) -> dict[str, float]:
         return {
-            item.id: lower_confidence_margin(
+            item.id: penalized_margin(
                 candidate.scores[item.id],
                 other.scores[item.id],
                 item,
@@ -86,7 +85,7 @@ def compare_candidates(
         }
 
     stable_margins = {
-        key: round(value, 6) for key, value in sorted(conservative_margins(first, second).items())
+        key: round(value, 6) for key, value in sorted(penalized_margins(first, second).items())
     }
     missing = [
         item for item in objective_ids if item not in left.scores or item not in right.scores
@@ -125,17 +124,17 @@ def compare_candidates(
             _reason("confidence below threshold", low_confidence),
         )
 
-    left_bounds = conservative_margins(left, right)
-    right_bounds = conservative_margins(right, left)
+    left_margins = penalized_margins(left, right)
+    right_margins = penalized_margins(right, left)
 
     def defended(margins: Mapping[str, float]) -> bool:
         return all(value >= 0.0 for value in margins.values()) and any(
             value > epsilon for value in margins.values()
         )
 
-    if defended(left_bounds):
-        margins = {key: round(value, 6) for key, value in sorted(left_bounds.items())}
-        strict = sorted(key for key, value in left_bounds.items() if value > epsilon)
+    if defended(left_margins):
+        margins = {key: round(value, 6) for key, value in sorted(left_margins.items())}
+        strict = sorted(key for key, value in left_margins.items() if value > epsilon)
         return Pair(
             pair_id,
             left.prompt_id,
@@ -144,11 +143,11 @@ def compare_candidates(
             "defended",
             confidence,
             margins,
-            _reason("lower-bound Pareto dominance", strict),
+            _reason("Pareto dominance after heuristic penalty", strict),
         )
-    if defended(right_bounds):
-        margins = {key: round(value, 6) for key, value in sorted(right_bounds.items())}
-        strict = sorted(key for key, value in right_bounds.items() if value > epsilon)
+    if defended(right_margins):
+        margins = {key: round(value, 6) for key, value in sorted(right_margins.items())}
+        strict = sorted(key for key, value in right_margins.items() if value > epsilon)
         return Pair(
             pair_id,
             left.prompt_id,
@@ -157,7 +156,7 @@ def compare_candidates(
             "defended",
             confidence,
             margins,
-            _reason("lower-bound Pareto dominance", strict),
+            _reason("Pareto dominance after heuristic penalty", strict),
         )
 
     observed = [
@@ -171,7 +170,7 @@ def compare_candidates(
     elif all(abs(value) <= epsilon for value in observed):
         reason = "equivalent within epsilon"
     else:
-        reason = "confidence bounds overlap"
+        reason = "heuristic penalty prevents dominance"
     return Pair(
         pair_id,
         left.prompt_id,
