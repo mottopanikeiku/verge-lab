@@ -21,10 +21,10 @@ export function Overview({ run, onNavigate }: OverviewProps) {
       <section className="bench-hero">
         <header className="view-hero overview-hero">
           <div>
-            <span className="eyebrow">Pair selection / authored examples</span>
-            <h1>Better on one score. Worse on none.</h1>
-            <p>I compare two answers to the same prompt without averaging away their tradeoffs. A Pareto preference means no score worsens and at least one improves. If one answer gains on one score but loses on another, I abstain: neither is a winner under this rule.</p>
-            <div className="hero-readout" role="list" aria-label="Counts computed from authored example inputs, not evaluation results">
+            <span className="eyebrow">Pair selection / examples</span>
+            <h1>Pareto preference-pair selection</h1>
+            <p>I compare answers to the same prompt across several scores. A pair is selected when no adjusted score worsens and at least one improves beyond the threshold. When scores trade off, the selector abstains.</p>
+            <div className="hero-readout" role="list" aria-label="Counts computed from example inputs">
               <span role="listitem"><strong>{run.summary.candidateCount}</strong> example answers</span>
               <span role="listitem"><strong>{run.summary.defendedPairCount}</strong> selected pairs</span>
               <span role="listitem"><strong>{run.summary.ambiguousPairCount}</strong> abstentions</span>
@@ -35,15 +35,15 @@ export function Overview({ run, onNavigate }: OverviewProps) {
       </section>
 
       <section className="ledger" aria-labelledby="ledger-title">
-        <header className="section-heading"><div><span className="eyebrow">The selection rule</span><h2 id="ledger-title">Select a pair, or leave it unresolved.</h2></div></header>
+        <header className="section-heading"><div><span className="eyebrow">The selection rule</span><h2 id="ledger-title">Selected pairs and abstentions</h2></div></header>
         <div className="ledger-grid">
-          <article className="ledger-lead"><span>Selected from this example</span><strong>{formatPercent(defendedRate)}</strong><p>{run.summary.defendedPairCount} of {totalPairs} authored comparisons pass the rule. This is an example count, not a measured accuracy or win rate.</p><button type="button" className="text-action" onClick={() => onNavigate('pairs')}>Inspect a pair <ArrowRight size={15} aria-hidden="true" /></button></article>
-          <div className="selection-rule"><h3>What counts as better?</h3><p>Higher is better for a score marked “maximize”; lower is better for “minimize”. The Python comparison also subtracts an uncertainty allowance from each advantage. Every adjusted margin must be nonnegative, and at least one must exceed the improvement threshold.</p><h3>When do I abstain?</h3><p>A tradeoff, near tie, missing score, low confidence or overlapping confidence bounds leaves the pair unresolved. The artifact calls a selected pair <code>defended</code> and an abstention <code>ambiguous</code>. Neither label proves that a model is better.</p><button type="button" className="text-action" onClick={() => onNavigate('topology')}>Compare example scores <ArrowRight size={15} aria-hidden="true" /></button></div>
+          <article className="ledger-lead"><span>Selected from this example</span><strong>{formatPercent(defendedRate)}</strong><p>{run.summary.defendedPairCount} of {totalPairs} example comparisons pass the rule.</p><button type="button" className="text-action" onClick={() => onNavigate('pairs')}>Inspect a pair <ArrowRight size={15} aria-hidden="true" /></button></article>
+          <div className="selection-rule"><h3>Score margins</h3><p>Higher is better for “maximize”; lower is better for “minimize”. A heuristic penalty based on the supplied confidence reduces each advantage. Every adjusted margin must be nonnegative, and at least one must exceed the improvement threshold.</p><h3>Abstentions</h3><p>Tradeoffs, near ties, missing scores, low confidence and penalties that remove dominance leave a pair unresolved. The artifact labels selected pairs <code>defended</code> and abstentions <code>ambiguous</code>.</p><button type="button" className="text-action" onClick={() => onNavigate('topology')}>Compare example scores <ArrowRight size={15} aria-hidden="true" /></button></div>
         </div>
       </section>
 
       <section className="objective-ledger" aria-labelledby="objective-title">
-        <header className="section-heading"><div><span className="eyebrow">Scores used in this example</span><h2 id="objective-title">Keep each objective separate.</h2></div></header>
+        <header className="section-heading"><div><span className="eyebrow">Scores used in this example</span><h2 id="objective-title">Separate objectives</h2></div></header>
         <div className="objective-rows">
           {run.objectives.map((objective, index) => (
             <article key={objective.id} className="objective-row">
@@ -56,8 +56,8 @@ export function Overview({ run, onNavigate }: OverviewProps) {
       </section>
 
       <section className="triage-strip" aria-labelledby="triage-title">
-        <header><span className="eyebrow">Explore the examples</span><h2 id="triage-title">Why was no winner selected?</h2></header>
-        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Inspect pairs</span><strong>{run.summary.ambiguousPairCount} example abstentions to inspect</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('runbook')}><span><Clock3 size={18} aria-hidden="true" />Example artifact</span><strong>Authored metadata, not a training record</strong><ArrowRight aria-hidden="true" /></button></div>
+        <header><span className="eyebrow">Explore the examples</span><h2 id="triage-title">Inspect the decisions</h2></header>
+        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Inspect pairs</span><strong>{run.summary.ambiguousPairCount} example abstentions</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('runbook')}><span><Clock3 size={18} aria-hidden="true" />Example artifact</span><strong>Model metadata and checkpoint examples</strong><ArrowRight aria-hidden="true" /></button></div>
       </section>
     </div>
   )
@@ -76,7 +76,7 @@ export function RewardTopology({ run, filters, onFiltersChange }: FilteredViewPr
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Compare example scores</span><h1>Not every pair has a winner.</h1><p>An arrow points to the answer selected by the Pareto rule: no adjusted score worsens, and at least one improves beyond the threshold. A dashed line means I abstain. Scores and coordinates are authored examples, not model measurements.</p></div></header>
+      <header className="view-hero"><div><span className="eyebrow">Example scores</span><h1>Compare answer scores</h1><p>An arrow points to the answer selected by the Pareto rule; a dashed line marks an abstention. Select an answer to read its scores. Graph positions are illustrative coordinates.</p></div></header>
       <EvidenceFilters run={run} filters={filters} onChange={onFiltersChange} resultCount={visibleCandidates.length} resultLabel={`candidates · ${visiblePairs.length} edges`} />
       <PartialOrderGraph run={run} candidates={visibleCandidates} pairs={visiblePairs} selectedCandidateId={effectiveSelectedCandidateId} onSelectCandidate={setSelectedCandidateId} />
     </div>
@@ -97,7 +97,7 @@ function PairChoice({ run, pair, role }: { run: RunArtifact; pair: Pair; role: '
       <blockquote>{candidate.output}</blockquote>
       <div className="pair-score-stack">{run.objectives.map((objective) => {
         const score = candidate.scores[objective.id]
-        return <div key={objective.id}><span>Illustrative {objective.label} score</span><strong>{score ? formatNumber(score.value) : '—'}</strong>{score ? <ConfidenceDial value={score.confidence} tone="neutral" label={`${sideLabel} ${objective.label} confidence`} size="inline" /> : <small>missing example score</small>}{score ? <p>Authored example evidence: {score.evidence}</p> : null}</div>
+        return <div key={objective.id}><span>Example {objective.label} score</span><strong>{score ? formatNumber(score.value) : '—'}</strong>{score ? <ConfidenceDial value={score.confidence} tone="neutral" label={`${sideLabel} ${objective.label} confidence`} size="inline" /> : <small>missing example score</small>}{score ? <p>Example rationale: {score.evidence}</p> : null}</div>
       })}</div>
     </article>
   )
@@ -114,12 +114,12 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Inspect example pairs</span><h1>See why a pair was selected.</h1><p>No score may worsen; at least one must improve. Tradeoffs abstain rather than forcing a winner. These example verdicts also account for confidence, missing scores and near ties.</p></div><dl className="verdict-counts"><div><dt>Selected pairs</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Abstentions</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></header>
+      <header className="view-hero"><div><span className="eyebrow">Example pairs</span><h1>Inspect pair decisions</h1><p>Compare the answers, their scores and adjusted margins. The selector also checks confidence, missing scores and near ties before choosing a winner.</p></div><dl className="verdict-counts"><div><dt>Selected pairs</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Abstentions</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></header>
       <EvidenceFilters run={run} filters={filters} onChange={onFiltersChange} resultCount={visiblePairs.length} resultLabel="comparisons" />
       {selectedPair ? (
         <div className={`pair-workbench ${drillDownOpen ? 'pair-workbench--detail' : 'pair-workbench--register'}`}>
           <aside className="pair-index pair-index-panel" aria-label="Filtered illustrative comparison pairs">
-            <span className="eyebrow">Illustrative pair register</span>
+            <span className="eyebrow">Example comparisons</span>
             {visiblePairs.map((pair) => {
               const prompt = promptFor(run, pair.promptId)
               const selected = pair.id === selectedPair.id
@@ -139,15 +139,15 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
               <dl><div><dt>Illustrative confidence</dt><dd><ConfidenceDial value={selectedPair.confidence} tone={selectedPair.verdict} label={`${shortId(selectedPair.id)} verdict confidence`} size="panel" /></dd></div><div><dt>Example domain</dt><dd>{promptFor(run, selectedPair.promptId)?.domain}</dd></div></dl>
             </header>
             <section className="specification-band" aria-labelledby="spec-title">
-              <h3 id="spec-title">Example prompt-level reward specification</h3>
+              <h3 id="spec-title">Prompt criteria</h3>
               <div>
                 <section aria-labelledby="rubrics-title"><h4 id="rubrics-title">Rubrics</h4><ul>{promptFor(run, selectedPair.promptId)?.specification.rubrics.map((rubric) => <li key={rubric}>{rubric}</li>)}</ul></section>
                 <section aria-labelledby="constraints-title"><h4 id="constraints-title">Constraints</h4><ul>{promptFor(run, selectedPair.promptId)?.specification.constraints.map((constraint) => <li key={constraint}>{constraint}</li>)}</ul></section>
               </div>
             </section>
             <div className="pair-comparison"><PairChoice run={run} pair={selectedPair} role="chosen" /><PairChoice run={run} pair={selectedPair} role="rejected" /></div>
-            <section className="verdict-reason"><span className="eyebrow">Why this example gets this verdict</span><h3>{selectedPair.reason}</h3><p>Margins compare {selectedPair.verdict === 'defended' ? 'the chosen answer with the rejected answer' : 'Candidate A with Candidate B; this order does not imply a preference'}. They account for score direction and subtract an uncertainty allowance. Selection requires every margin ≥ 0 and at least one above the improvement threshold. Negative margins or a near tie cannot select a winner; missing or low-confidence scores also abstain.</p><div className="margin-strip">{run.objectives.map((objective) => <div key={objective.id}><span>{objective.label}</span><strong>{selectedPair.margins[objective.id] === undefined ? 'not shared' : `${selectedPair.margins[objective.id] > 0 ? '+' : ''}${formatNumber(selectedPair.margins[objective.id], 4)}`}</strong></div>)}</div></section>
-            <section className="mutation-evidence"><header><span className="eyebrow">Illustrative mutation comparisons</span><strong>{relevantMutations.length} linked examples</strong></header><p>Verdict flips and deltas are computed from authored before/after scores, not measured rescoring or model bias tests.</p>{relevantMutations.length === 0 ? <p className="empty-inline">No example mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} · computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
+            <section className="verdict-reason"><span className="eyebrow">Selection reason</span><h3>{selectedPair.reason}</h3><p>Margins compare {selectedPair.verdict === 'defended' ? 'the chosen answer with the rejected answer' : 'Candidate A with Candidate B; this order does not imply a preference'}. They account for score direction and a heuristic confidence penalty. Selection requires every margin ≥ 0 and at least one above the improvement threshold.</p><div className="margin-strip">{run.objectives.map((objective) => <div key={objective.id}><span>{objective.label}</span><strong>{selectedPair.margins[objective.id] === undefined ? 'not shared' : `${selectedPair.margins[objective.id] > 0 ? '+' : ''}${formatNumber(selectedPair.margins[objective.id], 4)}`}</strong></div>)}</div></section>
+            <section className="mutation-evidence"><header><span className="eyebrow">Example mutations</span><strong>{relevantMutations.length} linked examples</strong></header><p>These text edits come with example before/after scores. The selector computes score changes and verdict flips from them.</p>{relevantMutations.length === 0 ? <p className="empty-inline">No example mutation targets either candidate in this pair.</p> : relevantMutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} · computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</section>
           </section>
         </div>
       ) : <div className="empty-state"><CircleAlert aria-hidden="true" /><h2>No comparisons match</h2><p>Clear the candidate search or widen the domain and verdict filters.</p></div>}
@@ -159,14 +159,14 @@ export function Runbook({ run }: SharedViewProps) {
 
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Runbook / illustrative demo</span><h1>An authored example, not a run.</h1><p>Illustrative checkpoints, mutation comparisons and model metadata show the artifact format. They are not a training record, a trained adapter or GPU diagnostics.</p></div><div className="runbook-seal"><ShieldCheck aria-hidden="true" /><span>Example artifact status</span><strong>{run.status}</strong><small>{run.id}</small></div></header>
+      <header className="view-hero"><div><span className="eyebrow">Artifact format</span><h1>Example training artifact</h1><p>Model metadata, checkpoint curves and mutation comparisons illustrate the saved format. All checkpoint and resource values on this page are authored examples.</p></div><div className="runbook-seal"><ShieldCheck aria-hidden="true" /><span>Example artifact status</span><strong>{run.status}</strong><small>{run.id}</small></div></header>
       <section className="runbook-grid">
         <section className="manifest" aria-labelledby="manifest-title"><header><span className="eyebrow">Illustrative model metadata</span><h2 id="manifest-title">Example adapter description</h2></header><dl><div><dt>Example base</dt><dd>{run.model.base}</dd></div><div><dt>Example method</dt><dd>{run.model.method}</dd></div><div><dt>Example adapter name</dt><dd>{run.model.adapter}</dd></div><div><dt>Illustrative parameters</dt><dd>{formatCompactNumber(run.model.parameterCount)}</dd></div><div><dt>Example quantization</dt><dd>{run.model.quantization}</dd></div><div><dt>Illustrative GPU estimate</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} GPU min</dd></div></dl></section>
       </section>
       <section className="timeline-section" aria-labelledby="timeline-title">
-        <header className="section-heading"><div><span className="eyebrow">Illustrative checkpoint trace</span><h2 id="timeline-title">Authored demo timeline</h2></div><span>{run.checkpoints.length} illustrative states</span></header>
+        <header className="section-heading"><div><span className="eyebrow">Illustrative checkpoints</span><h2 id="timeline-title">Example timeline</h2></div><span>{run.checkpoints.length} example states</span></header>
         {run.checkpoints.length === 0 ? (
-          <div className="empty-state"><Clock3 aria-hidden="true" /><h3>No illustrative checkpoints</h3><p>The example artifact contains no authored checkpoint values.</p></div>
+          <div className="empty-state"><Clock3 aria-hidden="true" /><h3>No example checkpoints</h3><p>The artifact contains no checkpoint values.</p></div>
         ) : (
           <div className="checkpoint-trace-stack">
             <CheckpointTrace checkpoints={run.checkpoints} />
@@ -174,8 +174,8 @@ export function Runbook({ run }: SharedViewProps) {
           </div>
         )}
       </section>
-      <section className="method-note"><Beaker aria-hidden="true" /><div><span className="eyebrow">Example export rule</span><h2>Only example defended edges are eligible.</h2><p>The Python exporter retains margins and authored score evidence as metadata. Missing scores, low confidence and cross-objective tradeoffs remain ambiguous. These eligibility counts are computed on illustrative inputs, not evidence of training quality.</p></div><dl><div><dt>Example eligible edges</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Example ambiguous edges</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></section>
-      <section className="mutation-register" aria-labelledby="mutation-title"><header className="section-heading"><div><span className="eyebrow"><Microscope size={14} aria-hidden="true" />Illustrative mutations</span><h2 id="mutation-title">Example mutation register</h2></div><span>{run.summary.mutationFlipCount} computed example flips</span></header><p>Mutated text and authored before/after scores illustrate the audit rule. Deltas and flips are deterministic example calculations, not measured model responses.</p>{run.mutations.length === 0 ? <p className="empty-inline">No illustrative mutations are included in this artifact.</p> : <div>{run.mutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind} · {shortId(mutation.sourceCandidateId)}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} / computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</div>}</section>
+      <section className="method-note"><Beaker aria-hidden="true" /><div><span className="eyebrow">DPO export</span><h2>Export selected pairs</h2><p>The Python exporter recomputes each decision and writes selected pairs with their margins and score rationales. Abstentions are excluded.</p></div><dl><div><dt>Example eligible edges</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Example ambiguous edges</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></section>
+      <section className="mutation-register" aria-labelledby="mutation-title"><header className="section-heading"><div><span className="eyebrow"><Microscope size={14} aria-hidden="true" />Text changes</span><h2 id="mutation-title">Example mutations</h2></div><span>{run.summary.mutationFlipCount} computed example flips</span></header><p>Each text edit has example before/after scores. The selector computes deltas and checks whether the pair decision changes.</p>{run.mutations.length === 0 ? <p className="empty-inline">No example mutations are included in this artifact.</p> : <div>{run.mutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind} · {shortId(mutation.sourceCandidateId)}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} / computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</div>}</section>
     </div>
   )
 }

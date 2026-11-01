@@ -37,9 +37,9 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
       <figure className="checkpoint-trace checkpoint-trace--empty">
         <figcaption>
           <span className="eyebrow">Illustrative checkpoint curves</span>
-          <strong>No authored example states to plot</strong>
+          <strong>No example checkpoints to plot</strong>
         </figcaption>
-        <p>The example checkpoint register has no finite authored reward, win-rate or loss values.</p>
+        <p>The artifact has no finite reward, win-rate or loss values.</p>
       </figure>
     )
   }
@@ -74,8 +74,8 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
     <figure className="checkpoint-trace calibration-chrome" aria-labelledby={titleId}>
       <figcaption className="checkpoint-trace__heading">
         <div>
-          <span className="eyebrow">Illustrative checkpoint curves — not observations</span>
-          <strong>{data.length} authored example {data.length === 1 ? 'state' : 'states'}</strong>
+          <span className="eyebrow">Illustrative checkpoint curves</span>
+          <strong>{data.length} example {data.length === 1 ? 'checkpoint' : 'checkpoints'}</strong>
         </div>
         <ul className="checkpoint-trace__legend" aria-label="Illustrative curve legend; all values are authored examples">
           <li><i className="trace-key trace-key--reward" />Illustrative eval reward</li>
@@ -86,8 +86,8 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
 
       <div className="checkpoint-trace__plot" tabIndex={0} role="region" aria-label="Illustrative checkpoint plot; scroll horizontally to view all steps">
         <svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
-          <title id={titleId}>Illustrative checkpoint reward, win-rate and loss curves, not measured training results</title>
-          <desc id={descriptionId}>Authored demo values, not observations from training or evaluation. From illustrative step {stepFormatter.format(first.step)} to {stepFormatter.format(latest.step)}. Illustrative evaluation reward goes from {formatDecimal(first.evalReward)} to {formatDecimal(latest.evalReward)}, illustrative defended win rate from {Math.round(first.defendedWinRate * 100)} percent to {Math.round(latest.defendedWinRate * 100)} percent, and illustrative training loss from {formatDecimal(first.trainLoss)} to {formatDecimal(latest.trainLoss)}.</desc>
+          <title id={titleId}>Example checkpoint reward, win-rate and loss curves</title>
+          <desc id={descriptionId}>These values are authored illustrations. From step {stepFormatter.format(first.step)} to {stepFormatter.format(latest.step)}, example evaluation reward goes from {formatDecimal(first.evalReward)} to {formatDecimal(latest.evalReward)}, example defended win rate from {Math.round(first.defendedWinRate * 100)} percent to {Math.round(latest.defendedWinRate * 100)} percent, and example training loss from {formatDecimal(first.trainLoss)} to {formatDecimal(latest.trainLoss)}.</desc>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stopColor="var(--violet)" stopOpacity="0.26" />
@@ -126,7 +126,7 @@ export function CheckpointTrace({ checkpoints }: CheckpointTraceProps) {
         </svg>
       </div>
 
-      <dl className="checkpoint-trace__readout" aria-label={`Latest illustrative checkpoint at authored step ${stepFormatter.format(latest.step)}, not a measured state`}>
+      <dl className="checkpoint-trace__readout" aria-label={`Latest example checkpoint at step ${stepFormatter.format(latest.step)}`}>
         <div><dt>Illustrative eval reward</dt><dd><strong>{formatDecimal(latest.evalReward)}</strong><small>from {formatDecimal(first.evalReward)}</small></dd></div>
         <div><dt>Illustrative defended win rate</dt><dd><strong>{Math.round(latest.defendedWinRate * 100)}%</strong><small>from {Math.round(first.defendedWinRate * 100)}%</small></dd></div>
         <div><dt>Illustrative train loss</dt><dd><strong>{formatDecimal(latest.trainLoss)}</strong><small>from {formatDecimal(first.trainLoss)}</small></dd></div>

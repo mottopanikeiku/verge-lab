@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "verge-lab"
 version = "0.1.0"
-description = "Verifier-grounded preference mining for defensible LLM post-training"
+description = "Pareto preference-pair selection"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }

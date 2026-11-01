@@ -48,7 +48,7 @@ const checkDemo = async (page, isMobile) => {
   await page.keyboard.press('Enter')
   await overflow('Overview')
 
-  await navigate(2, 'Not every pair has a winner.')
+  await navigate(2, 'Compare answer scores')
   await page.focus('.graph-controls button:nth-child(3)')
   await page.keyboard.press('Enter')
   assert(await page.$eval('.graph-controls output', (element) => element.textContent === '125%'),
@@ -99,7 +99,7 @@ const checkDemo = async (page, isMobile) => {
   await page.waitForSelector('.graph-node')
   results.push('Graph zoom/reset, keyboard nodes/table, domain/verdict/search filters')
 
-  await navigate(3, 'See why a pair was selected.')
+  await navigate(3, 'Inspect pair decisions')
   const pairSelects = await page.$$('.filter-bar select')
   await pairSelects[1].select('ambiguous')
   const chosen = await page.$eval('.pair-index button', (element) => element.dataset.pairId)
@@ -130,7 +130,7 @@ const checkDemo = async (page, isMobile) => {
   await pairSelects[1].select('all')
   results.push('Selected and abstained pair drilldown; no implied winner on abstention')
 
-  await navigate(4, 'An authored example, not a run.')
+  await navigate(4, 'Example training artifact')
   assert(await page.$eval('.checkpoint-trace svg', (element) => element.getAttribute('role') === 'img'),
     'Chart accessible description')
   await page.focus('.checkpoint-trace__plot')
@@ -145,7 +145,7 @@ const checkDemo = async (page, isMobile) => {
   }
   await overflow('Artifact expanded mutation')
   results.push('Artifact chart focus, mutation disclosure')
-  await navigate(1, 'Better on one score. Worse on none.')
+  await navigate(1, 'Pareto preference-pair selection')
   return { isMobile, results }
 }
 

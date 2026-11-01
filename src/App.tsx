@@ -33,9 +33,9 @@ function App() {
       <aside className="side-rail" aria-label="Verge Lab navigation">
         <header className="brand-lockup">
           <div className="brand-mark" aria-hidden="true"><span /><span /><span /></div>
-          <div><strong>VERGE / LAB</strong><small>Illustrative preference demo</small></div>
+          <div><strong>VERGE / LAB</strong><small>Pair-selection demo</small></div>
         </header>
-        <nav className="primary-nav" aria-label="Workbench views">
+        <nav className="primary-nav" aria-label="Demo views">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
             return <button type="button" key={item.id} className={activeView === item.id ? 'is-active' : undefined} aria-current={activeView === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><span className="nav-index">{item.index}</span><Icon size={17} aria-hidden={true} /><span>{item.label}</span><ChevronRight className="nav-chevron" size={15} aria-hidden="true" /></button>
@@ -51,9 +51,9 @@ function App() {
 
       <main id="lab-main" tabIndex={-1}>
         <aside className="example-notice" aria-labelledby="example-notice-title">
-          <strong id="example-notice-title">Illustrative demo — not measured results</strong>
-          <p>I use authored example scores to explain pair selection. These are not human ratings or model measurements. No training or inference runs here.</p>
-          <details><summary>Where these examples come from</summary><p>Every view reads static <code>artifacts/demo-run.json</code>, derived from <code>examples/candidates.json</code>. Scores, confidence, token counts, latency, model metadata, coordinates, checkpoints, mutations and cost estimates are authored illustrations. Pair verdicts, margins, counts and mutation flips are calculations on those inputs, not measured evaluation results.</p></details>
+          <strong id="example-notice-title">Illustrative pair-selection demo</strong>
+          <p>Explore the selector with example scores. Pair decisions are computed; model metadata and checkpoint curves are illustrations. No training or inference runs here. <a href="https://github.com/mottopanikeiku/verge-lab#the-comparison">Read the nine-adapter DPO comparison</a>.</p>
+          <details><summary>Where these examples come from</summary><p>Every view reads <code>artifacts/demo-run.json</code>, built from <code>examples/candidates.json</code>. Scores, confidences, token counts, latency, model metadata, coordinates, checkpoints and cost estimates are authored inputs. The Python demo computes pair decisions, margins, counts and mutation flips from them.</p></details>
         </aside>
         <div className="bench-content">
           {activeView === 'overview' ? <Overview run={run} onNavigate={navigate} /> : null}
@@ -63,7 +63,7 @@ function App() {
         </div>
       </main>
 
-      <nav className="bottom-nav" aria-label="Mobile workbench views">
+      <nav className="bottom-nav" aria-label="Mobile demo views">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon
           return <button type="button" key={item.id} className={activeView === item.id ? 'is-active' : undefined} aria-label={item.label} aria-current={activeView === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}><Icon size={18} aria-hidden={true} /><span>{item.id === 'topology' ? 'Scores' : item.id === 'pairs' ? 'Pairs' : item.id === 'runbook' ? 'Artifact' : item.label}</span></button>

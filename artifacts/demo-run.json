@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "run_958df457b456",
+  "id": "run_f72752fc3dbb",
   "name": "Verge Lab · illustrative pair-mining example",
   "createdAt": "2026-08-23T12:00:00Z",
   "status": "complete",
   "model": {
     "base": "Qwen/Qwen3-0.6B",
-    "method": "DPO over confidence-bound Pareto edges",
+    "method": "DPO over Pareto pairs with a heuristic confidence penalty",
     "adapter": "verge-demo-lora",
     "parameterCount": 600000000,
     "quantization": "bfloat16"
@@ -432,9 +432,9 @@
       }
     },
     {
-      "id": "candidate_fb3a078ea195",
+      "id": "candidate_0223eb54eead",
       "promptId": "prompt_24c4ab6fc7ae",
-      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence.   Compare candidates objective by objective after normalizing direction.\tDefend an edge only when conservative confidence bounds show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
+      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence.   Compare candidates objective by objective after normalizing direction.\tSelect an edge only when the margins after a heuristic confidence penalty show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
       "tokens": 105,
       "latencyMs": 421.0,
       "scores": {
@@ -548,7 +548,7 @@
         "correctness": 0.117,
         "latency": 68.999
       },
-      "reason": "lower-bound Pareto dominance: clarity, constraint, correctness, latency"
+      "reason": "Pareto dominance after heuristic penalty: clarity, constraint, correctness, latency"
     },
     {
       "id": "pair_a04acc0649be",
@@ -608,7 +608,7 @@
         "correctness": 0.0875,
         "latency": 73.999
       },
-      "reason": "lower-bound Pareto dominance: clarity, constraint, correctness, latency"
+      "reason": "Pareto dominance after heuristic penalty: clarity, constraint, correctness, latency"
     },
     {
       "id": "pair_f7c110f76bd4",
@@ -641,32 +641,32 @@
       "reason": "confidence below threshold: correctness"
     },
     {
-      "id": "pair_69e6398c8e34",
+      "id": "pair_8b6064572b77",
       "promptId": "prompt_24c4ab6fc7ae",
-      "chosenId": "candidate_28131455cc02",
-      "rejectedId": "candidate_fb3a078ea195",
+      "chosenId": "candidate_0223eb54eead",
+      "rejectedId": "candidate_28131455cc02",
       "verdict": "ambiguous",
       "confidence": 0.62,
       "margins": {
-        "clarity": -0.0555,
-        "constraint": -0.692,
-        "correctness": -0.52,
-        "latency": 69.999
+        "clarity": 0.0445,
+        "constraint": 0.688,
+        "correctness": 0.48,
+        "latency": -70.001
       },
       "reason": "confidence below threshold: correctness"
     },
     {
-      "id": "pair_c67afaafdf09",
+      "id": "pair_e887577b335e",
       "promptId": "prompt_24c4ab6fc7ae",
-      "chosenId": "candidate_1a8caf702cee",
-      "rejectedId": "candidate_fb3a078ea195",
+      "chosenId": "candidate_0223eb54eead",
+      "rejectedId": "candidate_1a8caf702cee",
       "verdict": "ambiguous",
       "confidence": 0.96,
       "margins": {
-        "clarity": 0.026,
-        "constraint": -0.0815,
-        "correctness": -0.072,
-        "latency": -72.001
+        "clarity": -0.034,
+        "constraint": 0.0785,
+        "correctness": 0.068,
+        "latency": 71.999
       },
       "reason": "cross-objective tradeoff"
     },
@@ -746,10 +746,10 @@
       "reason": "defended preference reversed after remove-emphasis"
     },
     {
-      "id": "mut_d1d57005d791",
-      "sourceCandidateId": "candidate_fb3a078ea195",
+      "id": "mut_c85c1fb0d4fc",
+      "sourceCandidateId": "candidate_0223eb54eead",
       "kind": "collapse-whitespace",
-      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence. Compare candidates objective by objective after normalizing direction. Defend an edge only when conservative confidence bounds show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
+      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence. Compare candidates objective by objective after normalizing direction. Select an edge only when the margins after a heuristic confidence penalty show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
       "scoreDelta": {
         "clarity": 0.02,
         "constraint": -0.03,

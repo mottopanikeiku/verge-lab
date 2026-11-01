@@ -211,7 +211,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
   return (
     <div className="topology-stack">
       <figure className="order-graph calibration-chrome" data-armed={selectedCandidate ? 'true' : 'false'} aria-labelledby="order-graph-title">
-        <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Illustrative partial order</strong></span><span>{visiblePairs.length} computed example edges</span></figcaption>
+        <figcaption><span><GitBranch size={15} aria-hidden="true" /><strong id="order-graph-title">Example pair comparisons</strong></span><span>{visiblePairs.length} computed edges</span></figcaption>
         <div className="graph-key" aria-label="Example graph legend"><span><i className="key-line key-line--defended" />Arrow: selected answer</span><span><i className="key-line key-line--ambiguous" />Dashed: abstain</span><span><i className="key-node" />Example answer</span></div>
         <div className="graph-controls" role="group" aria-label="Graph viewport controls">
           <button type="button" onClick={() => zoomBy(1 / ZOOM_STEP)} disabled={viewport.scale <= MIN_ZOOM}><Minus size={14} aria-hidden="true" /><span>Zoom out</span></button>
@@ -220,7 +220,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
           <output aria-label="Current graph zoom">{Math.round(viewport.scale * 100)}%</output>
         </div>
         <div className="graph-viewport" onPointerDown={beginPan} onPointerMove={continuePan} onPointerUp={endPan} onPointerCancel={endPan}>
-          <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Illustrative candidate partial-order graph computed from authored example scores. Coordinates are authored, not model embeddings. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
+          <svg className="order-graph-svg" viewBox={`${viewport.x} ${viewport.y} ${viewWidth} ${viewHeight}`} role="group" aria-label="Pair comparisons computed from example scores, with illustrative coordinates. Tab to nodes; arrow keys move between candidates." preserveAspectRatio="xMidYMid meet">
             <defs>
               <marker id="arrow-defended" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" className="marker-defended" /></marker>
             </defs>
@@ -230,7 +230,7 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
                 const rejected = nodeById[pair.rejectedId]
                 const markerEnd = pair.verdict === 'defended' ? 'url(#arrow-defended)' : undefined
                 const edgeLabel = pair.verdict === 'defended' ? 'preference edge' : 'undirected comparison'
-                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd}><title>{`Computed example ${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} illustrative confidence, not a measurement. ${pair.reason}`}</title></line>
+                return <line key={pair.id} x1={rejected.graphX} y1={rejected.graphY} x2={chosen.graphX} y2={chosen.graphY} className={`graph-edge graph-edge--${pair.verdict}`} markerEnd={markerEnd}><title>{`Example ${pair.verdict} ${edgeLabel}, ${formatPercent(pair.confidence)} supplied confidence. ${pair.reason}`}</title></line>
               })}
             </g>
             <g aria-label="Illustrative candidates">
@@ -248,19 +248,19 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
             </g>
           </svg>
         </div>
-        <p className="graph-note">Arrows point to the selected answer, not to a global rank. Dashed lines mean no winner was selected. Positions are authored coordinates, not measured model embeddings. Use zoom buttons, then drag with a mouse to pan. Tab to an answer; arrow keys move between answers; Enter selects it. The table below offers the same selection controls.</p>
+        <p className="graph-note">Arrows point to the selected answer within each pair; dashed lines mark abstentions. Positions are illustrative coordinates. Use zoom buttons, then drag with a mouse to pan. Tab to an answer; arrow keys move between answers; Enter selects it. The table offers the same selection controls.</p>
       </figure>
 
       {selectedCandidate ? (
         <section className="candidate-inspector" aria-labelledby="candidate-inspector-title">
-          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected illustrative candidate</span><h2 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h2><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
+          <header><span className="eyebrow"><Focus size={13} aria-hidden="true" />Selected example answer</span><h2 id="candidate-inspector-title">{candidateLabel(run, selectedCandidate)} · {shortId(selectedCandidate.id)}</h2><p>{promptFor(run, selectedCandidate.promptId)?.domain}</p></header>
           <blockquote>{selectedCandidate.output}</blockquote>
           <dl className="specimen-facts"><div><dt>Illustrative tokens</dt><dd>{selectedCandidate.tokens}</dd></div><div><dt>Illustrative latency</dt><dd>{selectedCandidate.latencyMs} ms</dd></div><div><dt>Illustrative coordinate z</dt><dd>{formatNumber(selectedCandidate.embedding.z)}</dd></div></dl>
           <div className="score-evidence-list">
             {run.objectives.map((objective) => {
               const score = selectedCandidate.scores[objective.id]
               if (!score) return null
-              return <details key={objective.id}><summary><span>Illustrative {objective.label} score</span><span className="score-evidence-value"><strong>{formatNumber(score.value)}</strong><ConfidenceDial value={score.confidence} tone="neutral" label={`${objective.label} confidence`} size="inline" /></span></summary><p>Authored example evidence: {score.evidence}</p></details>
+              return <details key={objective.id}><summary><span>Example {objective.label} score</span><span className="score-evidence-value"><strong>{formatNumber(score.value)}</strong><ConfidenceDial value={score.confidence} tone="neutral" label={`${objective.label} confidence`} size="inline" /></span></summary><p>Example rationale: {score.evidence}</p></details>
             })}
           </div>
         </section>
@@ -269,8 +269,8 @@ export function PartialOrderGraph({ run, candidates, pairs, selectedCandidateId,
       <details className="candidate-register-disclosure" open>
         <summary><span>Example answer table</span><small>{candidates.length} rows · score / confidence</small></summary>
         <section className="candidate-table-section" aria-labelledby="candidate-table-title">
-          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Illustrative accessible register</span><h2 id="candidate-table-title">Example candidate scores and confidences</h2></div><span>{candidates.length} example rows</span></header>
-          <div className="table-wrap" tabIndex={0} role="region" aria-label="Example scores table; scroll horizontally for all objectives"><table className="data-table candidate-table"><caption>All scores, confidences, token counts and latencies are illustrative authored inputs, not model measurements. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
+          <header className="section-heading section-heading--compact"><div><span className="eyebrow">Score table</span><h2 id="candidate-table-title">Example scores and confidences</h2></div><span>{candidates.length} example rows</span></header>
+          <div className="table-wrap" tabIndex={0} role="region" aria-label="Example scores table; scroll horizontally for all objectives"><table className="data-table candidate-table"><caption>Scores, confidences, token counts and latencies are example inputs. Objective cells show score / confidence.</caption><thead><tr><th scope="col">Example candidate</th><th scope="col">Example domain</th>{run.objectives.map((objective) => <th scope="col" key={objective.id}>Illustrative {objective.label} score / confidence</th>)}<th scope="col">Illustrative tokens</th><th scope="col">Illustrative latency</th></tr></thead><tbody>
             {candidates.map((candidate) => {
               const selected = candidate.id === selectedCandidateId
               return <tr key={candidate.id} className={selected ? 'is-selected' : undefined}><th scope="row" data-label="Example candidate"><button type="button" onClick={() => onSelectCandidate(candidate.id)} aria-pressed={selected}><span>{candidateLabel(run, candidate)}</span>{shortId(candidate.id)}</button></th><td data-label="Example domain">{promptFor(run, candidate.promptId)?.domain}</td>{run.objectives.map((objective) => { const score = candidate.scores[objective.id]; return <td data-label={`Illustrative ${objective.label} score / confidence`} key={objective.id}>{score ? `${formatNumber(score.value)} / ${formatPercent(score.confidence)}` : '—'}</td> })}<td data-label="Illustrative tokens">{candidate.tokens}</td><td data-label="Illustrative latency">{candidate.latencyMs} ms</td></tr>

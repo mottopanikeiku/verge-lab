@@ -4,7 +4,7 @@
   "status": "complete",
   "model": {
     "base": "Qwen/Qwen3-0.6B",
-    "method": "DPO over confidence-bound Pareto edges",
+    "method": "DPO over Pareto pairs with a heuristic confidence penalty",
     "adapter": "verge-demo-lora",
     "parameterCount": 600000000,
     "quantization": "bfloat16"
@@ -425,7 +425,7 @@
       "promptKey": "p4",
       "tokens": 105,
       "latencyMs": 421,
-      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence.   Compare candidates objective by objective after normalizing direction.\tDefend an edge only when conservative confidence bounds show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
+      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence.   Compare candidates objective by objective after normalizing direction.\tSelect an edge only when the margins after a heuristic confidence penalty show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
       "scores": {
         "correctness": {
           "value": 0.97,
@@ -612,7 +612,7 @@
       "sourceKey": "p4-a",
       "opponentKey": "p4-b",
       "kind": "collapse-whitespace",
-      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence. Compare candidates objective by objective after normalizing direction. Defend an edge only when conservative confidence bounds show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
+      "output": "A scalar lets a large gain in one signal compensate for a serious regression in another, even when the second signal encodes a hard requirement.\n\nIt also hides which verifier supplied the evidence. Compare candidates objective by objective after normalizing direction. Select an edge only when the margins after a heuristic confidence penalty show no regression on every objective and a strict improvement on at least one.\nKeep cross-objective tradeoffs, missing scores, and weak evidence ambiguous for review rather than fabricating a winner. The resulting partial order is preference evidence; any topology view is only an assistive visualization of that offline analysis.",
       "scores": {
         "correctness": {
           "value": 0.95,

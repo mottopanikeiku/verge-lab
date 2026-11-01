@@ -29,6 +29,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+.cache/
 *.egg-info/
 
 # Generated training output

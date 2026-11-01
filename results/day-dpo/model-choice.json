@@ -1,7 +1,7 @@
 {
   "selected_model": "Qwen/Qwen2.5-1.5B-Instruct",
   "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
-  "original_plan_commit": "12c887e",
+  "original_plan_commit": "5600d51",
   "selected_before_complete_training": true,
   "pilot_reward_scored": false,
   "pilot_evaluation_prompts_used": false,
