@@ -259,9 +259,9 @@ def test_gzip_input_outputs_and_svg_are_deterministic(tmp_path):
     assert first["source"]["records_sha256"] == hashlib.sha256(records.read_bytes()).hexdigest()
     svg = ElementTree.fromstring(outputs["reward-difference.svg"])
     text = " ".join(svg.itertext())
-    assert "192 paired prompts" in text
-    assert "[+1.000, +1.000]" in text
-    assert "mean 12.0; median 12.0" in text
+    assert "192 held-out prompts" in text
+    assert "[+1.00, +1.00]: Pareto ahead" in text
+    assert "Pareto pairs" in text
 
 
 def test_invalid_records_do_not_write_outputs(tmp_path):
@@ -294,18 +294,14 @@ def test_length_spread_and_seed_means_keep_seed_variation():
         {"seed": 1701, "mean": 0}, {"seed": 1702, "mean": 10}, {"seed": 1703, "mean": 20}]
 
 
-def test_svg_length_domain_contains_seed_means_above_condition_mean():
-    rows = balanced_rows()
-    for row in rows:
-        if row["condition"] == "pareto":
-            row["response_tokens"] = 192 if row["seed"] == 1701 else 0
-    summary = analysis.summarize(analysis.validate_records(rows), draws=20)
+def test_svg_draws_one_dot_per_seed_mean():
+    summary = analysis.summarize(analysis.validate_records(balanced_rows()), draws=20)
     svg = ElementTree.fromstring(analysis.render_svg(summary))
     dots = [element for element in svg.iter()
-            if element.tag.endswith("circle") and float(element.attrib["cy"]) >= 400]
-    assert len(dots) == 10  # Nine training-seed means plus the common unseeded start.
-    assert all(210 <= float(dot.attrib["cx"]) <= 590 for dot in dots)
-    assert max(float(dot.attrib["cx"]) for dot in dots) == 590
+            if element.tag.endswith("circle") and "dot" in element.attrib["class"]]
+    # Nine trained-seed rewards, three paired seed effects, one pooled effect.
+    assert len(dots) == 13
+    assert all(0 <= float(dot.attrib["cx"]) <= 880 for dot in dots)
 
 
 def test_percentile_interval_uses_linear_interpolation():

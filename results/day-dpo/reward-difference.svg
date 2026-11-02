@@ -1,55 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="630" viewBox="0 0 920 630" role="img" aria-labelledby="title desc">
-<title id="title">Day DPO: paired reward differences and response lengths</title>
-<desc id="desc">Three matched training seed effects and the crossed bootstrap 95 percent interval for Pareto minus gap reward, with mean response token lengths for each condition.</desc>
-<rect width="920" height="630" fill="white"/>
-<g font-family="sans-serif" font-size="14" fill="#17212b">
-<text x="28" y="34" font-size="20">Pareto minus gap: raw reward difference</text>
-<text x="28" y="58">192 paired prompts; 3 matched seeds; 10,000 crossed bootstrap draws</text>
-<line x1="683.72" x2="683.72" y1="82" y2="255" stroke="#9aa4ae" stroke-dasharray="4 4"/>
-<text x="210.00" y="280" text-anchor="middle">-0.307</text>
-<text x="360.00" y="280" text-anchor="middle">-0.210</text>
-<text x="510.00" y="280" text-anchor="middle">-0.112</text>
-<text x="660.00" y="280" text-anchor="middle">-0.015</text>
-<text x="810.00" y="280" text-anchor="middle">0.082</text>
-<line x1="210" x2="810" y1="260" y2="260" stroke="#9aa4ae"/>
-<text x="28" y="110">Seed 1701</text>
-<circle cx="641.75" cy="105" r="5" fill="#245a85"/>
-<text x="840" y="110">-0.027</text>
-<text x="28" y="150">Seed 1702</text>
-<circle cx="501.63" cy="145" r="5" fill="#245a85"/>
-<text x="840" y="150">-0.118</text>
-<text x="28" y="190">Seed 1703</text>
-<circle cx="390.47" cy="185" r="5" fill="#245a85"/>
-<text x="840" y="190">-0.190</text>
-<text x="28" y="235">Aggregate + 95% CI</text>
-<line x1="287.22" x2="732.78" y1="230" y2="230" stroke="#245a85" stroke-width="3"/>
-<circle cx="511.28" cy="230" r="6" fill="#245a85"/>
-<text x="840" y="235">-0.112</text>
-<text x="28" y="315">95% CI [-0.257, +0.032]; inconclusive</text>
-<text x="28" y="358" font-size="20">Generated response tokens</text>
-<text x="28" y="382">Bars: means; dots: seed means; text: median and observed range</text>
-<text x="28" y="419">start</text>
-<rect x="210" y="402" width="371.73" height="22" fill="#d8e7f0"/>
-<text x="620" y="419">mean 159.9; median 192.0; range 6–192</text>
-<circle cx="581.73" cy="413" r="4" fill="#245a85"/>
-<text x="28" y="455">pareto</text>
-<rect x="210" y="438" width="376.22" height="22" fill="#d8e7f0"/>
-<text x="620" y="455">mean 161.8; median 192.0; range 6–192</text>
-<circle cx="590.00" cy="449" r="4" fill="#245a85"/>
-<circle cx="580.98" cy="449" r="4" fill="#245a85"/>
-<circle cx="587.68" cy="449" r="4" fill="#245a85"/>
-<text x="28" y="491">gap</text>
-<rect x="210" y="474" width="366.60" height="22" fill="#d8e7f0"/>
-<text x="620" y="491">mean 157.7; median 192.0; range 5–192</text>
-<circle cx="574.00" cy="485" r="4" fill="#245a85"/>
-<circle cx="577.41" cy="485" r="4" fill="#245a85"/>
-<circle cx="578.39" cy="485" r="4" fill="#245a85"/>
-<text x="28" y="527">human</text>
-<rect x="210" y="510" width="371.22" height="22" fill="#d8e7f0"/>
-<text x="620" y="527">mean 159.7; median 192.0; range 6–192</text>
-<circle cx="583.80" cy="521" r="4" fill="#245a85"/>
-<circle cx="579.74" cy="521" r="4" fill="#245a85"/>
-<circle cx="580.11" cy="521" r="4" fill="#245a85"/>
-<text x="28" y="566">Paired length difference: +4.14 tokens; 95% CI [+0.04, +8.47]</text>
-<text x="28" y="593">Reward is a model logit, not human preference truth. Length may confound the comparison.</text>
-</g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="500" viewBox="0 0 880 500" role="img" aria-labelledby="title desc">
+<title id="title">DPO pair selectors: mean reward and the Pareto-minus-gap effect</title>
+<desc id="desc">Mean reward for the starting model and for three DPO training sets, with per-seed means, and the Pareto minus gap reward difference per seed with its bootstrap 95 percent interval.</desc>
+<style>text{font-family:system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;fill:#1f2933}.title{font-size:20px;font-weight:600}.sub{fill:#52606d}.small{font-size:12px}.axis{stroke:#9aa5b1;stroke-width:1}.grid{stroke:#e4e7eb;stroke-width:1}.bar{fill:#bcccdc}.hot{fill:#2f6f9f}.dot{fill:#102a43;stroke:#fff;stroke-width:1.5}.ci{stroke:#2f6f9f;stroke-width:4;stroke-linecap:round}.zero{stroke:#c0392b;stroke-width:1.5;stroke-dasharray:5 4}.red{fill:#c0392b}@media (prefers-color-scheme:dark){text{fill:#e4e7eb}.sub{fill:#9aa5b1}.axis{stroke:#616e7c}.grid{stroke:#323f4b}.bar{fill:#486581}.hot{fill:#6cb2eb}.dot{fill:#f0f4f8;stroke:#102a43}.ci{stroke:#6cb2eb}.zero{stroke:#ff8a80}.red{fill:#ff8a80}.bg{fill:#12181f}}.bg{fill:#fff}</style>
+<rect class="bg" width="880" height="500"/>
+<text class="title" x="24" y="34">DPO on 1,024 selected pairs: mean reward after training</text>
+<text class="sub" x="24" y="58">Qwen2.5-1.5B-Instruct, 192 held-out prompts, 3 seeds per training set. Dots are seed means.</text>
+<line class="grid" x1="190.0" x2="190.0" y1="82" y2="238"/>
+<text class="small sub" x="190.0" y="256" text-anchor="middle">0</text>
+<line class="grid" x1="342.5" x2="342.5" y1="82" y2="238"/>
+<text class="small sub" x="342.5" y="256" text-anchor="middle">0.2</text>
+<line class="grid" x1="495.0" x2="495.0" y1="82" y2="238"/>
+<text class="small sub" x="495.0" y="256" text-anchor="middle">0.4</text>
+<line class="grid" x1="647.5" x2="647.5" y1="82" y2="238"/>
+<text class="small sub" x="647.5" y="256" text-anchor="middle">0.6</text>
+<line class="grid" x1="800.0" x2="800.0" y1="82" y2="238"/>
+<text class="small sub" x="800.0" y="256" text-anchor="middle">0.8</text>
+<text class="small sub" x="190" y="274">mean reward (raw logit)</text>
+<text x="178" y="110" text-anchor="end">Starting model</text>
+<rect class="bar" x="190.0" y="92" width="419.5" height="26" rx="3"/>
+<text x="623.5" y="110">0.55</text>
+<text x="178" y="148" text-anchor="end">Pareto pairs</text>
+<rect class="hot" x="190.0" y="130" width="472.6" height="26" rx="3"/>
+<circle class="dot" cx="682.1" cy="143" r="4.5"/>
+<circle class="dot" cx="653.8" cy="143" r="4.5"/>
+<circle class="dot" cx="651.8" cy="143" r="4.5"/>
+<text x="696.1" y="148">0.62</text>
+<text x="178" y="186" text-anchor="end">Human-label pairs</text>
+<rect class="bar" x="190.0" y="168" width="496.6" height="26" rx="3"/>
+<circle class="dot" cx="716.9" cy="181" r="4.5"/>
+<circle class="dot" cx="686.2" cy="181" r="4.5"/>
+<circle class="dot" cx="656.7" cy="181" r="4.5"/>
+<text x="730.9" y="186">0.65</text>
+<text x="178" y="224" text-anchor="end">Helpfulness-gap pairs</text>
+<rect class="bar" x="190.0" y="206" width="557.7" height="26" rx="3"/>
+<circle class="dot" cx="702.8" cy="219" r="4.5"/>
+<circle class="dot" cx="743.7" cy="219" r="4.5"/>
+<circle class="dot" cx="796.6" cy="219" r="4.5"/>
+<text x="810.6" y="224">0.73</text>
+<line class="axis" x1="190.0" x2="190.0" y1="82" y2="238"/>
+<text class="title" x="24" y="296" style="font-size:16px">Pareto minus gap, same prompts and seeds</text>
+<line class="grid" x1="340.8" x2="340.8" y1="312" y2="416"/>
+<text class="small sub" x="340.8" y="434" text-anchor="middle">-0.2</text>
+<line class="grid" x1="517.0" x2="517.0" y1="312" y2="416"/>
+<text class="small sub" x="517.0" y="434" text-anchor="middle">-0.1</text>
+<line class="grid" x1="693.2" x2="693.2" y1="312" y2="416"/>
+<text class="small sub" x="693.2" y="434" text-anchor="middle">0</text>
+<line class="zero" x1="693.2" x2="693.2" y1="308" y2="418"/>
+<text class="small red" x="699.2" y="322">no difference</text>
+<text class="small" x="178" y="344" text-anchor="end">seed 1701</text>
+<circle class="dot" cx="645.3" cy="340" r="4.5"/>
+<text class="small" x="178" y="366" text-anchor="end">seed 1702</text>
+<circle class="dot" cx="485.4" cy="362" r="4.5"/>
+<text class="small" x="178" y="388" text-anchor="end">seed 1703</text>
+<circle class="dot" cx="358.6" cy="384" r="4.5"/>
+<text x="178" y="409" text-anchor="end">all seeds</text>
+<line class="ci" x1="240.8" x2="749.2" y1="404" y2="404"/>
+<circle class="dot" cx="496.5" cy="404" r="6"/>
+<text x="24" y="470">-0.11 logits, 95% CI [-0.26, +0.03]: interval crosses zero: no clear winner.</text>
+<text class="small sub" x="24" y="490">Reward: OpenAssistant DeBERTa-v3-large-v2. 10,000 bootstrap draws over prompts and seeds.</text>
+</svg>

@@ -8,7 +8,6 @@ import hashlib
 import json
 import math
 import random
-from html import escape
 from pathlib import Path
 from statistics import mean, median, pstdev
 
@@ -240,87 +239,127 @@ def summarize(records, *, draws=BOOTSTRAP_DRAWS, random_seed=BOOTSTRAP_SEED):
     }
 
 
+def nice_ticks(low, high, target=5):
+    span = high - low
+    raw = span / target
+    magnitude = 10 ** math.floor(math.log10(raw))
+    step = next(size * magnitude for size in (1, 2, 5, 10) if size * magnitude >= raw)
+    first = math.ceil(low / step - 1e-9)
+    last = math.floor(high / step + 1e-9)
+    return [round(index * step, 10) for index in range(first, last + 1)], step
+
+
 def render_svg(summary):
-    """Draw observed seed effects, the crossed interval, and response lengths."""
+    """Draw mean reward per training set, then the paired Pareto-minus-gap effect."""
+    css = (
+        "text{font-family:system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;"
+        "font-size:14px;fill:#1f2933}"
+        ".title{font-size:20px;font-weight:600}.sub{fill:#52606d}.small{font-size:12px}"
+        ".axis{stroke:#9aa5b1;stroke-width:1}.grid{stroke:#e4e7eb;stroke-width:1}"
+        ".bar{fill:#bcccdc}.hot{fill:#2f6f9f}.dot{fill:#102a43;stroke:#fff;stroke-width:1.5}"
+        ".ci{stroke:#2f6f9f;stroke-width:4;stroke-linecap:round}"
+        ".zero{stroke:#c0392b;stroke-width:1.5;stroke-dasharray:5 4}.red{fill:#c0392b}"
+        "@media (prefers-color-scheme:dark){"
+        "text{fill:#e4e7eb}.sub{fill:#9aa5b1}.axis{stroke:#616e7c}.grid{stroke:#323f4b}"
+        ".bar{fill:#486581}.hot{fill:#6cb2eb}.dot{fill:#f0f4f8;stroke:#102a43}"
+        ".ci{stroke:#6cb2eb}.zero{stroke:#ff8a80}.red{fill:#ff8a80}.bg{fill:#12181f}}"
+        ".bg{fill:#fff}"
+    )
+    conditions = summary["conditions"]
+    order = sorted(conditions, key=lambda name: conditions[name]["mean_reward"])
+    labels = {"start": "Starting model", "pareto": "Pareto pairs",
+              "human": "Human-label pairs", "gap": "Helpfulness-gap pairs"}
+    left, right = 190, 800
+    parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="880" height="500" '
+        'viewBox="0 0 880 500" role="img" aria-labelledby="title desc">',
+        '<title id="title">DPO pair selectors: mean reward and the Pareto-minus-gap effect</title>',
+        '<desc id="desc">Mean reward for the starting model and for three DPO training sets, '
+        'with per-seed means, and the Pareto minus gap reward difference per seed with its '
+        'bootstrap 95 percent interval.</desc>',
+        f'<style>{css}</style>',
+        '<rect class="bg" width="880" height="500"/>',
+        '<text class="title" x="24" y="34">'
+        'DPO on 1,024 selected pairs: mean reward after training</text>',
+        f'<text class="sub" x="24" y="58">Qwen2.5-1.5B-Instruct, {summary["design"]["prompts"]} '
+        f'held-out prompts, 3 seeds per training set. Dots are seed means.</text>',
+    ]
+    rewards = [row["mean_reward"] for row in conditions.values()] + [
+        seed["mean_reward"] for row in conditions.values() for seed in row["per_seed"]]
+    lower, upper = min(0, *rewards), max(rewards)
+    ticks, step = nice_ticks(lower, upper + (upper - lower) * 0.08)
+    upper = max(ticks[-1], upper)
+
+    def reward_x(value):
+        return left + (value - lower) * (right - left) / (upper - lower)
+
+    for tick in ticks:
+        parts.append(f'<line class="grid" x1="{reward_x(tick):.1f}" x2="{reward_x(tick):.1f}" '
+                     'y1="82" y2="238"/>')
+        parts.append(f'<text class="small sub" x="{reward_x(tick):.1f}" y="256" '
+                     f'text-anchor="middle">{tick:g}</text>')
+    parts.append(f'<text class="small sub" x="{left}" y="274">mean reward (raw logit)</text>')
+    for index, name in enumerate(order):
+        y = 92 + index * 38
+        row = conditions[name]
+        cls = "hot" if name == "pareto" else "bar"
+        parts.append(f'<text x="{left - 12}" y="{y + 18}" text-anchor="end">'
+                     f'{labels.get(name, name)}</text>')
+        parts.append(f'<rect class="{cls}" x="{reward_x(0):.1f}" y="{y}" '
+                     f'width="{reward_x(row["mean_reward"]) - reward_x(0):.1f}" height="26" '
+                     'rx="3"/>')
+        if name != "start":
+            for seed_row in row["per_seed"]:
+                parts.append(f'<circle class="dot" cx="{reward_x(seed_row["mean_reward"]):.1f}" '
+                             f'cy="{y + 13}" r="4.5"/>')
+        reach = max(row["mean_reward"], *(seed["mean_reward"] for seed in row["per_seed"]))
+        parts.append(f'<text x="{reward_x(reach) + 14:.1f}" y="{y + 18}">'
+                     f'{row["mean_reward"]:.2f}</text>')
+    parts.append(f'<line class="axis" x1="{reward_x(0):.1f}" x2="{reward_x(0):.1f}" '
+                 'y1="82" y2="238"/>')
+
     primary = summary["primary_pareto_minus_gap_reward"]
     low, high = primary["ci95"]
     effects = [row["mean"] for row in primary["per_seed"]]
-    lower, upper = min(0, low, *effects), max(0, high, *effects)
-    padding = max((upper - lower) * 0.12, 0.05)
-    lower, upper = lower - padding, upper + padding
-    left, right = 210, 810
+    delta_low, delta_high = min(0, low, *effects), max(0, high, *effects)
+    pad = max((delta_high - delta_low) * 0.1, 0.02)
+    delta_low, delta_high = delta_low - pad, delta_high + pad
+    delta_ticks, _ = nice_ticks(delta_low, delta_high)
 
-    def x(value):
-        return left + (value - lower) * (right - left) / (upper - lower)
+    def delta_x(value):
+        return left + (value - delta_low) * (right - left) / (delta_high - delta_low)
 
-    parts = [
-        '<svg xmlns="http://www.w3.org/2000/svg" width="920" height="630" '
-        'viewBox="0 0 920 630" role="img" aria-labelledby="title desc">',
-        '<title id="title">Day DPO: paired reward differences and response lengths</title>',
-        '<desc id="desc">Three matched training seed effects and the crossed bootstrap '
-        '95 percent interval for Pareto minus gap reward, with mean response token '
-        'lengths for each condition.</desc>',
-        '<rect width="920" height="630" fill="white"/>',
-        '<g font-family="sans-serif" font-size="14" fill="#17212b">',
-        '<text x="28" y="34" font-size="20">Pareto minus gap: raw reward difference</text>',
-        f'<text x="28" y="58">{summary["design"]["prompts"]} paired prompts; '
-        f'3 matched seeds; {summary["bootstrap"]["draws"]:,} crossed bootstrap draws</text>',
-        f'<line x1="{x(0):.2f}" x2="{x(0):.2f}" y1="82" y2="255" '
-        'stroke="#9aa4ae" stroke-dasharray="4 4"/>',
-    ]
-    for index in range(5):
-        value = lower + (upper - lower) * index / 4
-        position = x(value)
-        parts.append(f'<text x="{position:.2f}" y="280" text-anchor="middle">'
-                     f'{value:.3f}</text>')
-    parts.append(f'<line x1="{left}" x2="{right}" y1="260" y2="260" stroke="#9aa4ae"/>')
-    for index, row in enumerate(primary["per_seed"]):
-        y = 105 + index * 40
-        parts.append(f'<text x="28" y="{y + 5}">Seed {row["seed"]}</text>')
-        parts.append(f'<circle cx="{x(row["mean"]):.2f}" cy="{y}" r="5" fill="#245a85"/>')
-        parts.append(f'<text x="840" y="{y + 5}">{row["mean"]:+.3f}</text>')
+    parts.append('<text class="title" x="24" y="296" style="font-size:16px">'
+                 'Pareto minus gap, same prompts and seeds</text>')
+    for tick in delta_ticks:
+        parts.append(f'<line class="grid" x1="{delta_x(tick):.1f}" x2="{delta_x(tick):.1f}" '
+                     'y1="312" y2="416"/>')
+        parts.append(f'<text class="small sub" x="{delta_x(tick):.1f}" y="434" '
+                     f'text-anchor="middle">{tick:+g}</text>' if tick else
+                     f'<text class="small sub" x="{delta_x(tick):.1f}" y="434" '
+                     'text-anchor="middle">0</text>')
+    parts.append(f'<line class="zero" x1="{delta_x(0):.1f}" x2="{delta_x(0):.1f}" '
+                 'y1="308" y2="418"/>')
+    parts.append(f'<text class="small red" x="{delta_x(0) + 6:.1f}" y="322">'
+                 'no difference</text>')
+    for index, seed_row in enumerate(primary["per_seed"]):
+        y = 340 + index * 22
+        parts.append(f'<text class="small" x="{left - 12}" y="{y + 4}" text-anchor="end">'
+                     f'seed {seed_row["seed"]}</text>')
+        parts.append(f'<circle class="dot" cx="{delta_x(seed_row["mean"]):.1f}" cy="{y}" r="4.5"/>')
+    y = 404
+    parts.append(f'<text x="{left - 12}" y="{y + 5}" text-anchor="end">all seeds</text>')
+    parts.append(f'<line class="ci" x1="{delta_x(low):.1f}" x2="{delta_x(high):.1f}" '
+                 f'y1="{y}" y2="{y}"/>')
+    parts.append(f'<circle class="dot" cx="{delta_x(primary["mean"]):.1f}" cy="{y}" r="6"/>')
+    verdict = {"pareto_superior": "Pareto ahead", "gap_superior": "gap ahead"}.get(
+        primary["conclusion"], "interval crosses zero: no clear winner")
     parts.extend([
-        '<text x="28" y="235">Aggregate + 95% CI</text>',
-        f'<line x1="{x(low):.2f}" x2="{x(high):.2f}" y1="230" y2="230" '
-        'stroke="#245a85" stroke-width="3"/>',
-        f'<circle cx="{x(primary["mean"]):.2f}" cy="230" r="6" fill="#245a85"/>',
-        f'<text x="840" y="235">{primary["mean"]:+.3f}</text>',
-        f'<text x="28" y="315">95% CI [{low:+.3f}, {high:+.3f}]; '
-        f'{escape(primary["conclusion"].replace("_", " "))}</text>',
-        '<text x="28" y="358" font-size="20">Generated response tokens</text>',
-        '<text x="28" y="382">Bars: means; dots: seed means; '
-        'text: median and observed range</text>',
-    ])
-    maximum = max(
-        max(row["response_tokens"]["mean"],
-            max((seed_row["response_tokens"]["mean"] for seed_row in row["per_seed"]),
-                default=0))
-        for row in summary["conditions"].values()
-    )
-    scale = 380 / max(maximum, 1)
-    for index, condition in enumerate(("start", *CONDITIONS)):
-        row = summary["conditions"][condition]
-        lengths = row["response_tokens"]
-        y = 402 + index * 36
-        width = lengths["mean"] * scale
-        parts.extend([
-            f'<text x="28" y="{y + 17}">{condition}</text>',
-            f'<rect x="{left}" y="{y}" width="{width:.2f}" height="22" fill="#d8e7f0"/>',
-            f'<text x="620" y="{y + 17}">mean {lengths["mean"]:.1f}; '
-            f'median {lengths["median"]:.1f}; '
-            f'range {lengths["min"]}–{lengths["max"]}</text>',
-        ])
-        for seed_row in row["per_seed"]:
-            position = left + seed_row["response_tokens"]["mean"] * scale
-            parts.append(f'<circle cx="{position:.2f}" cy="{y + 11}" r="4" fill="#245a85"/>')
-    length_delta = summary["pareto_minus_gap_response_tokens"]
-    length_low, length_high = length_delta["ci95"]
-    parts.extend([
-        f'<text x="28" y="566">Paired length difference: {length_delta["mean"]:+.2f} tokens; '
-        f'95% CI [{length_low:+.2f}, {length_high:+.2f}]</text>',
-        '<text x="28" y="593">Reward is a model logit, not human preference truth. '
-        'Length may confound the comparison.</text>',
-        '</g></svg>\n',
+        f'<text x="24" y="470">{primary["mean"]:+.2f} logits, 95% CI '
+        f'[{low:+.2f}, {high:+.2f}]: {verdict}.</text>',
+        f'<text class="small sub" x="24" y="490">Reward: OpenAssistant DeBERTa-v3-large-v2. '
+        f'{summary["bootstrap"]["draws"]:,} bootstrap draws over prompts and seeds.</text>',
+        '</svg>\n',
     ])
     return "\n".join(parts)
 
