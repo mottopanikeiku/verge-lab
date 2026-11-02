@@ -176,6 +176,19 @@ blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font
 .method-note p { margin-top: .75rem; line-height: 1.7; }
 .method-note dl { display: grid; align-content: start; gap: 1rem; }
 .method-note dd { margin-top: .5rem; }
+.real-sample-note { font-size: .95rem; }
+.real-filter-bar { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); align-items: end; }
+.real-filter-bar .filter-result { grid-column: auto; }
+.real-prompt { max-height: 14rem; margin-top: .75rem; overflow-y: auto; background: var(--mineral-0); border: 1px solid var(--mineral-3); }
+.real-response blockquote { max-height: 30rem; overflow-y: auto; border-top: 1px solid var(--mineral-3); }
+.rating-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; padding: .75rem 1rem; }
+.rating-grid dt { font-size: .75rem; }
+.rating-grid dd { margin-top: .25rem; font-family: var(--font-mono); font-size: 1.1rem; }
+.rating-grid .is-pareto dt { color: var(--ink-0); font-weight: 650; }
+.decision-table { margin: 1.5rem 0; }
+.decision-table tbody th { font-weight: 600; }
+.real-credit { color: var(--ink-2); font-size: .85rem; line-height: 1.6; }
+.real-credit code { overflow-wrap: anywhere; }
 @media (max-width: 68rem) {
   .view-hero, .topology-stack { grid-template-columns: minmax(0, 1fr); }
   .pair-workbench { grid-template-columns: 11rem minmax(0, 1fr); gap: 1rem; }
@@ -186,7 +199,7 @@ blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font
   .side-rail { display: none; }
   .mobile-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; color: var(--mineral-0); background: var(--assay-0); }
   .mobile-demo-label { font-size: .8rem; color: #abc9c3; }
-  .bottom-nav { position: fixed; z-index: 30; inset: auto 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding-bottom: env(safe-area-inset-bottom); color: var(--mineral-3); background: var(--assay-0); }
+  .bottom-nav { position: fixed; z-index: 30; inset: auto 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding-bottom: env(safe-area-inset-bottom); color: var(--mineral-3); background: var(--assay-0); }
   .bottom-nav button { display: grid; place-items: center; align-content: center; gap: .25rem; min-width: 0; min-height: 4.5rem; padding: .5rem; color: inherit; background: transparent; border: 0; border-top: 3px solid transparent; font-size: .8rem; }
   .bottom-nav button.is-active { color: var(--lime); border-top-color: var(--lime); }
   main { padding: 1.25rem 1rem calc(6rem + env(safe-area-inset-bottom)); }
@@ -196,6 +209,7 @@ blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font
   .view-hero h1 { font-size: clamp(2rem, 9vw, 3rem); }
   .view-hero p { font-size: 1rem; }
   .ledger-grid, .triage-strip > div, .filter-bar, .specification-band > div, .pair-evidence-header { grid-template-columns: minmax(0, 1fr); }
+  .rating-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .objective-row { grid-template-columns: 1.5rem minmax(0, 1fr); }
   .objective-row dl { grid-column: 2; }
   .graph-controls { gap: .5rem; }
@@ -208,6 +222,7 @@ blockquote { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; font
   .margin-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .candidate-register-disclosure > summary small { display: block; margin-left: 1rem; }
   .data-table { min-width: 45rem; }
+  .data-table.decision-table { min-width: 0; }
   .method-note { grid-template-columns: 1.5rem minmax(0, 1fr); padding: 1rem; }
   .method-note dl { grid-column: 2; }
 }

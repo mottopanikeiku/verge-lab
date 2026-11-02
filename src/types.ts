@@ -1,4 +1,4 @@
-export type ViewId = 'overview' | 'topology' | 'pairs' | 'export'
+export type ViewId = 'real' | 'overview' | 'topology' | 'pairs' | 'export'
 export type PairVerdict = 'defended' | 'ambiguous'
 
 export type Score = {
@@ -105,4 +105,39 @@ export type LabFilters = {
   candidate: string
   domain: string
   verdict: 'all' | PairVerdict
+}
+
+export type RealPairSample = 'hash-order' | 'pareto-abstains' | 'pareto-against-human'
+export type ResponseNumber = 1 | 2
+
+export type RealPair = {
+  id: string
+  sample: RealPairSample
+  hashRank: number
+  prompt: string
+  responses: [string, string]
+  ratings: [Record<string, number>, Record<string, number>]
+  preferenceStrength: number
+  selectors: {
+    pareto: { pick: ResponseNumber | null; reason: string; inTrainingSet: boolean }
+    gap: { pick: ResponseNumber; helpfulnessGap: number; inTrainingSet: boolean }
+    human: { pick: ResponseNumber; inTrainingSet: boolean }
+  }
+}
+
+export type RealPairsArtifact = {
+  dataset: {
+    name: string
+    huggingFace: string
+    revision: string
+    license: string
+    licenseUrl: string
+    attribution: string
+    papers: string[]
+  }
+  pool: { eligiblePairs: number; paretoPasses: number; trainingPairsPerSelector: number }
+  sample: Array<{ name: RealPairSample; count: number }>
+  attributes: string[]
+  paretoAttributes: string[]
+  pairs: RealPair[]
 }

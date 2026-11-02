@@ -2,7 +2,7 @@
 
 Picks DPO preference pairs by Pareto dominance. A pair is kept only when one answer is at least as good on every score and clearly better on at least one; trade-offs, near ties and missing scores abstain.
 
-I trained nine LoRA adapters on Qwen2.5-1.5B-Instruct to compare it with the simplest alternative, taking the pairs with the largest helpfulness gap. Over three seeds per training set, the Pareto adapters scored 0.11 reward-model logits below the gap adapters, with a 95% interval of −0.26 to +0.03. They came out lower on every seed, but the interval crosses zero, so these runs don't separate the two selectors, and nothing in them favors Pareto.
+I trained nine LoRA adapters on Qwen2.5-1.5B-Instruct to compare it with the simplest alternative, taking the pairs with the largest helpfulness gap. Pareto scored lower on all three seeds, 0.11 reward-model logits below gap on average (95% interval −0.26 to +0.03); the interval still includes a tie.
 
 ![Mean reward per training set, and the Pareto minus gap difference](results/day-dpo/reward-difference.svg)
 
@@ -37,8 +37,8 @@ Retraining needs a Modal account. Data selection, training settings and the exac
 
 ## Demo
 
-[![Pair graph in the browser demo](docs/demo.png)](https://mottopanikeiku.github.io/verge-lab/)
+[![A HelpSteer2 training pair in the browser demo, with each selector's decision](docs/demo.png)](https://mottopanikeiku.github.io/verge-lab/)
 
-A small React app for browsing pair decisions on made-up scores, at [mottopanikeiku.github.io/verge-lab](https://mottopanikeiku.github.io/verge-lab/). `npm ci && npm run dev` runs it locally.
+The [demo](https://mottopanikeiku.github.io/verge-lab/) opens on 40 real training pairs from the experiment: the prompt, both HelpSteer2 responses, the annotators' ratings, and what the Pareto, gap and human-label selectors did with each pair, including whether it made each 1,024-pair training set. The other views walk through the rule's confidence penalty, near-tie threshold and export on made-up scores. `npm ci && npm run dev` runs it locally; `uv run python tools/export_demo_pairs.py` rebuilds the pair file from the saved results.
 
 Data: [HelpSteer2](https://arxiv.org/abs/2406.08673) and [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257) (NVIDIA, CC-BY-4.0). Trained with the [DPO](https://arxiv.org/abs/2305.18290) loss on Qwen2.5 (Apache-2.0). The earlier rating study in `results/public-preferences/` uses [UltraFeedback](https://arxiv.org/abs/2310.01377) on [TruthfulQA](https://arxiv.org/abs/2109.07958). Code is MIT.

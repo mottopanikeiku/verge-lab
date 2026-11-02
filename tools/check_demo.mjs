@@ -46,9 +46,22 @@ const checkDemo = async (page, isMobile) => {
   assert(await page.$eval('.example-notice details', (element) => element.open),
     'Source disclosure opens by keyboard')
   await page.keyboard.press('Enter')
-  await overflow('Overview')
+  await overflow('HelpSteer2 pairs')
 
-  await navigate(2, 'Compare answer scores')
+  const realFilter = await page.$('.real-filter-bar select')
+  await realFilter.select('abstains')
+  await page.click('.pair-index button')
+  assert(await page.$eval('.verdict-label', (element) => element.textContent === 'Pareto abstains'),
+    'HelpSteer2 abstention label')
+  assert(await page.$$eval('.decision-table tbody tr', (rows) => rows.length === 3),
+    'Three selector decisions')
+  await overflow('HelpSteer2 abstention detail')
+  if (isMobile) await page.click('.pair-back')
+  await realFilter.select('all')
+  results.push('HelpSteer2 pairs: decision filter, abstention detail, three selector rows')
+
+  await navigate(2, 'Pareto preference-pair selection')
+  await navigate(3, 'Compare answer scores')
   await page.focus('.graph-controls button:nth-child(3)')
   await page.keyboard.press('Enter')
   assert(await page.$eval('.graph-controls output', (element) => element.textContent === '125%'),
@@ -99,7 +112,7 @@ const checkDemo = async (page, isMobile) => {
   await page.waitForSelector('.graph-node')
   results.push('Graph zoom/reset, keyboard nodes/table, domain/verdict/search filters')
 
-  await navigate(3, 'Inspect pair decisions')
+  await navigate(4, 'Inspect pair decisions')
   const pairSelects = await page.$$('.filter-bar select')
   await pairSelects[1].select('ambiguous')
   const chosen = await page.$eval('.pair-index button', (element) => element.dataset.pairId)
@@ -130,7 +143,7 @@ const checkDemo = async (page, isMobile) => {
   await pairSelects[1].select('all')
   results.push('Selected and abstained pair drilldown; no implied winner on abstention')
 
-  await navigate(4, 'Export and text edits')
+  await navigate(5, 'Export and text edits')
   const mutation = await page.$('.mutation-register summary')
   if (mutation) {
     await mutation.focus()
@@ -140,7 +153,7 @@ const checkDemo = async (page, isMobile) => {
   }
   await overflow('Export expanded mutation')
   results.push('Export view, mutation disclosure')
-  await navigate(1, 'Pareto preference-pair selection')
+  await navigate(1, 'Training pairs from the experiment')
   return { isMobile, results }
 }
 
