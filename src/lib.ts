@@ -11,20 +11,6 @@ export const formatNumber = (value: number, digits = 2) =>
     minimumFractionDigits: digits,
   }).format(value)
 
-export const formatCompactNumber = (value: number) =>
-  new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)
-
-export const formatDate = (value: string) =>
-  new Intl.DateTimeFormat('en-US', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'UTC',
-    timeZoneName: 'short',
-  }).format(new Date(value))
-
 // Artifact IDs are `prefix_hash`; keep the prefix and enough hash to tell items apart.
 export const shortId = (value: string) => {
   const separator = value.lastIndexOf('_')

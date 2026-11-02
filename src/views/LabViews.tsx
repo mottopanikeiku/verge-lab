@@ -1,11 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { ArrowLeft, ArrowRight, Beaker, CheckCircle2, CircleAlert, Clock3, Microscope, ShieldCheck } from 'lucide-react'
-import { CheckpointTrace } from '../components/CheckpointTrace'
+import { ArrowLeft, ArrowRight, Beaker, CheckCircle2, CircleAlert, FileOutput, Microscope } from 'lucide-react'
 import { ConfidenceDial } from '../components/ConfidenceDial'
 import { EvidenceFilters } from '../components/EvidenceFilters'
 import { PartialOrderGraph } from '../components/PartialOrderGraph'
-import { candidateFor, candidateLabel, filteredCandidates, filteredPairs, formatCompactNumber, formatDate, formatNumber, formatPercent, promptFor, shortId } from '../lib'
+import { candidateFor, candidateLabel, filteredCandidates, filteredPairs, formatNumber, formatPercent, promptFor, shortId } from '../lib'
 import type { LabFilters, Pair, RunArtifact, ViewId } from '../types'
 
 type SharedViewProps = { run: RunArtifact }
@@ -30,7 +29,6 @@ export function Overview({ run, onNavigate }: OverviewProps) {
               <span role="listitem"><strong>{run.summary.ambiguousPairCount}</strong> abstentions</span>
             </div>
           </div>
-          <dl className="run-stamp"><div><dt>Demo status</dt><dd><span className="status-dot" />{run.status}</dd></div><div><dt>Example model</dt><dd>{run.model.base}</dd></div><div><dt>Demo date</dt><dd>{formatDate(run.createdAt)}</dd></div></dl>
         </header>
       </section>
 
@@ -57,7 +55,7 @@ export function Overview({ run, onNavigate }: OverviewProps) {
 
       <section className="triage-strip" aria-labelledby="triage-title">
         <header><span className="eyebrow">Explore the examples</span><h2 id="triage-title">Inspect the decisions</h2></header>
-        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Inspect pairs</span><strong>{run.summary.ambiguousPairCount} example abstentions</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('runbook')}><span><Clock3 size={18} aria-hidden="true" />Example artifact</span><strong>Model metadata and checkpoint examples</strong><ArrowRight aria-hidden="true" /></button></div>
+        <div><button type="button" onClick={() => onNavigate('pairs')}><span><CircleAlert size={18} aria-hidden="true" />Inspect pairs</span><strong>{run.summary.ambiguousPairCount} example abstentions</strong><ArrowRight aria-hidden="true" /></button><button type="button" onClick={() => onNavigate('export')}><span><FileOutput size={18} aria-hidden="true" />Export</span><strong>DPO export and text edits</strong><ArrowRight aria-hidden="true" /></button></div>
       </section>
     </div>
   )
@@ -155,25 +153,10 @@ export function PairLab({ run, filters, onFiltersChange }: FilteredViewProps) {
   )
 }
 
-export function Runbook({ run }: SharedViewProps) {
-
+export function ExportView({ run }: SharedViewProps) {
   return (
     <div className="view-stack">
-      <header className="view-hero"><div><span className="eyebrow">Artifact format</span><h1>Example training artifact</h1><p>Model metadata, checkpoint curves and mutation comparisons illustrate the saved format. All checkpoint and resource values on this page are authored examples.</p></div><div className="runbook-seal"><ShieldCheck aria-hidden="true" /><span>Example artifact status</span><strong>{run.status}</strong><small>{run.id}</small></div></header>
-      <section className="runbook-grid">
-        <section className="manifest" aria-labelledby="manifest-title"><header><span className="eyebrow">Illustrative model metadata</span><h2 id="manifest-title">Example adapter description</h2></header><dl><div><dt>Example base</dt><dd>{run.model.base}</dd></div><div><dt>Example method</dt><dd>{run.model.method}</dd></div><div><dt>Example adapter name</dt><dd>{run.model.adapter}</dd></div><div><dt>Illustrative parameters</dt><dd>{formatCompactNumber(run.model.parameterCount)}</dd></div><div><dt>Example quantization</dt><dd>{run.model.quantization}</dd></div><div><dt>Illustrative GPU estimate</dt><dd>{formatNumber(run.summary.estimatedGpuMinutes, 1)} GPU min</dd></div></dl></section>
-      </section>
-      <section className="timeline-section" aria-labelledby="timeline-title">
-        <header className="section-heading"><div><span className="eyebrow">Illustrative checkpoints</span><h2 id="timeline-title">Example timeline</h2></div><span>{run.checkpoints.length} example states</span></header>
-        {run.checkpoints.length === 0 ? (
-          <div className="empty-state"><Clock3 aria-hidden="true" /><h3>No example checkpoints</h3><p>The artifact contains no checkpoint values.</p></div>
-        ) : (
-          <div className="checkpoint-trace-stack">
-            <CheckpointTrace checkpoints={run.checkpoints} />
-            <ol className="timeline">{run.checkpoints.map((checkpoint, index) => <li key={`${checkpoint.step}-${checkpoint.label}`}><div className="timeline-axis"><span>{String(index + 1).padStart(2, '0')}</span></div><article><header><div><span>Illustrative step {checkpoint.step}</span><h3>{checkpoint.label}</h3></div><strong>{formatPercent(checkpoint.defendedWinRate)} illustrative defended win rate</strong></header><dl><div><dt>Illustrative train loss</dt><dd>{formatNumber(checkpoint.trainLoss, 3)}</dd></div><div><dt>Illustrative eval reward</dt><dd>{formatNumber(checkpoint.evalReward, 3)}</dd></div><div><dt>Illustrative GPU minutes</dt><dd>{formatNumber(checkpoint.gpuMinutes, 1)} min</dd></div></dl></article></li>)}</ol>
-          </div>
-        )}
-      </section>
+      <header className="view-hero"><div><span className="eyebrow">Export</span><h1>Export and text edits</h1><p>The exporter writes selected pairs as DPO JSONL. Text edits show which pair decisions flip when an answer changes.</p></div></header>
       <section className="method-note"><Beaker aria-hidden="true" /><div><span className="eyebrow">DPO export</span><h2>Export selected pairs</h2><p>The Python exporter recomputes each decision and writes selected pairs with their margins and score rationales. Abstentions are excluded.</p></div><dl><div><dt>Example eligible edges</dt><dd>{run.summary.defendedPairCount}</dd></div><div><dt>Example ambiguous edges</dt><dd>{run.summary.ambiguousPairCount}</dd></div></dl></section>
       <section className="mutation-register" aria-labelledby="mutation-title"><header className="section-heading"><div><span className="eyebrow"><Microscope size={14} aria-hidden="true" />Text changes</span><h2 id="mutation-title">Example mutations</h2></div><span>{run.summary.mutationFlipCount} computed example flips</span></header><p>Each text edit has example before/after scores. The selector computes deltas and checks whether the pair decision changes.</p>{run.mutations.length === 0 ? <p className="empty-inline">No example mutations are included in this artifact.</p> : <div>{run.mutations.map((mutation) => <details key={mutation.id}><summary><span>{mutation.kind} · {shortId(mutation.sourceCandidateId)}</span><strong className={mutation.flipped ? 'coral-text' : undefined}>{mutation.flipped ? 'example verdict flipped' : 'example verdict stable'} / computed deltas</strong></summary><blockquote>{mutation.output}</blockquote><div className="mutation-deltas">{Object.entries(mutation.scoreDelta).map(([objectiveId, delta]) => <span key={objectiveId}>{objectiveId}: {delta > 0 ? '+' : ''}{formatNumber(delta)}</span>)}</div><p>{mutation.reason}</p></details>)}</div>}</section>
     </div>

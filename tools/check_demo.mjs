@@ -130,12 +130,7 @@ const checkDemo = async (page, isMobile) => {
   await pairSelects[1].select('all')
   results.push('Selected and abstained pair drilldown; no implied winner on abstention')
 
-  await navigate(4, 'Example training artifact')
-  assert(await page.$eval('.checkpoint-trace svg', (element) => element.getAttribute('role') === 'img'),
-    'Chart accessible description')
-  await page.focus('.checkpoint-trace__plot')
-  assert(await page.evaluate(() => document.activeElement.className === 'checkpoint-trace__plot'),
-    'Chart scroll region focus')
+  await navigate(4, 'Export and text edits')
   const mutation = await page.$('.mutation-register summary')
   if (mutation) {
     await mutation.focus()
@@ -143,8 +138,8 @@ const checkDemo = async (page, isMobile) => {
     assert(await page.$eval('.mutation-register details', (element) => element.open),
       'Mutation disclosure keyboard')
   }
-  await overflow('Artifact expanded mutation')
-  results.push('Artifact chart focus, mutation disclosure')
+  await overflow('Export expanded mutation')
+  results.push('Export view, mutation disclosure')
   await navigate(1, 'Pareto preference-pair selection')
   return { isMobile, results }
 }

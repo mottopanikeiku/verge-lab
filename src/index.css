@@ -50,12 +50,6 @@
   initial-value: 0;
 }
 
-@property --checkpoint-progress {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 0%;
-}
-
 * { box-sizing: border-box; }
 html { min-width: 20rem; background: var(--mineral-1); }
 body { margin: 0; min-width: 20rem; min-height: 100vh; background: var(--mineral-1); }

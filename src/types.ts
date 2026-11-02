@@ -1,4 +1,4 @@
-export type ViewId = 'overview' | 'topology' | 'pairs' | 'runbook'
+export type ViewId = 'overview' | 'topology' | 'pairs' | 'export'
 export type PairVerdict = 'defended' | 'ambiguous'
 
 export type Score = {
