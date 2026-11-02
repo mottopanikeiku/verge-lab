@@ -4,7 +4,7 @@
 
 HelpSteer2 ratings and HelpSteer2-Preference labels are joined by exact prompt and response hashes ([`tools/prepare_day_dpo.py`](../tools/prepare_day_dpo.py)). A pair is eligible if it is in the train split, single-turn, has a nonzero helpfulness gap and a nonzero human preference, and fits the length limits (prompt ≤ 4,000 characters, responses ≤ 8,000). That leaves 3,956 pairs, 3,719 of which pass the Pareto rule.
 
-Each training set takes 1,024 of them:
+Each training set takes 1,024 of them, chosen like this:
 
 | Selector | How the 1,024 are chosen | Chosen answer |
 | --- | --- | --- |
@@ -12,11 +12,11 @@ Each training set takes 1,024 of them:
 | Helpfulness gap | Largest absolute helpfulness gaps, same hash order for ties | Higher helpfulness |
 | Human reference | Eligible pairs, same hash order | Human-preferred answer |
 
-Pareto maximizes correctness and coherence (rescaled 0–1, confidence 1). Helpfulness is the baseline's signal. Complexity and verbosity are left out, since maximizing them rewards length whatever the prompt asks.
+Pareto maximizes correctness and coherence (rescaled 0–1, confidence 1), while helpfulness is the baseline's signal. Complexity and verbosity are left out, since maximizing them rewards length whatever the prompt asks.
 
-The 192 evaluation prompts are single-turn validation prompts picked by the same hash rule. None appears in any HelpSteer2 training rating row.
+The 192 evaluation prompts are single-turn validation prompts picked by the same hash rule, and none of them appears in any HelpSteer2 training rating row.
 
-The compact data (full texts for the 1,024-pair sets and the evaluation prompts) is in `results/day-dpo/data.json.gz`. To rebuild it from upstream:
+The compact data (full texts for the 1,024-pair sets and the evaluation prompts) is in `results/day-dpo/data.json.gz`, and these commands rebuild it from upstream:
 
 ```bash
 uv run python tools/compare_human_preferences.py --fetch --cache .cache/helpsteer2
@@ -42,17 +42,17 @@ Per-run settings, losses and dependency versions are in `results/day-dpo/trainin
 
 ## Evaluation
 
-Every adapter and the starting model answer the same 192 prompts, greedy decoding, at most 192 new tokens. The starting model answers once per prompt and is shared across seeds.
+Every adapter and the starting model answer the same 192 prompts with greedy decoding and at most 192 new tokens, and the starting model answers once per prompt, shared across seeds.
 
 The scorer is `OpenAssistant/reward-model-deberta-v3-large-v2`: one raw logit per prompt and answer, truncated to 512 tokens (117 of 1,920 inputs are cut). Its training sources (WebGPT comparisons, summarization feedback, synthetic instruction pairs, Anthropic HH) predate HelpSteer2.
 
-The headline number is the mean of `reward(Pareto) − reward(gap)` over prompts and matched seeds. The interval comes from 10,000 bootstrap draws that resample prompts and seeds independently (random seed 20261007), with percentile endpoints. An interval entirely above zero favors Pareto, entirely below favors gap, otherwise no verdict. No length adjustment is applied.
+The headline number is the mean of `reward(Pareto) − reward(gap)` over prompts and matched seeds, with no length adjustment. The interval comes from 10,000 bootstrap draws that resample prompts and seeds independently (random seed 20261007), with percentile endpoints. An interval entirely above zero favors Pareto and one entirely below favors gap, while anything else gives no verdict.
 
-`records.jsonl.gz` holds every generation with its reward. `summary.json` holds the aggregates. [`tools/analyze_day_dpo.py`](../tools/analyze_day_dpo.py) refuses missing, duplicate, nonfinite or unbalanced rows.
+`records.jsonl.gz` holds every generation with its reward and `summary.json` the aggregates, and [`tools/analyze_day_dpo.py`](../tools/analyze_day_dpo.py) refuses missing, duplicate, nonfinite or unbalanced rows.
 
 ## Retraining on Modal
 
-Needs a Modal account and paid L4 GPUs; full training uses up to three containers in parallel.
+Retraining needs a Modal account and paid L4 GPUs, and full training uses up to three containers in parallel.
 
 ```bash
 uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode cache
@@ -61,7 +61,7 @@ uvx --python 3.12 --from modal==1.5.3 modal run tools/day_dpo_modal.py --mode sc
 uv run python tools/analyze_day_dpo.py --output-dir .cache/dpo
 ```
 
-Finished adapters, generations and scores are saved to a Modal volume before returning, so a rerun skips completed work. `--mode cleanup` deletes the downloaded model weights and keeps the adapters. `results/day-dpo/compute.json` lists every attempt and its cost bound.
+Finished adapters, generations and scores are saved to a Modal volume before returning, so a rerun skips completed work. `--mode cleanup` deletes the downloaded model weights but keeps the adapters, and `results/day-dpo/compute.json` lists every attempt and its cost bound.
 
 ## Selection rule
 
@@ -72,13 +72,13 @@ left_score - right_score
   - uncertainty_scale * ((1 - left_confidence) + (1 - right_confidence))
 ```
 
-Defaults: `uncertainty_scale = 0.05`, minimum confidence 0.8, `epsilon = 0.01` in each objective's own units. A pair is selected when every adjusted margin is nonnegative and at least one exceeds epsilon. The same test runs in the other direction. Anything else abstains: missing scores, low confidence, near ties, tradeoffs. With a nonzero penalty, an exact tie on any objective also blocks dominance.
+The defaults are `uncertainty_scale = 0.05`, minimum confidence 0.8 and `epsilon = 0.01` in each objective's own units. A pair is selected when every adjusted margin is nonnegative and at least one exceeds epsilon, and the same test runs in the other direction. Anything else abstains, whether the cause is missing scores, low confidence, near ties or tradeoffs, and with a nonzero penalty an exact tie on any objective also blocks dominance.
 
-[`export.py`](../verge_lab/export.py) recomputes every comparison before writing DPO JSONL and rejects artifacts whose stored decisions or margins disagree. The package runs no model; scores come from whatever you supply (the built-in checkers and scorers are phrase, JSON-field, regex and word-count checks).
+[`export.py`](../verge_lab/export.py) recomputes every comparison before writing DPO JSONL and rejects artifacts whose stored decisions or margins disagree. The package runs no model, so scores come from whatever you supply (the built-in checkers and scorers are phrase, JSON-field, regex and word-count checks).
 
 ## Agreement with human preference labels
 
-`results/human-preferences/` compares both selectors with HelpSteer2-Preference labels (`uv run python tools/compare_human_preferences.py`). At matched yield on validation data each selects 310 pairs; the human labels agree on 281 of 286 Pareto picks and 277 of 282 gap picks (human ties are excluded from the denominators, 24 and 28 of them).
+`results/human-preferences/` compares both selectors with HelpSteer2-Preference labels (`uv run python tools/compare_human_preferences.py`). At matched yield on validation data each selects 310 pairs, and the human labels agree on 281 of 286 Pareto picks and 277 of 282 gap picks, with human ties (24 and 28 of them) excluded from the denominators.
 
 ## UltraFeedback ratings on TruthfulQA
 
@@ -86,13 +86,13 @@ Defaults: `uncertainty_scale = 0.05`, minimum confidence 0.8, `epsilon = 0.01` i
 
 ## Browser demo and checks
 
-`artifacts/demo-run.json` is generated from `examples/candidates.json` with `uv run verge demo`. Its scores are made up; the pair decisions are computed. The Pages workflow builds with Vite under `/verge-lab/`. To preview a production build:
+`artifacts/demo-run.json` is generated from `examples/candidates.json` with `uv run verge demo`, and its scores are made up while the pair decisions are computed from them. The Pages workflow builds with Vite under `/verge-lab/`, and this previews a production build locally:
 
 ```bash
 npm ci && npm run build && npm run preview -- --host 127.0.0.1
 ```
 
-Checks:
+The tests, the linter and the demo build run with:
 
 ```bash
 uv run pytest

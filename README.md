@@ -1,8 +1,8 @@
 # Verge Lab
 
-Picks DPO preference pairs by Pareto dominance. A pair is kept only when one answer is at least as good on every score and clearly better on at least one; trade-offs, near ties and missing scores abstain.
+Verge Lab picks DPO preference pairs by Pareto dominance, keeping a pair only when one answer is at least as good on every score and clearly better on at least one, and abstaining on trade-offs, near ties and missing scores.
 
-I trained nine LoRA adapters on Qwen2.5-1.5B-Instruct to compare it with the simplest alternative, taking the pairs with the largest helpfulness gap. Pareto scored lower on all three seeds, 0.11 reward-model logits below gap on average (95% interval −0.26 to +0.03); the interval still includes a tie.
+I trained nine LoRA adapters on Qwen2.5-1.5B-Instruct to compare it with the simplest alternative, taking the pairs with the largest helpfulness gap. Pareto scored lower on all three seeds, 0.11 reward-model logits below gap on average, although the 95% interval (−0.26 to +0.03) still includes a tie.
 
 ![Mean reward per training set, and the Pareto minus gap difference](results/day-dpo/reward-difference.svg)
 
@@ -25,7 +25,7 @@ uv run verge analyze examples/candidates.json --output artifacts/my-run.json
 uv run verge export-dpo artifacts/my-run.json --output artifacts/my-run.dpo.jsonl
 ```
 
-You supply the scores; the package runs no model. The export is TRL-ready DPO JSONL. A confidence penalty can shrink the margins of uncertain scores (the experiment sets confidence to 1). [`verge_lab/pareto.py`](verge_lab/pareto.py) is about 200 lines.
+You supply the scores, since the package runs no model, and the export is TRL-ready DPO JSONL. A confidence penalty can shrink the margins of uncertain scores (the experiment sets confidence to 1), and [`verge_lab/pareto.py`](verge_lab/pareto.py), which implements the rule, is about 200 lines.
 
 To redo the analysis from the saved rewards (10,000 bootstrap resamples over prompts and seeds, plus the figure):
 
@@ -33,12 +33,12 @@ To redo the analysis from the saved rewards (10,000 bootstrap resamples over pro
 uv run python tools/analyze_day_dpo.py --output-dir .cache/dpo
 ```
 
-Retraining needs a Modal account. Data selection, training settings and the exact selection rule are in [docs/experiment.md](docs/experiment.md).
+Retraining needs a Modal account, and the data selection, training settings and exact selection rule are described in [docs/experiment.md](docs/experiment.md).
 
 ## Demo
 
 [![A HelpSteer2 training pair in the browser demo, with each selector's decision](docs/demo.png)](https://mottopanikeiku.github.io/verge-lab/)
 
-The [demo](https://mottopanikeiku.github.io/verge-lab/) opens on 40 real training pairs from the experiment: the prompt, both HelpSteer2 responses, the annotators' ratings, and what the Pareto, gap and human-label selectors did with each pair, including whether it made each 1,024-pair training set. The other views walk through the rule's confidence penalty, near-tie threshold and export on made-up scores. `npm ci && npm run dev` runs it locally; `uv run python tools/export_demo_pairs.py` rebuilds the pair file from the saved results.
+The [demo](https://mottopanikeiku.github.io/verge-lab/) opens on 40 real training pairs from the experiment: the prompt, both HelpSteer2 responses, the annotators' ratings, and what the Pareto, gap and human-label selectors did with each pair, including whether it made each 1,024-pair training set. The other views walk through the rule's confidence penalty, near-tie threshold and export on made-up scores. `npm ci && npm run dev` runs it locally, and `uv run python tools/export_demo_pairs.py` rebuilds the pair file from the saved results.
 
-Data: [HelpSteer2](https://arxiv.org/abs/2406.08673) and [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257) (NVIDIA, CC-BY-4.0). Trained with the [DPO](https://arxiv.org/abs/2305.18290) loss on Qwen2.5 (Apache-2.0). The earlier rating study in `results/public-preferences/` uses [UltraFeedback](https://arxiv.org/abs/2310.01377) on [TruthfulQA](https://arxiv.org/abs/2109.07958). Code is MIT.
+The data is [HelpSteer2](https://arxiv.org/abs/2406.08673) and [HelpSteer2-Preference](https://arxiv.org/abs/2410.01257) (NVIDIA, CC-BY-4.0), and the adapters train with the [DPO](https://arxiv.org/abs/2305.18290) loss on Qwen2.5 (Apache-2.0). The earlier rating study in `results/public-preferences/` uses [UltraFeedback](https://arxiv.org/abs/2310.01377) on [TruthfulQA](https://arxiv.org/abs/2109.07958), and the code is MIT licensed.

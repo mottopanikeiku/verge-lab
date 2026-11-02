@@ -54,14 +54,14 @@ function App() {
         {activeView === 'real' ? (
           <aside className="example-notice" aria-labelledby="example-notice-title">
             <strong id="example-notice-title">Real pairs from the DPO experiment</strong>
-            <p>These pairs, ratings and selector decisions come from the experiment's saved data. The other views use made-up scores to show the rule's confidence penalty, near-tie threshold and export. <a href="https://github.com/mottopanikeiku/verge-lab#readme">The results</a> are in the README.</p>
+            <p>These pairs, ratings and selector decisions come from the experiment's saved data, and <a href="https://github.com/mottopanikeiku/verge-lab#readme">the results</a> are in the README. The other views use made-up scores to show the rule's confidence penalty, near-tie threshold and export.</p>
             <details><summary>Where the pairs come from</summary><p>This view reads <code>data/helpsteer2-pairs.json</code>, exported by <code>tools/export_demo_pairs.py</code> from <code>results/day-dpo/data.json.gz</code> and <code>results/human-preferences/source.jsonl</code>. A test checks the file against those results and the saved pair table.</p></details>
           </aside>
         ) : (
           <aside className="example-notice" aria-labelledby="example-notice-title">
             <strong id="example-notice-title">Made-up example scores</strong>
-            <p>The scores in this view are made up; the selection decisions are computed from them. The first view has real HelpSteer2 pairs.</p>
-            <details><summary>Where the examples come from</summary><p>Every example view reads <code>artifacts/demo-run.json</code>, built from <code>examples/candidates.json</code>. Scores, confidences, token counts, latency and coordinates are authored inputs. The Python package computes pair decisions, margins, counts and mutation flips from them.</p></details>
+            <p>The scores in this view are made up and the selection decisions are computed from them, while the first view has real HelpSteer2 pairs.</p>
+            <details><summary>Where the examples come from</summary><p>Every example view reads <code>artifacts/demo-run.json</code>, built from <code>examples/candidates.json</code>. Its scores, confidences, token counts, latency and coordinates are authored inputs, and the Python package computes pair decisions, margins, counts and mutation flips from them.</p></details>
           </aside>
         )}
         <div className="bench-content">

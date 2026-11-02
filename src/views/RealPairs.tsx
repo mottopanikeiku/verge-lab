@@ -60,7 +60,7 @@ function Decisions({ data, pair }: { data: RealPairsArtifact; pair: RealPair }) 
   return (
     <div className="table-wrap">
       <table className="data-table decision-table">
-        <caption>What each selector does with this pair. Each trained on {integer.format(data.pool.trainingPairsPerSelector)} pairs from the same pool of {integer.format(data.pool.eligiblePairs)}.</caption>
+        <caption>Each selector trained on {integer.format(data.pool.trainingPairsPerSelector)} pairs from the same pool of {integer.format(data.pool.eligiblePairs)}, and this table shows what each one does with this pair.</caption>
         <thead><tr><th scope="col">Selector</th><th scope="col">Picks</th><th scope="col">Why</th><th scope="col">In its training set</th></tr></thead>
         <tbody>
           <tr><th scope="row">Pareto, {data.paretoAttributes.join(' + ')}</th><td>{pareto.pick === null ? 'Abstains' : `Response ${pareto.pick}`}</td><td>{pareto.reason}</td><td>{pareto.inTrainingSet ? 'Yes' : 'No'}</td></tr>
@@ -95,7 +95,7 @@ export function RealPairs() {
         <div>
           <span className="eyebrow">HelpSteer2 / real data</span>
           <h1>Training pairs from the experiment</h1>
-          <p>{pairs.length} HelpSteer2 prompts with two responses each, the annotators' 0–4 ratings and preference, and what each of the experiment's three selectors did with the pair. The Pareto rule keeps a pair when one response is at least as good on correctness and coherence and better on one of them.</p>
+          <p>Here are {pairs.length} HelpSteer2 prompts with two responses each, along with the annotators' 0–4 ratings and preference and what each of the experiment's three selectors did with the pair. The Pareto rule keeps a pair when one response is at least as good on correctness and coherence and better on one of them.</p>
           <p className="real-sample-note">The first {counts['hash-order']} open the experiment's {integer.format(data.pool.eligiblePairs)}-pair pool in hash order. Pareto passes {integer.format(data.pool.paretoPasses)} of the {integer.format(data.pool.eligiblePairs)}, so its rare cases are added from further down the same order: {counts['pareto-abstains']} abstentions and {counts['pareto-against-human']} pairs where it disagrees with the annotators.</p>
         </div>
         <dl className="verdict-counts"><div><dt>Pareto keeps</dt><dd>{pairs.length - abstains}</dd></div><div><dt>Pareto abstains</dt><dd>{abstains}</dd></div></dl>
@@ -134,7 +134,7 @@ export function RealPairs() {
           </section>
         </div>
       ) : null}
-      <p className="real-credit">Data: <a href={`https://huggingface.co/datasets/${data.dataset.huggingFace}`}>{data.dataset.name}</a>, {data.dataset.attribution}, <a href={data.dataset.licenseUrl}>{data.dataset.license}</a>. Texts and ratings are unchanged; the file is <code>public/data/helpsteer2-pairs.json</code>, written by <code>tools/export_demo_pairs.py</code>.</p>
+      <p className="real-credit">The data comes from <a href={`https://huggingface.co/datasets/${data.dataset.huggingFace}`}>{data.dataset.name}</a> ({data.dataset.attribution}) under <a href={data.dataset.licenseUrl}>{data.dataset.license}</a>, with texts and ratings unchanged, and the file is <code>public/data/helpsteer2-pairs.json</code>, written by <code>tools/export_demo_pairs.py</code>.</p>
     </div>
   )
 }
